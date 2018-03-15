@@ -74,6 +74,8 @@ private:
 	*/
 	void keyHandler(const ASGE::SharedEventData data);
 
+	void mouseClickHandler(const ASGE::SharedEventData data);
+
 private:
 	
 	std::thread th;           /**< Network Event Thread. 
@@ -82,5 +84,7 @@ private:
 							       The networking component used for clients. */
 	int key_handler_id = -1;  /**< Input Callback ID. 
 							       The callback ID assigned by the game engine. */
+
+	int click_handler_id = -1;
 };
 
