@@ -25,7 +25,7 @@ bool MyNetGame::init()
 		return false;
 	}
 
-	renderer->setWindowTitle("My Network Game");
+	renderer->setWindowTitle("The Gathering Storm");
 	renderer->setClearColour(ASGE::COLOURS::CORNFLOWERBLUE);
 	renderer->setSpriteMode(ASGE::SpriteSortMode::BACK_TO_FRONT);
 	toggleFPS();
