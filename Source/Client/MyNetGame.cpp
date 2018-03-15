@@ -11,6 +11,7 @@ namespace {
 MyNetGame::~MyNetGame()
 {
 	this->inputs->unregisterCallback(key_handler_id);
+	this->inputs->unregisterCallback(click_handler_id);
 	LoadedGameFont::loaded_fonts.clear();
 	network.deinitialize();
 }
@@ -34,6 +35,9 @@ bool MyNetGame::init()
 	
 	key_handler_id = this->inputs->addCallbackFnc(
 		ASGE::EventType::E_KEY, &MyNetGame::keyHandler, this);
+
+	click_handler_id = this->inputs->addCallbackFnc(ASGE::EventType::E_MOUSE_CLICK, 
+		&MyNetGame::mouseClickHandler, this);
 
 	auto font_idx = renderer->loadFont(".\\Resources\\Fonts\\Zorque.ttf", 60);
 
@@ -79,4 +83,15 @@ void MyNetGame::keyHandler(const ASGE::SharedEventData data)
 	{
 		signalExit();
 	}
+}
+
+void MyNetGame::mouseClickHandler(const ASGE::SharedEventData data)
+{
+	const ASGE::ClickEvent* click_event = 
+		static_cast<const ASGE::ClickEvent*>(data.get());
+
+	auto button = click_event->button;
+	auto action = click_event->action;
+
+	// this will change slightly on the next update to the project where mouse click co - ords will be with the click event itself.
 }
