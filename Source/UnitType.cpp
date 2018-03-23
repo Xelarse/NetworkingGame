@@ -28,20 +28,20 @@ std::string UnitType::getSpriteName() const
 	return sprite_name;
 }
 
-Unit* UnitType::createUnit()
+Unit* UnitType::createUnit(ASGE::Renderer* renderer)
 {
-	return new Unit(*this);
+	return new Unit(*this, renderer);
 }
 
 void UnitType::load()
 {
 	using jsoncons::json;
-	std::ifstream is("..\\..\\Resources\\Data\\Enemies.json");
+	std::ifstream is("..\\..\\Resources\\Data\\Units.json");
 
-	json enemies;
-	is >> enemies;
+	json units;
+	is >> units;
 
-	for (const auto& type : enemies.members())
+	for (const auto& type : units.members())
 	{
 		const auto& name = type.name();
 		const auto& data = type.value();
@@ -50,7 +50,7 @@ void UnitType::load()
 		int damage = data["damage"].as_int();
 		int armour = data["armour"].as_int();
 
-		std::string sprite = data["model"].as_string();
+		std::string sprite = data["sprite"].as_string();
 
 		unit_types.push_back(UnitType(health, damage, armour, sprite));
 	}

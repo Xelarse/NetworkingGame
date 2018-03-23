@@ -1,0 +1,9 @@
+{
+    "Gunner": {
+      "health": 2,
+      "damage": 2,
+      "armour": 0,
+      "sprite": "Gunner.png",
+      "sprite_scale": 1.0
+    }
+  }

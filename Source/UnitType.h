@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <sstream>
+#include <Engine/OGLGame.h>
+#include <Engine/Sprite.h>
 
 class Unit;
 class UnitType
@@ -16,7 +18,7 @@ public:
 	std::string getSpriteName() const;
 
 
-	Unit* createUnit();
+	Unit* createUnit(ASGE::Renderer* renderer);
 	static void load();
 
 private:

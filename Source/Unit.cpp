@@ -17,10 +17,10 @@ void Unit::init(ASGE::Renderer * renderer)
 	object_sprite = renderer->createUniqueSprite();
 	object_sprite->loadTexture("..\\..\\Resources\\Sprites" + sprite_name);
 
-	object_sprite->xPos(-10);
+	object_sprite->xPos(100);
 	object_sprite->yPos(520);
-	object_sprite->width(100);
-	object_sprite->height(100);
+	object_sprite->width(200);
+	object_sprite->height(200);
 }
 
 void Unit::update(const ASGE::GameTime & ms)
