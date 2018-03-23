@@ -1,0 +1,17 @@
+{
+    "Gunner": {
+      "health": 2,
+      "damage": 2,
+      "armour": 0,
+      "sprite": "Gunner.png",
+      "sprite_scale": 1.0
+    },
+	
+	"Tank": {
+      "health": 10,
+      "damage": 5,
+      "armour": 5,
+      "sprite": "Swag.png",
+      "sprite_scale": 1.0
+    }
+  }
