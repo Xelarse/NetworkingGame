@@ -2,6 +2,7 @@
 #include <Engine\OGLGame.h>
 #include <Engine\Sprite.h>
 #include <Client\Networking.h>
+#include <irrKlang.h>
 
 #include "Unit.h"
 #include "UnitType.h"
@@ -9,6 +10,10 @@
 namespace ASGE {
 	struct GameTime;
 }
+
+namespace irrklang {
+	class ISoundEngine;
+}
 
 /**
 *  MyNetGame is the main entrypoint into the game.
@@ -90,8 +95,11 @@ private:
 
 	int click_handler_id = -1;
 
+	bool initAudioEngine();
 
 
 	std::unique_ptr<Unit> gunner_enemy = nullptr;
+
+	std::unique_ptr<irrklang::ISoundEngine> audio_engine = nullptr;
 };
 

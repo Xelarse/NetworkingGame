@@ -14,6 +14,7 @@ MyNetGame::~MyNetGame()
 	this->inputs->unregisterCallback(click_handler_id);
 	LoadedGameFont::loaded_fonts.clear();
 	network.deinitialize();
+	audio_engine->stopAllSounds();
 }
 
 bool MyNetGame::init()
@@ -49,10 +50,13 @@ bool MyNetGame::init()
 	th = std::thread(&ClientComponent::consumeEvents, &network);
 	th.detach();
 
+	//initilising audio engine
+	initAudioEngine();
+
 
 	////Loading in units and initialising one, Change the number index in unit types to determine which unit is loaded from the json file
 	UnitType::load();
-	gunner_enemy.reset(UnitType::unit_types[0].createUnit(renderer.get()));
+	gunner_enemy.reset(UnitType::unit_types[1].createUnit(renderer.get()));
 
 	return true;
 }
@@ -107,4 +111,16 @@ void MyNetGame::mouseClickHandler(const ASGE::SharedEventData data)
 	auto action = click_event->action;
 
 	// this will change slightly on the next update to the project where mouse click co - ords will be with the click event itself.
+}
+
+bool MyNetGame::initAudioEngine()
+{
+	using namespace irrklang;
+	audio_engine.reset(createIrrKlangDevice());
+	if (!audio_engine)
+	{
+		// error starting audio engine
+		return false;
+	}
+	return true;
 }
