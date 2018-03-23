@@ -15,7 +15,10 @@ Unit::Unit(UnitType& T, ASGE::Renderer* renderer) : type(T)
 void Unit::init(ASGE::Renderer * renderer)
 {
 	object_sprite = renderer->createUniqueSprite();
-	object_sprite->loadTexture("..\\..\\Resources\\Sprites" + sprite_name);
+
+	std::string sprite_string = "..\\..\\Resources\\Sprites\\" + sprite_name;
+
+	object_sprite->loadTexture(sprite_string);
 
 	object_sprite->xPos(100);
 	object_sprite->yPos(520);
