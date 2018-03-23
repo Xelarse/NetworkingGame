@@ -3,6 +3,9 @@
 #include <Engine\Sprite.h>
 #include <Client\Networking.h>
 
+#include "Unit.h"
+#include "UnitType.h"
+
 namespace ASGE {
 	struct GameTime;
 }
@@ -86,5 +89,9 @@ private:
 							       The callback ID assigned by the game engine. */
 
 	int click_handler_id = -1;
+
+
+
+	std::unique_ptr<Unit> gunner_enemy = nullptr;
 };
 

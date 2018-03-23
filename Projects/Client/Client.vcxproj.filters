@@ -16,13 +16,13 @@
     <ClCompile Include="..\..\Source\Client\main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\GameObject.cpp">
+    <ClCompile Include="..\..\Source\Client\GameObject.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\UnitType.cpp">
+    <ClCompile Include="..\..\Source\Client\Unit.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Unit.cpp">
+    <ClCompile Include="..\..\Source\Client\UnitType.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -42,13 +42,13 @@
     <ClInclude Include="..\..\Source\Client\targetver.h">
       <Filter>Headers\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\GameObject.h">
+    <ClInclude Include="..\..\Source\Client\GameObject.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\UnitType.h">
+    <ClInclude Include="..\..\Source\Client\Unit.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Unit.h">
+    <ClInclude Include="..\..\Source\Client\UnitType.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
