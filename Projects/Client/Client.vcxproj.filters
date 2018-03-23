@@ -16,6 +16,15 @@
     <ClCompile Include="..\..\Source\Client\main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\GameObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\UnitType.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Unit.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Client\GameFont.h">
@@ -32,6 +41,15 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Client\targetver.h">
       <Filter>Headers\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GameObject.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\UnitType.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Unit.h">
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
