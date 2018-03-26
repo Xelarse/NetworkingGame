@@ -1,7 +1,7 @@
 #pragma once
 #include <Engine\OGLGame.h>
 #include <Engine\Sprite.h>
-#include <Client\Networking.h>
+#include <Client\ClientNetworking.h>
 #include <irrKlang.h>
 
 #include "Unit.h"
@@ -13,7 +13,8 @@ namespace ASGE {
 
 namespace irrklang {
 	class ISoundEngine;
-}
+}
+
 
 /**
 *  MyNetGame is the main entrypoint into the game.
@@ -84,6 +85,10 @@ private:
 
 	void mouseClickHandler(const ASGE::SharedEventData data);
 
+	//std::atomic<std::string> packetstring;
+
+	std::string packetstring = "";
+
 private:
 	
 	std::thread th;           /**< Network Event Thread. 
@@ -93,7 +98,7 @@ private:
 	int key_handler_id = -1;  /**< Input Callback ID. 
 							       The callback ID assigned by the game engine. */
 
-	int click_handler_id = -1;
+	int click_handler_id = -1; //TODO : when deleting make sure click is delete before key handler
 
 	bool initAudioEngine();
 

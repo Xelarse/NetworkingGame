@@ -1,6 +1,6 @@
 #pragma once
 #include <enetpp/client.h>
-#include <Common/Networking.h>
+#include <Common/CommonNetworking.h>
 
 class ClientComponent :
 	public NetworkComponent

@@ -1,6 +1,6 @@
 #pragma once
 #include <enetpp/server.h>
-#include <Common/Networking.h>
+#include <Common/CommonNetworking.h>
 
 static unsigned int next_uid = 0;
 struct server_client

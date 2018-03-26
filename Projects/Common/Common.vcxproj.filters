@@ -24,9 +24,6 @@
     <ClInclude Include="..\..\Source\Common\Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Common\Networking.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\Common\Tracer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -36,15 +33,18 @@
     <ClInclude Include="..\..\Source\Common\stdafx.h">
       <Filter>Header Files\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Common\CommonNetworking.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Common\stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Common\Networking.cpp">
+    <ClCompile Include="..\..\Source\Common\Tracer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Common\Tracer.cpp">
+    <ClCompile Include="..\..\Source\Common\CommonNetworking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

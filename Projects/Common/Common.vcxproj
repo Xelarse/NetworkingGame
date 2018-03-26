@@ -13,13 +13,13 @@
   <ItemGroup>
     <ClInclude Include="..\..\Source\Common\Component.h" />
     <ClInclude Include="..\..\Source\Common\Components.h" />
-    <ClInclude Include="..\..\Source\Common\Networking.h" />
+    <ClInclude Include="..\..\Source\Common\CommonNetworking.h" />
     <ClInclude Include="..\..\Source\Common\stdafx.h" />
     <ClInclude Include="..\..\Source\Common\targetver.h" />
     <ClInclude Include="..\..\Source\Common\Tracer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\Common\Networking.cpp" />
+    <ClCompile Include="..\..\Source\Common\CommonNetworking.cpp" />
     <ClCompile Include="..\..\Source\Common\stdafx.cpp" />
     <ClCompile Include="..\..\Source\Common\Tracer.cpp" />
   </ItemGroup>

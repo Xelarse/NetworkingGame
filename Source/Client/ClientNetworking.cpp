@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Networking.h"
+#include "ClientNetworking.h"
 
 bool ClientComponent::initialize()
 {

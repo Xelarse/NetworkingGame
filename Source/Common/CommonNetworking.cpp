@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "Networking.h"
+#include "CommonNetworking.h"
 #include "Tracer.h"
 
 NetworkComponent::NetworkComponent() 

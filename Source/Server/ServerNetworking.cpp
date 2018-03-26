@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Networking.h"
+#include "ServerNetworking.h"
 
 bool ServerComponent::initialize()
 {
@@ -17,12 +17,12 @@ bool ServerComponent::initialize()
 
 	on_connected = [&](server_client& client)
 	{
-		trace("on_client_connected");
+		trace("on_client_connected id :" + std::to_string(client._uid));
 	};
 
 	 on_disconnected = [&](unsigned int client_uid)
 	{
-		trace("on_client_disconnected");
+		trace("on_client_disconnected id :" + std::to_string(client_uid));
 	};
 
 	auto on_client_data_received = 

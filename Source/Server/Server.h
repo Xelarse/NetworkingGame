@@ -1,5 +1,5 @@
 #pragma once
-#include <Server\Networking.h>
+#include <Server\ServerNetworking.h>
 
 
 class Server

@@ -10,9 +10,6 @@
     <ClCompile Include="..\..\Source\Client\MyNetGame.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Client\Networking.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Client\main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -25,15 +22,15 @@
     <ClCompile Include="..\..\Source\Client\UnitType.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Client\ClientNetworking.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Client\GameFont.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Client\MyNetGame.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Client\Networking.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Client\stdafx.h">
@@ -49,6 +46,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Client\UnitType.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Client\ClientNetworking.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

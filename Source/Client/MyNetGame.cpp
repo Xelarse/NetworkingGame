@@ -49,6 +49,7 @@ bool MyNetGame::init()
 	network.initialize();
 	th = std::thread(&ClientComponent::consumeEvents, &network);
 	th.detach();
+	
 
 	//initilising audio engine
 	initAudioEngine();

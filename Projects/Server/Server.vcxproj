@@ -131,14 +131,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Server\Server.h" />
-    <ClInclude Include="..\..\Source\Server\Networking.h" />
+    <ClInclude Include="..\..\Source\Server\ServerNetworking.h" />
     <ClInclude Include="..\..\Source\Server\stdafx.h" />
     <ClInclude Include="..\..\Source\Server\targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Server\main.cpp" />
     <ClCompile Include="..\..\Source\Server\Server.cpp" />
-    <ClCompile Include="..\..\Source\Server\Networking.cpp" />
+    <ClCompile Include="..\..\Source\Server\ServerNetworking.cpp" />
     <ClCompile Include="..\..\Source\Server\stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
