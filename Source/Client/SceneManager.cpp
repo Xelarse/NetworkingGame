@@ -8,6 +8,12 @@ void SceneManager::init()
 
 void SceneManager::update(const ASGE::GameTime& ms)
 {
+	if (scene_switcher == SceneSwiching::REMOVE_SCENE)
+	{
+		game_scenes.pop_back();
+		scene_switcher = SceneSwiching::IDLE;
+	}
+
 	//updates the last scene
 	game_scenes[game_scenes.size()]->update(ms);
 }
@@ -25,5 +31,5 @@ void SceneManager::addScene(Scene* scene)
 
 void SceneManager::removeScene()
 {
-	game_scenes.pop_back();
+	scene_switcher = SceneSwiching::REMOVE_SCENE;
 }

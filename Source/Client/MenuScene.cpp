@@ -37,6 +37,32 @@ void MenuScene::init(ASGE::Renderer * renderer, ASGE::Input* inputs, SceneManage
 
 void MenuScene::update(const ASGE::GameTime& ms)
 {
+	if (next_scene != SceneTransitions::NONE)
+	{
+		switch (next_scene)
+		{
+			case SceneTransitions::TO_GAME:
+			{
+				//Add game transition
+				next_scene = SceneTransitions::NONE;
+				break;
+			}
+
+			case SceneTransitions::TO_SETTINGS:
+			{
+				//Add game transitions
+				next_scene = SceneTransitions::NONE;
+				break;
+			}
+
+			case SceneTransitions::TO_EXIT:
+			{
+				host_manager->removeScene();
+				next_scene = SceneTransitions::NONE;
+				break;
+			}
+		}
+	}
 }
 
 void MenuScene::render(ASGE::Renderer * renderer)
@@ -73,11 +99,14 @@ void MenuScene::clickHandler(const ASGE::SharedEventData data)
 	{
 		if (Collision::mouseOnSprite(click_event->xpos, click_event->ypos, start_button.get()))
 		{
+			next_scene = SceneTransitions::TO_GAME;
+
 			tester = 1;
 		}
 
 		else if (Collision::mouseOnSprite(click_event->xpos, click_event->ypos, exit_button.get()))
 		{
+			next_scene = SceneTransitions::TO_EXIT;
 			tester = 2;
 		}
 	}

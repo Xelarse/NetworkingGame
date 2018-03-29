@@ -10,7 +10,6 @@ class SceneManager
 	enum class SceneSwiching
 	{
 		IDLE,
-		ADD_SCENE,
 		REMOVE_SCENE
 	};
 
@@ -25,6 +24,8 @@ public:
 
 private:
 	
+
+
 	std::vector<std::unique_ptr<Scene>> game_scenes;
 
 	std::atomic<SceneSwiching> scene_switcher = SceneSwiching::IDLE;
