@@ -8,7 +8,7 @@ class Scene
 {
 public:
 
-	virtual void init(ASGE::Renderer* renderer, ASGE::Input* input) = 0;
+	virtual void init(ASGE::Renderer* renderer, ASGE::Input* input, SceneManager* host) = 0;
 	virtual void update(const ASGE::GameTime& ms) = 0;
 	virtual void render(ASGE::Renderer* renderer) = 0;
 

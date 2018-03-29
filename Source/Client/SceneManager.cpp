@@ -9,7 +9,7 @@ void SceneManager::init()
 void SceneManager::update(const ASGE::GameTime& ms)
 {
 	//updates the last scene
-	game_scenes[game_scenes.size()]->update();
+	game_scenes[game_scenes.size()]->update(ms);
 }
 
 void SceneManager::render(ASGE::Renderer * renderer)
