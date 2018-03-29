@@ -127,6 +127,8 @@
     <ClInclude Include="..\..\Source\Client\MyNetGame.h" />
     <ClInclude Include="..\..\Source\Client\GameFont.h" />
     <ClInclude Include="..\..\Source\Client\ClientNetworking.h" />
+    <ClInclude Include="..\..\Source\Client\Scene.h" />
+    <ClInclude Include="..\..\Source\Client\SceneManager.h" />
     <ClInclude Include="..\..\Source\Client\stdafx.h" />
     <ClInclude Include="..\..\Source\Client\targetver.h" />
     <ClInclude Include="..\..\Source\Client\Unit.h" />
@@ -138,6 +140,7 @@
     <ClCompile Include="..\..\Source\Client\GameFont.cpp" />
     <ClCompile Include="..\..\Source\Client\main.cpp" />
     <ClCompile Include="..\..\Source\Client\ClientNetworking.cpp" />
+    <ClCompile Include="..\..\Source\Client\SceneManager.cpp" />
     <ClCompile Include="..\..\Source\Client\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Create</PrecompiledHeader>

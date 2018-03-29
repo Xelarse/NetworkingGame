@@ -25,6 +25,7 @@
     <ClCompile Include="..\..\Source\Client\ClientNetworking.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Client\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Client\GameFont.h">
@@ -51,6 +52,12 @@
     <ClInclude Include="..\..\Source\Client\ClientNetworking.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Client\Scene.h">
+      <Filter>Headers\ScenesAndManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Client\SceneManager.h">
+      <Filter>Headers\ScenesAndManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Headers">
@@ -64,6 +71,9 @@
     </Filter>
     <Filter Include="Headers\Platform">
       <UniqueIdentifier>{fc276487-b5f7-4e8c-8498-69fb1506831b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\ScenesAndManager">
+      <UniqueIdentifier>{497b1acf-ea93-4b7f-ba41-da316addc384}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
