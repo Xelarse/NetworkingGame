@@ -16,16 +16,16 @@ void SceneManager::update(const ASGE::GameTime& ms)
 	}
 
 	//updates the last scene
-	game_scenes[game_scenes.size()]->update(ms);
+	game_scenes.back()->update(ms);
 }
 
 void SceneManager::render(ASGE::Renderer * renderer)
 {
 	//render the last scene 
-	game_scenes[game_scenes.size()]->render(renderer);
+	game_scenes.back()->render(renderer);
 }
 
-void SceneManager::addScene(Scene* scene)
+void SceneManager::addScene(std::unique_ptr<Scene>&& scene)
 {
 	game_scenes.emplace_back(std::move(scene));
 }

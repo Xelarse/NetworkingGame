@@ -23,7 +23,7 @@ public:
 	void update(const ASGE::GameTime& ms);
 	void render(ASGE::Renderer* renderer);
 
-	void addScene(Scene* scene);
+	void addScene(std::unique_ptr<Scene>&& scene);
 	void removeScene();
 
 private:

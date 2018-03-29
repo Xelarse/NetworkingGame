@@ -8,6 +8,7 @@
 #include "UnitType.h"
 #include "SceneManager.h"
 #include "MenuScene.h"
+#include "Scene.h"
 
 namespace ASGE {
 	struct GameTime;

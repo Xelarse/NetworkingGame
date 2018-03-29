@@ -45,8 +45,9 @@ bool MyNetGame::init()
 	//init of scene manager and adding menu scene to it
 	scene_manager = std::make_unique<SceneManager>();
 	scene_manager->init();
-	MenuScene menu_scene(renderer.get(), inputs.get(), scene_manager.get());
-	scene_manager->addScene(&menu_scene);
+	std::unique_ptr<MenuScene> menu_scene;
+	menu_scene = std::make_unique<MenuScene>(renderer.get(), inputs.get(), scene_manager.get());
+	scene_manager->addScene(std::move(menu_scene));
 
 	//initilising audio engine
 	initAudioEngine();
