@@ -94,17 +94,19 @@ void MenuScene::clickHandler(const ASGE::SharedEventData data)
 
 	auto button = click_event->button;
 	auto action = click_event->action;
+	auto xpos = click_event->xpos;
+	auto ypos = click_event->ypos;
 
 	if (action == ASGE::MOUSE::BUTTON_PRESSED)
 	{
-		if (Collision::mouseOnSprite(click_event->xpos, click_event->ypos, start_button.get()))
+		if (Collision::mouseOnSprite(xpos, ypos, start_button.get()))
 		{
 			next_scene = SceneTransitions::TO_GAME;
 
 			tester = 1;
 		}
 
-		else if (Collision::mouseOnSprite(click_event->xpos, click_event->ypos, exit_button.get()))
+		else if (Collision::mouseOnSprite(xpos, ypos, exit_button.get()))
 		{
 			next_scene = SceneTransitions::TO_EXIT;
 			tester = 2;
