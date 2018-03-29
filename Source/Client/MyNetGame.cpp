@@ -10,8 +10,8 @@ namespace {
 
 MyNetGame::~MyNetGame()
 {
-	this->inputs->unregisterCallback(key_handler_id);
-	this->inputs->unregisterCallback(click_handler_id);
+	//this->inputs->unregisterCallback(key_handler_id);
+	//this->inputs->unregisterCallback(click_handler_id);
 	LoadedGameFont::loaded_fonts.clear();
 	network.deinitialize();
 	audio_engine->stopAllSounds();
@@ -91,27 +91,27 @@ void MyNetGame::render(const ASGE::GameTime& ms)
 
 void MyNetGame::keyHandler(const ASGE::SharedEventData data)
 {
-	const ASGE::KeyEvent* key_event =
-		static_cast<const ASGE::KeyEvent*>(data.get());
+	//const ASGE::KeyEvent* key_event =
+	//	static_cast<const ASGE::KeyEvent*>(data.get());
 
-	auto key = key_event->key;
-	auto action = key_event->action;
+	//auto key = key_event->key;
+	//auto action = key_event->action;
 
-	if (key == ASGE::KEYS::KEY_ESCAPE)
-	{
-		signalExit();
-	}
+	//if (key == ASGE::KEYS::KEY_ESCAPE)
+	//{
+	//	signalExit();
+	//}
 }
 
 void MyNetGame::mouseClickHandler(const ASGE::SharedEventData data)
 {
-	const ASGE::ClickEvent* click_event = 
-		static_cast<const ASGE::ClickEvent*>(data.get());
+	//const ASGE::ClickEvent* click_event = 
+	//	static_cast<const ASGE::ClickEvent*>(data.get());
 
-	auto button = click_event->button;
-	auto action = click_event->action;
+	//auto button = click_event->button;
+	//auto action = click_event->action;
 
-	// this will change slightly on the next update to the project where mouse click co - ords will be with the click event itself.
+	//// this will change slightly on the next update to the project where mouse click co - ords will be with the click event itself.
 }
 
 bool MyNetGame::initAudioEngine()

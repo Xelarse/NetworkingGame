@@ -6,28 +6,19 @@
 class Scene;
 
 class SceneManager
-
 {
-
-	struct input_info
-	{
-		ASGE::ClickEvent* click_event = nullptr;
-		ASGE::KeyEvent* key_event = nullptr;
-	};
-
-
 public:
 
 	void init();
-	void update();
+	void update(const ASGE::GameTime& ms);
+	void render(ASGE::Renderer* renderer);
 
-	void addInputToQueue(input_info info);
 	void addScene(Scene* scene);
+	void removeScene();
 
 private:
 	
-	std::vector<Scene> game_scenes;
-
-	std::queue<input_info> input_queue;
-	std::mutex input_queue_mtx;
+	std::vector<std::unique_ptr<Scene>> game_scenes;
 };
+
+
