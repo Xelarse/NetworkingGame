@@ -15,6 +15,10 @@ class SceneManager
 
 public:
 
+	SceneManager() = default;
+	~SceneManager() = default;
+
+
 	void init();
 	void update(const ASGE::GameTime& ms);
 	void render(ASGE::Renderer* renderer);

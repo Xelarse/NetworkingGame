@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "Scene.h"
+#include "MenuScene.h"
 
 void SceneManager::init()
 {
