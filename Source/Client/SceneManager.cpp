@@ -16,13 +16,24 @@ void SceneManager::update(const ASGE::GameTime& ms)
 	}
 
 	//updates the last scene
-	game_scenes.back()->update(ms);
+	if (game_scenes.size() != 0)
+	{
+		game_scenes.back()->update(ms);
+	}
+
+	else
+	{
+		exit_game = true;
+	}
 }
 
 void SceneManager::render(ASGE::Renderer * renderer)
 {
 	//render the last scene 
-	game_scenes.back()->render(renderer);
+	if (game_scenes.size() != 0)
+	{
+		game_scenes.back()->render(renderer);
+	}
 }
 
 void SceneManager::addScene(std::unique_ptr<Scene>&& scene)

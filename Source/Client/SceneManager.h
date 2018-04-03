@@ -26,9 +26,11 @@ public:
 	void addScene(std::unique_ptr<Scene>&& scene);
 	void removeScene();
 
+	bool gameExit() { return exit_game; };
+
 private:
 	
-
+	std::atomic<bool> exit_game = false;
 
 	std::vector<std::unique_ptr<Scene>> game_scenes;
 

@@ -75,12 +75,15 @@ private:
 	*/
 	virtual void render(const ASGE::GameTime& ms) override;
 
+	//Our stuff under the goes here under the boilerplate
+
 private:
-	
 	std::thread th;           /**< Network Event Thread. 
 							       Consumes incoming network events. */
 	ClientComponent network;  /**< Network Component. 
 							       The networking component used for clients. */
+
+	//Our stuff goes here under the boilerplate
 
 	bool initAudioEngine();
 
@@ -90,5 +93,7 @@ private:
 	std::unique_ptr<Unit> gunner_enemy = nullptr;
 
 	std::unique_ptr<irrklang::ISoundEngine> audio_engine = nullptr;
+
+	std::atomic<bool> exit_game = false;
 };
 

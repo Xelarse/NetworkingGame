@@ -61,6 +61,11 @@ bool MyNetGame::init()
 
 void MyNetGame::update(const ASGE::GameTime& ms)
 {
+	if (scene_manager->gameExit())
+	{
+		this->exit = true;
+	}
+
 	scene_manager->update(ms);
 }
 
