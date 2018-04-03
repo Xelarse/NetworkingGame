@@ -10,8 +10,6 @@ namespace {
 
 MyNetGame::~MyNetGame()
 {
-	this->inputs->unregisterCallback(key_handler_id);
-	this->inputs->unregisterCallback(click_handler_id);
 	LoadedGameFont::loaded_fonts.clear();
 	network.deinitialize();
 	audio_engine->stopAllSounds();
@@ -33,12 +31,6 @@ bool MyNetGame::init()
 	toggleFPS();
 
 	this->inputs->use_threads = true;
-	
-	key_handler_id = this->inputs->addCallbackFnc(
-		ASGE::EventType::E_KEY, &MyNetGame::keyHandler, this);
-
-	click_handler_id = this->inputs->addCallbackFnc(ASGE::EventType::E_MOUSE_CLICK, 
-		&MyNetGame::mouseClickHandler, this);
 
 	auto font_idx = renderer->loadFont(".\\Resources\\Fonts\\Zorque.ttf", 60);
 
@@ -49,27 +41,39 @@ bool MyNetGame::init()
 	network.initialize();
 	th = std::thread(&ClientComponent::consumeEvents, &network);
 	th.detach();
-	
+
+	//init of scene manager and adding menu scene to it
+	scene_manager = std::make_unique<SceneManager>();
+	scene_manager->init();
+	std::unique_ptr<MenuScene> menu_scene;
+	menu_scene = std::make_unique<MenuScene>(renderer.get(), inputs.get(), scene_manager.get());
+	scene_manager->addScene(std::move(menu_scene));
 
 	//initilising audio engine
 	initAudioEngine();
 
-
 	////Loading in units and initialising one, Change the number index in unit types to determine which unit is loaded from the json file
 	UnitType::load();
-	gunner_enemy.reset(UnitType::unit_types[1].createUnit(renderer.get()));
+	gunner_enemy.reset(UnitType::unit_types[0].createUnit(renderer.get()));
 
 	return true;
 }
 
 void MyNetGame::update(const ASGE::GameTime& ms)
 {
+	if (scene_manager->gameExit())
+	{
+		this->exit = true;
+	}
 
+	scene_manager->update(ms);
 }
 
 void MyNetGame::render(const ASGE::GameTime& ms)
 {
 	renderer->setFont(LoadedGameFont::loaded_fonts[0].id);
+
+	scene_manager->render(renderer.get());
 
 	if (network.isConnected())
 	{
@@ -87,31 +91,6 @@ void MyNetGame::render(const ASGE::GameTime& ms)
 	}
 
 	renderer->renderSprite(*gunner_enemy->getObjectSprite());
-}
-
-void MyNetGame::keyHandler(const ASGE::SharedEventData data)
-{
-	const ASGE::KeyEvent* key_event =
-		static_cast<const ASGE::KeyEvent*>(data.get());
-
-	auto key = key_event->key;
-	auto action = key_event->action;
-
-	if (key == ASGE::KEYS::KEY_ESCAPE)
-	{
-		signalExit();
-	}
-}
-
-void MyNetGame::mouseClickHandler(const ASGE::SharedEventData data)
-{
-	const ASGE::ClickEvent* click_event = 
-		static_cast<const ASGE::ClickEvent*>(data.get());
-
-	auto button = click_event->button;
-	auto action = click_event->action;
-
-	// this will change slightly on the next update to the project where mouse click co - ords will be with the click event itself.
 }
 
 bool MyNetGame::initAudioEngine()

@@ -6,6 +6,9 @@
 
 #include "Unit.h"
 #include "UnitType.h"
+#include "SceneManager.h"
+#include "MenuScene.h"
+#include "Scene.h"
 
 namespace ASGE {
 	struct GameTime;
@@ -72,39 +75,25 @@ private:
 	*/
 	virtual void render(const ASGE::GameTime& ms) override;
 
-	/**
-	*  The key handling function for the game.
-	*  Key inputs will be delivered and handled within this function.
-	*  Make a decision whether to process the input immediately
-	*  or whether to generate a queue of actions that are then
-	*  processed at the beginning of the game update loop.
-	*  @param data They key event and its related data.
-	*  @see SharedEventData
-	*/
-	void keyHandler(const ASGE::SharedEventData data);
-
-	void mouseClickHandler(const ASGE::SharedEventData data);
-
-	//std::atomic<std::string> packetstring;
-
-	std::string packetstring = "";
+	//Our stuff under the goes here under the boilerplate
 
 private:
-	
 	std::thread th;           /**< Network Event Thread. 
 							       Consumes incoming network events. */
 	ClientComponent network;  /**< Network Component. 
 							       The networking component used for clients. */
-	int key_handler_id = -1;  /**< Input Callback ID. 
-							       The callback ID assigned by the game engine. */
 
-	int click_handler_id = -1; //TODO : when deleting make sure click is delete before key handler
+	//Our stuff goes here under the boilerplate
 
 	bool initAudioEngine();
+
+	std::unique_ptr<SceneManager> scene_manager;
 
 
 	std::unique_ptr<Unit> gunner_enemy = nullptr;
 
 	std::unique_ptr<irrklang::ISoundEngine> audio_engine = nullptr;
+
+	std::atomic<bool> exit_game = false;
 };
 

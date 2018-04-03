@@ -123,21 +123,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Client\Collision.h" />
+    <ClInclude Include="..\..\Source\Client\Constants.h" />
     <ClInclude Include="..\..\Source\Client\GameObject.h" />
+    <ClInclude Include="..\..\Source\Client\GameScene.h" />
+    <ClInclude Include="..\..\Source\Client\MenuScene.h" />
     <ClInclude Include="..\..\Source\Client\MyNetGame.h" />
     <ClInclude Include="..\..\Source\Client\GameFont.h" />
     <ClInclude Include="..\..\Source\Client\ClientNetworking.h" />
+    <ClInclude Include="..\..\Source\Client\Scene.h" />
+    <ClInclude Include="..\..\Source\Client\SceneManager.h" />
     <ClInclude Include="..\..\Source\Client\stdafx.h" />
     <ClInclude Include="..\..\Source\Client\targetver.h" />
     <ClInclude Include="..\..\Source\Client\Unit.h" />
     <ClInclude Include="..\..\Source\Client\UnitType.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\Client\Collision.cpp" />
     <ClCompile Include="..\..\Source\Client\GameObject.cpp" />
+    <ClCompile Include="..\..\Source\Client\GameScene.cpp" />
+    <ClCompile Include="..\..\Source\Client\MenuScene.cpp" />
     <ClCompile Include="..\..\Source\Client\MyNetGame.cpp" />
     <ClCompile Include="..\..\Source\Client\GameFont.cpp" />
     <ClCompile Include="..\..\Source\Client\main.cpp" />
     <ClCompile Include="..\..\Source\Client\ClientNetworking.cpp" />
+    <ClCompile Include="..\..\Source\Client\SceneManager.cpp" />
     <ClCompile Include="..\..\Source\Client\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugFast|Win32'">Create</PrecompiledHeader>
