@@ -11,7 +11,7 @@ GameScene::GameScene(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 
 GameScene::~GameScene()
 {
-	main_inputs->unregisterCallback(click_handler_id);
+	clickHandlerReset();
 }
 
 void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManager * host)
@@ -25,12 +25,12 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	game_background->xPos(0);
 	game_background->yPos(0);
 
-	exit_button = renderer->createUniqueSprite();
-	exit_button->loadTexture("..\\..\\Resources\\Buttons\\XButton.png");
-	exit_button->xPos(1170);
-	exit_button->yPos(610);
-	exit_button->height(100);
-	exit_button->width(100);
+	x_button = renderer->createUniqueSprite();
+	x_button->loadTexture("..\\..\\Resources\\Buttons\\XButton.png");
+	x_button->xPos(1170);
+	x_button->yPos(610);
+	x_button->height(100);
+	x_button->width(100);
 	
 }
 
@@ -42,7 +42,9 @@ void GameScene::update(const ASGE::GameTime & ms)
 		{
 			case SceneTransitions::TO_MENU:
 			{
-				host_manager->resetToMenu(main_renderer, main_inputs, host_manager);
+				last_scene = false;
+				clickHandlerReset();
+				host_manager->removeScene();
 				next_scene = SceneTransitions::NONE;
 				break;
 			}
@@ -52,9 +54,8 @@ void GameScene::update(const ASGE::GameTime & ms)
 
 void GameScene::render(ASGE::Renderer * renderer)
 {
-
 	renderer->renderSprite(*game_background.get(), BACKGROUND);
-	renderer->renderSprite(*exit_button.get(), FOREGROUND);
+	renderer->renderSprite(*x_button.get(), FOREGROUND);
 }
 
 void GameScene::clickHandler(const ASGE::SharedEventData data)
@@ -67,11 +68,14 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 	auto xpos = click_event->xpos;
 	auto ypos = click_event->ypos;
 
-	if (action == ASGE::MOUSE::BUTTON_PRESSED)
+	if (last_scene)
 	{
-		if (Collision::mouseOnSprite(xpos, ypos, exit_button.get()))
+		if (action == ASGE::MOUSE::BUTTON_PRESSED)
 		{
-			next_scene = SceneTransitions::TO_MENU;
+			if (Collision::mouseOnSprite(xpos, ypos, x_button.get()))
+			{
+				next_scene.store(SceneTransitions::TO_MENU);
+			}
 		}
 	}
 }

@@ -13,9 +13,18 @@ public:
 	virtual void update(const ASGE::GameTime& ms) = 0;
 	virtual void render(ASGE::Renderer* renderer) = 0;
 
+	bool lastScene() { return last_scene; };
+	void lastScene(bool rhs) { last_scene = rhs; };
+
+	void clickHandlerReset() { main_inputs->unregisterCallback(click_handler_id); };
+
 protected:
 
 	SceneManager* host_manager = nullptr;
 	ASGE::Input* main_inputs = nullptr;
 	ASGE::Renderer* main_renderer = nullptr;
+
+	std::atomic<bool> last_scene = false;
+
+	int click_handler_id = -1;
 };

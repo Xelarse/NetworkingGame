@@ -10,7 +10,6 @@ class MenuScene : public Scene
 	{
 		NONE,
 		TO_GAME,
-		TO_SETTINGS,
 		TO_EXIT
 	};
 
@@ -37,6 +36,4 @@ private:
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
 
 	std::atomic<int> tester = 0;
-
-	int click_handler_id = -1;
 };

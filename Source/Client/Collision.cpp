@@ -1,6 +1,6 @@
 #include "Collision.h"
 
-bool Collision::spriteOnSprite(ASGE::Sprite * collider, ASGE::Sprite * collidee)
+bool Collision::spriteOnSprite(ASGE::Sprite* collider, ASGE::Sprite* collidee)
 {
 	bool x_collide = false;
 	bool y_collide = false;
@@ -28,10 +28,11 @@ bool Collision::spriteOnSprite(ASGE::Sprite * collider, ASGE::Sprite * collidee)
 	}
 }
 
-bool Collision::mouseOnSprite(int pos_x, int pos_y, ASGE::Sprite * collidee)
+bool Collision::mouseOnSprite(int pos_x, int pos_y, ASGE::Sprite* collidee)
 {
 	bool x_collide = false;
 	bool y_collide = false;
+
 
 	if (pos_x <= (collidee->xPos() + collidee->width()) &&
 		pos_x >= collidee->xPos())

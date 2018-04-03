@@ -11,6 +11,7 @@ void SceneManager::update(const ASGE::GameTime& ms)
 {
 	if (scene_switcher == SceneSwiching::REMOVE_SCENE)
 	{
+		game_scenes.back()->lastScene(false);
 		game_scenes.pop_back();
 		scene_switcher = SceneSwiching::IDLE;
 	}
@@ -18,6 +19,7 @@ void SceneManager::update(const ASGE::GameTime& ms)
 	//updates the last scene
 	if (game_scenes.size() != 0)
 	{
+		game_scenes.back()->lastScene(true);
 		game_scenes.back()->update(ms);
 	}
 
@@ -25,6 +27,7 @@ void SceneManager::update(const ASGE::GameTime& ms)
 	{
 		exit_game = true;
 	}
+
 }
 
 void SceneManager::render(ASGE::Renderer * renderer)
@@ -52,4 +55,11 @@ void SceneManager::resetToMenu(ASGE::Renderer* renderer, ASGE::Input* inputs, Sc
 	std::unique_ptr<MenuScene> new_menu;
 	new_menu = std::make_unique<MenuScene>(renderer, inputs, host);
 	addScene(std::move(new_menu));
+}
+
+Scene * SceneManager::getLastScenePtr()
+{
+	std::lock_guard<std::mutex> lock(scene_vec_mtx);
+	Scene* back_scene = game_scenes.back().get();
+	return back_scene;
 }

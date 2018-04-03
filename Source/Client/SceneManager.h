@@ -26,10 +26,12 @@ public:
 	void addScene(std::unique_ptr<Scene>&& scene);
 	void removeScene();
 	void resetToMenu(ASGE::Renderer* renderer, ASGE::Input* inputs, SceneManager* host);
+	Scene* getLastScenePtr();
 
 	bool gameExit() { return exit_game; };
 
 private:
+	std::mutex scene_vec_mtx;
 	
 	std::atomic<bool> exit_game = false;
 

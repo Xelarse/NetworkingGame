@@ -29,9 +29,7 @@ private:
 	GameScene();
 
 	std::unique_ptr<ASGE::Sprite> game_background;
-	std::unique_ptr<ASGE::Sprite> exit_button;
+	std::unique_ptr<ASGE::Sprite> x_button;
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
-
-	int click_handler_id = -2;
 };

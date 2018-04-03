@@ -12,7 +12,7 @@ MenuScene::MenuScene(ASGE::Renderer* renderer, ASGE::Input* input, SceneManager*
 
 MenuScene::~MenuScene()
 {
-	main_inputs->unregisterCallback(click_handler_id);
+	clickHandlerReset();
 }
 
 void MenuScene::init(ASGE::Renderer* renderer, ASGE::Input* inputs, SceneManager* host)
@@ -45,18 +45,13 @@ void MenuScene::update(const ASGE::GameTime& ms)
 		{
 			case SceneTransitions::TO_GAME:
 			{
+				last_scene.store(false);
+
 				std::unique_ptr<GameScene> game_scene;
 				game_scene = std::make_unique<GameScene>(main_renderer, main_inputs, host_manager);
 
 				host_manager->addScene(std::move(game_scene));
 
-				next_scene = SceneTransitions::NONE;
-				break;
-			}
-
-			case SceneTransitions::TO_SETTINGS:
-			{
-				//Add game transitions
 				next_scene = SceneTransitions::NONE;
 				break;
 			}
@@ -88,16 +83,19 @@ void MenuScene::clickHandler(const ASGE::SharedEventData data)
 	auto xpos = click_event->xpos;
 	auto ypos = click_event->ypos;
 
-	if (action == ASGE::MOUSE::BUTTON_PRESSED)
+	if (last_scene)
 	{
-		if (Collision::mouseOnSprite(xpos, ypos, start_button.get()))
+		if (action == ASGE::MOUSE::BUTTON_PRESSED)
 		{
-			next_scene = SceneTransitions::TO_GAME;
-		}
+			if (Collision::mouseOnSprite(xpos, ypos, start_button.get()))
+			{
+				next_scene.store(SceneTransitions::TO_GAME);
+			}
 
-		else if (Collision::mouseOnSprite(xpos, ypos, exit_button.get()))
-		{
-			next_scene = SceneTransitions::TO_EXIT;
+			else if (Collision::mouseOnSprite(xpos, ypos, exit_button.get()))
+			{
+				next_scene.store(SceneTransitions::TO_EXIT);
+			}
 		}
 	}
 }
