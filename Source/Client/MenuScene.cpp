@@ -1,6 +1,6 @@
 #include "MenuScene.h"
 
-MenuScene::MenuScene(ASGE::Renderer * renderer, ASGE::Input * input, SceneManager* host)
+MenuScene::MenuScene(ASGE::Renderer* renderer, ASGE::Input* input, SceneManager* host)
 {
 	main_inputs = input;
 	host_manager = host;
@@ -13,7 +13,7 @@ MenuScene::~MenuScene()
 	main_inputs->unregisterCallback(click_handler_id);
 }
 
-void MenuScene::init(ASGE::Renderer * renderer, ASGE::Input* inputs, SceneManager* host)
+void MenuScene::init(ASGE::Renderer* renderer, ASGE::Input* inputs, SceneManager* host)
 {
 
 	click_handler_id = main_inputs->addCallbackFnc(ASGE::EventType::E_MOUSE_CLICK,

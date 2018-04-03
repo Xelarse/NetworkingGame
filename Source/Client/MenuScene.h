@@ -20,9 +20,9 @@ public:
 	~MenuScene();
 
 	// Inherited via Scene
-	virtual void init(ASGE::Renderer * renderer, ASGE::Input* input, SceneManager* host) override;
+	virtual void init(ASGE::Renderer* renderer, ASGE::Input* input, SceneManager* host) override;
 	virtual void update(const ASGE::GameTime& ms) override;
-	virtual void render(ASGE::Renderer * renderer) override;
+	virtual void render(ASGE::Renderer* renderer) override;
 
 	void clickHandler(const ASGE::SharedEventData data);
 
