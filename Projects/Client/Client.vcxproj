@@ -124,7 +124,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Client\Collision.h" />
+    <ClInclude Include="..\..\Source\Client\Constants.h" />
     <ClInclude Include="..\..\Source\Client\GameObject.h" />
+    <ClInclude Include="..\..\Source\Client\GameScene.h" />
     <ClInclude Include="..\..\Source\Client\MenuScene.h" />
     <ClInclude Include="..\..\Source\Client\MyNetGame.h" />
     <ClInclude Include="..\..\Source\Client\GameFont.h" />
@@ -139,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\Source\Client\Collision.cpp" />
     <ClCompile Include="..\..\Source\Client\GameObject.cpp" />
+    <ClCompile Include="..\..\Source\Client\GameScene.cpp" />
     <ClCompile Include="..\..\Source\Client\MenuScene.cpp" />
     <ClCompile Include="..\..\Source\Client\MyNetGame.cpp" />
     <ClCompile Include="..\..\Source\Client\GameFont.cpp" />

@@ -25,6 +25,7 @@ public:
 
 	void addScene(std::unique_ptr<Scene>&& scene);
 	void removeScene();
+	void resetToMenu(ASGE::Renderer* renderer, ASGE::Input* inputs, SceneManager* host);
 
 	bool gameExit() { return exit_game; };
 

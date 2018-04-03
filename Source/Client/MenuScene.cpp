@@ -1,11 +1,13 @@
 #include "MenuScene.h"
+#include "GameScene.h"
 
 MenuScene::MenuScene(ASGE::Renderer* renderer, ASGE::Input* input, SceneManager* host)
 {
 	main_inputs = input;
 	host_manager = host;
+	main_renderer = renderer;
 
-	init(renderer, main_inputs, host_manager);
+	init(main_renderer, main_inputs, host_manager);
 }
 
 MenuScene::~MenuScene()
@@ -43,7 +45,11 @@ void MenuScene::update(const ASGE::GameTime& ms)
 		{
 			case SceneTransitions::TO_GAME:
 			{
-				//Add game transition
+				std::unique_ptr<GameScene> game_scene;
+				game_scene = std::make_unique<GameScene>(main_renderer, main_inputs, host_manager);
+
+				host_manager->addScene(std::move(game_scene));
+
 				next_scene = SceneTransitions::NONE;
 				break;
 			}
@@ -67,24 +73,9 @@ void MenuScene::update(const ASGE::GameTime& ms)
 
 void MenuScene::render(ASGE::Renderer * renderer)
 {
-	renderer->renderSprite(*menu_background.get());
-	renderer->renderSprite(*start_button.get());
-	renderer->renderSprite(*exit_button.get());
-
-	if (tester == 0)
-	{
-		renderer->renderText("nothing happend", 100, 100, 2.0, ASGE::COLOURS::ANTIQUEWHITE);
-	}
-
-	else if (tester == 1)
-	{
-		renderer->renderText("Start button pressed", 100, 100, 2.0, ASGE::COLOURS::ANTIQUEWHITE);
-	}
-
-	else if (tester == 2)
-	{
-		renderer->renderText("exit button pressed", 100, 100, 2.0, ASGE::COLOURS::ANTIQUEWHITE);
-	}
+	renderer->renderSprite(*menu_background.get(), BACKGROUND);
+	renderer->renderSprite(*start_button.get(), FOREGROUND);
+	renderer->renderSprite(*exit_button.get(), FOREGROUND);
 }
 
 void MenuScene::clickHandler(const ASGE::SharedEventData data)
@@ -102,14 +93,11 @@ void MenuScene::clickHandler(const ASGE::SharedEventData data)
 		if (Collision::mouseOnSprite(xpos, ypos, start_button.get()))
 		{
 			next_scene = SceneTransitions::TO_GAME;
-
-			tester = 1;
 		}
 
 		else if (Collision::mouseOnSprite(xpos, ypos, exit_button.get()))
 		{
 			next_scene = SceneTransitions::TO_EXIT;
-			tester = 2;
 		}
 	}
 }

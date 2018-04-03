@@ -3,6 +3,7 @@
 #include <Engine\InputEvents.h>
 #include <Engine\Sprite.h>
 #include "SceneManager.h"
+#include "Constants.h"
 
 class Scene
 {
@@ -16,4 +17,5 @@ protected:
 
 	SceneManager* host_manager = nullptr;
 	ASGE::Input* main_inputs = nullptr;
+	ASGE::Renderer* main_renderer = nullptr;
 };

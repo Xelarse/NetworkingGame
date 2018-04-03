@@ -34,6 +34,9 @@
     <ClCompile Include="..\..\Source\Client\Collision.cpp">
       <Filter>Source\Multi-Purpose</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Client\GameScene.cpp">
+      <Filter>Source\ScenesAndManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Client\GameFont.h">
@@ -70,6 +73,12 @@
       <Filter>Headers\ScenesAndManager</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Client\Collision.h">
+      <Filter>Headers\Multi-Purpose</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Client\GameScene.h">
+      <Filter>Headers\ScenesAndManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Client\Constants.h">
       <Filter>Headers\Multi-Purpose</Filter>
     </ClInclude>
   </ItemGroup>

@@ -45,3 +45,11 @@ void SceneManager::removeScene()
 {
 	scene_switcher = SceneSwiching::REMOVE_SCENE;
 }
+
+void SceneManager::resetToMenu(ASGE::Renderer* renderer, ASGE::Input* inputs, SceneManager* host)
+{
+	game_scenes.clear();
+	std::unique_ptr<MenuScene> new_menu;
+	new_menu = std::make_unique<MenuScene>(renderer, inputs, host);
+	addScene(std::move(new_menu));
+}
