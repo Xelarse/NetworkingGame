@@ -32,7 +32,7 @@ private:
 	enetpp::server<server_client> server;
 
 	// the number of clients supported by this server
-	static const int MAX_CLIENT_COUNT = 10;
+	static const int MAX_CLIENT_COUNT = 2;
 
 public:
 	// setters for the three consumer functions

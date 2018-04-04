@@ -24,8 +24,10 @@ public:
 	virtual void render(ASGE::Renderer* renderer) override;
 
 	void clickHandler(const ASGE::SharedEventData data);
+	void keyHandler(const ASGE::SharedEventData data);
 
 private:
+	void gameSceneReset();
 
 	std::thread chat_thread;
 
@@ -37,4 +39,8 @@ private:
 	std::unique_ptr<ASGE::Sprite> x_button;
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
+
+	std::string chat_str = "";
+	std::mutex chat_str_mutex;
+	void processString(std::string str);
 };

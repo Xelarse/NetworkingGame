@@ -36,7 +36,7 @@ bool ClientComponent::deinitialize()
 
 void ClientComponent::consumeEvents()
 {
-	while (client.is_connecting_or_connected())
+	while (client.is_connecting_or_connected() && !kill_thread)
 	{
 		client.consume_events(
 			on_connected,

@@ -78,11 +78,6 @@ private:
 	//Our stuff under the goes here under the boilerplate
 
 private:
-	std::thread th;           /**< Network Event Thread. 
-							       Consumes incoming network events. */
-	ClientComponent network;  /**< Network Component. 
-							       The networking component used for clients. */
-
 	//Our stuff goes here under the boilerplate
 
 	bool initAudioEngine();
