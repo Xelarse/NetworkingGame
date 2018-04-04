@@ -8,7 +8,7 @@ CustomPacket::CustomPacket(char * data)
 {
 	type = (reinterpret_cast<const char*>(data));
 	username = (reinterpret_cast<const char*>(data + type.length() + 1));
-	msg_text = (reinterpret_cast<const char*>(data + type.length() + username.length() + 2));
+	msg_text = (reinterpret_cast<const char*>(data + (type.length() + 1) + (username.length() + 1)));
 }
 
 std::string CustomPacket::getMsg()
@@ -28,11 +28,11 @@ std::string CustomPacket::getType()
 
 char * CustomPacket::data(unsigned int & size) const
 {
+	const int type_length = type.length() + 1;
 	const int username_length = username.length() + 1;
 	const int msg_length = msg_text.length() + 1;
-	const int type_length = type.length() + 1;
 
-	size = username_length + msg_length + type_length;
+	size = type_length + username_length + msg_length;
 
 	char* data = new char[size];
 

@@ -60,6 +60,20 @@ void GameScene::update(const ASGE::GameTime & ms)
 			}
 		}
 	}
+	if (chat_component.recieved_queue.size())
+	{
+		if (chat_timer > msg_duration)
+		{
+			std::lock_guard<std::mutex> lock(chat_component.recieved_mtx);
+			chat_component.recieved_queue.pop();
+			chat_timer = 0;
+		}
+
+		else
+		{
+			chat_timer += ms.delta_time.count();
+		}
+	}
 }
 
 void GameScene::render(ASGE::Renderer * renderer)
@@ -87,6 +101,16 @@ void GameScene::render(ASGE::Renderer * renderer)
 			std::string str = "Once you connect your username will be: " + chat_component.getUsername();
 			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 		}
+	}
+
+	renderer->renderText("Latest Message:", 800, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+
+	if (chat_component.recieved_queue.size())
+	{
+		std::lock_guard<std::mutex> lock(chat_component.recieved_mtx);
+
+		std::string msg1 = chat_component.recieved_queue.front().getUsername() + ": " + chat_component.recieved_queue.front().getMsg();
+		renderer->renderText(msg1, 800, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
 
 	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
@@ -158,5 +182,18 @@ void GameScene::processString(std::string str)
 	if (chat_component.getUsername() == "")
 	{
 		chat_component.setUsername(str);
+	}
+
+	else
+	{
+		CustomPacket msg("chat", chat_component.getUsername(), str);
+
+		chat_component.sending_mtx.lock();
+		chat_component.sending_queue.push(std::move(msg));
+		chat_component.sending_mtx.unlock();
+
+		chat_component.recieved_mtx.lock();
+		chat_component.recieved_queue.push(std::move(msg));
+		chat_component.recieved_mtx.unlock();
 	}
 }

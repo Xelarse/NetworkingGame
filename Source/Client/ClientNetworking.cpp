@@ -27,6 +27,21 @@ void ClientComponent::consumeEvents()
 			std::bind(&ClientComponent::on_disconnect, this),
 			std::bind(&ClientComponent::on_data, this, _1, _2));
 
+		while (sending_queue.size())
+		{
+			std::lock_guard<std::mutex> lock(sending_mtx);
+
+			const auto& msg = sending_queue.front();
+			unsigned int msg_length = 0;
+			auto msg_data = msg.data(msg_length);
+
+			sending_queue.pop();
+
+			assert(sizeof(char) == sizeof(enet_uint8));
+			client.send_packet(0, reinterpret_cast<enet_uint8*>(msg_data), msg_length, ENET_PACKET_FLAG_RELIABLE);
+		}
+
+
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 }
@@ -43,8 +58,12 @@ void ClientComponent::on_disconnect()
 
 void ClientComponent::on_data(const enet_uint8* data, size_t data_size)
 {
-	trace("received packet from server : '" +
-		std::string(reinterpret_cast<const char*>(data), data_size) + "'");
+	CustomPacket msg((char*)data);
+
+	if (msg.getType() == "chat")
+	{
+		recieved_queue.push(std::move(msg));
+	}
 }
 
 bool ClientComponent::isConnected() const
@@ -70,6 +89,3 @@ void ClientComponent::setUsername(std::string str)
 	std::lock_guard<std::mutex> lock(username_mtx);
 	username = str;
 }
-
-
-

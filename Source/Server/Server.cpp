@@ -1,3 +1,4 @@
+#include <Common\CustomPacket.h>
 #include "Server.h"
 
 void Server::initialise()
@@ -37,8 +38,22 @@ int Server::run()
 
 void Server::onClientData(server_client& client, const enet_uint8* data, size_t data_size)
 {
-	network_server.trace(
-		"received packet from client :" +
-		std::to_string(client.get_id()) + " => '"
-		+ std::string(reinterpret_cast<const char*>(data), data_size) + "'");
+	CustomPacket msg((char*)data);
+
+	if (msg.getType() == "chat")
+	{
+		network_server.trace(
+			"received packet from client " +
+			std::to_string(client.get_id()) +
+			"Via the username: " +
+			msg.getUsername() +
+			" => '" +
+			msg.getMsg() + 
+			"'\n");
+
+		network_server.trace("Forwarding to all clients");
+		network_server.getServer()->send_packet_to_all_if(0, data, data_size, ENET_PACKET_FLAG_RELIABLE,
+			[&](const server_client& destination) {return destination.get_id() != client.get_id(); });
+	}
+	
 }

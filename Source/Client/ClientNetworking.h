@@ -1,6 +1,7 @@
 #pragma once
 #include <enetpp/client.h>
 #include <Common/CommonNetworking.h>
+#include <Common/CustomPacket.h>
 
 class ClientComponent :
 	public NetworkComponent
@@ -24,6 +25,13 @@ public:
 	std::string getUsername();
 	void setUsername(std::string str);
 	void killThread() { kill_thread = true; };
+
+
+	std::queue<CustomPacket> recieved_queue;
+	std::mutex recieved_mtx;
+
+	std::queue<CustomPacket> sending_queue;
+	std::mutex sending_mtx;
 
 private:
 	std::atomic<bool> kill_thread = false;

@@ -3,6 +3,7 @@
 #include "Collision.h"
 #include <Engine\InputEvents.h>
 #include <Client\ClientNetworking.h>
+#include <Common\CustomPacket.h>
 
 
 class GameScene : public Scene
@@ -27,6 +28,9 @@ public:
 	void keyHandler(const ASGE::SharedEventData data);
 
 private:
+	float chat_timer = 0;
+	float msg_duration = 5;
+	
 	void gameSceneReset();
 
 	std::thread chat_thread;

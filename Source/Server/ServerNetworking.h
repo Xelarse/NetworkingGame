@@ -22,6 +22,8 @@ public:
 	virtual bool deinitialize() override;
 	virtual void consumeEvents() override;
 
+	enetpp::server<server_client>* getServer();
+
 private:
 	// three consume functions to process networking
 	std::function<void(server_client& client)> on_connected;

@@ -49,3 +49,8 @@ void ServerComponent::consumeEvents()
 		on_disconnected,
 		on_data_received);
 }
+
+enetpp::server<server_client>* ServerComponent::getServer()
+{
+	return &server;
+}
