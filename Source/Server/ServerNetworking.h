@@ -22,6 +22,8 @@ public:
 	virtual bool deinitialize() override;
 	virtual void consumeEvents() override;
 
+	enetpp::server<server_client>* getServer();
+
 private:
 	// three consume functions to process networking
 	std::function<void(server_client& client)> on_connected;
@@ -32,7 +34,7 @@ private:
 	enetpp::server<server_client> server;
 
 	// the number of clients supported by this server
-	static const int MAX_CLIENT_COUNT = 10;
+	static const int MAX_CLIENT_COUNT = 2;
 
 public:
 	// setters for the three consumer functions

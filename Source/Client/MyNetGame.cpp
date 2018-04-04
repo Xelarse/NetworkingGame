@@ -11,7 +11,6 @@ namespace {
 MyNetGame::~MyNetGame()
 {
 	LoadedGameFont::loaded_fonts.clear();
-	network.deinitialize();
 	audio_engine->stopAllSounds();
 }
 
@@ -37,10 +36,6 @@ bool MyNetGame::init()
 	LoadedGameFont::loaded_fonts.reserve(5);
 	LoadedGameFont::loaded_fonts.push_back(
 		LoadedGameFont(font_idx, "zorque", 60));
-
-	network.initialize();
-	th = std::thread(&ClientComponent::consumeEvents, &network);
-	th.detach();
 
 	//init of scene manager and adding menu scene to it
 	scene_manager = std::make_unique<SceneManager>();
@@ -75,22 +70,22 @@ void MyNetGame::render(const ASGE::GameTime& ms)
 
 	scene_manager->render(renderer.get());
 
-	if (network.isConnected())
-	{
-		renderer->renderText("CONNECTED", 250, 100, ASGE::COLOURS::WHITE);
-	}
+	//if (network.isConnected())
+	//{
+	//	renderer->renderText("CONNECTED", 250, 100, ASGE::COLOURS::WHITE);
+	//}
 
-	else if (network.isConnecting())
-	{
-		renderer->renderText("CONNECTING", 250, 100, ASGE::COLOURS::WHITE);
-	}
+	//else if (network.isConnecting())
+	//{
+	//	renderer->renderText("CONNECTING", 250, 100, ASGE::COLOURS::WHITE);
+	//}
 
-	else
-	{
-		renderer->renderText("DISCONNECTED", 250, 100, ASGE::COLOURS::WHITE);
-	}
+	//else
+	//{
+	//	renderer->renderText("DISCONNECTED", 250, 100, ASGE::COLOURS::WHITE);
+	//}
 
-	renderer->renderSprite(*gunner_enemy->getObjectSprite());
+	//renderer->renderSprite(*gunner_enemy->getObjectSprite());
 }
 
 bool MyNetGame::initAudioEngine()

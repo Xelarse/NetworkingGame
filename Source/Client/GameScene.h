@@ -2,6 +2,8 @@
 #include "Scene.h"
 #include "Collision.h"
 #include <Engine\InputEvents.h>
+#include <Client\ClientNetworking.h>
+#include <Common\CustomPacket.h>
 
 
 class GameScene : public Scene
@@ -23,8 +25,17 @@ public:
 	virtual void render(ASGE::Renderer* renderer) override;
 
 	void clickHandler(const ASGE::SharedEventData data);
+	void keyHandler(const ASGE::SharedEventData data);
 
 private:
+	float chat_timer = 0;
+	float msg_duration = 5;
+	
+	void gameSceneReset();
+
+	std::thread chat_thread;
+
+	ClientComponent chat_component;
 
 	GameScene();
 
@@ -32,4 +43,8 @@ private:
 	std::unique_ptr<ASGE::Sprite> x_button;
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
+
+	std::string chat_str = "";
+	std::mutex chat_str_mutex;
+	void processString(std::string str);
 };

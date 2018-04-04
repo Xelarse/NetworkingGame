@@ -11,7 +11,7 @@ bool ServerComponent::initialize()
 
 	server.start_listening(enetpp::server_listen_params<server_client>()
 		.set_max_client_count(MAX_CLIENT_COUNT)
-		.set_channel_count(1)
+		.set_channel_count(2)
 		.set_listen_port(8888)
 		.set_initialize_client_function(init_client_func));
 
@@ -48,4 +48,9 @@ void ServerComponent::consumeEvents()
 		on_connected,
 		on_disconnected,
 		on_data_received);
+}
+
+enetpp::server<server_client>* ServerComponent::getServer()
+{
+	return &server;
 }

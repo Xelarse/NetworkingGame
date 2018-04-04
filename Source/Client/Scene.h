@@ -17,6 +17,7 @@ public:
 	void lastScene(bool rhs) { last_scene = rhs; };
 
 	void clickHandlerReset() { main_inputs->unregisterCallback(click_handler_id); };
+	void keyHandlerReset() { main_inputs->unregisterCallback(key_handler_id); };
 
 protected:
 
@@ -27,4 +28,5 @@ protected:
 	std::atomic<bool> last_scene = false;
 
 	int click_handler_id = -1;
+	int key_handler_id = -1;
 };
