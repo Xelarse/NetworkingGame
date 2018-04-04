@@ -71,7 +71,7 @@ void GameScene::update(const ASGE::GameTime & ms)
 
 		else
 		{
-			chat_timer += ms.delta_time.count();
+			chat_timer += ms.delta_time.count() / 1000;
 		}
 	}
 }
