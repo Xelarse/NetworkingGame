@@ -1,3 +1,4 @@
+#include <sstream>
 #include "GameScene.h"
 
 GameScene::GameScene(ASGE::Renderer * renderer, ASGE::Input * input, SceneManager * host)
@@ -63,13 +64,32 @@ void GameScene::update(const ASGE::GameTime & ms)
 
 void GameScene::render(ASGE::Renderer * renderer)
 {
+	std::stringstream ss;
+	ss << "> " << chat_str;
 	renderer->renderSprite(*game_background.get(), BACKGROUND);
 	renderer->renderSprite(*x_button.get(), MIDDLE_GROUND);
 
 	if (chat_component.getUsername() == "")
 	{
-		renderer->renderText("Please enter username", 10, 500, 1.0, ASGE::COLOURS::BLACK, FOREGROUND);
+		renderer->renderText("Please enter username:", 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
+	
+	else
+	{
+		if (chat_component.isConnected())
+		{
+			std::string str = "Connected as : " + chat_component.getUsername();
+			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+		}
+
+		else
+		{
+			std::string str = "Once you connect your username will be: " + chat_component.getUsername();
+			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+		}
+	}
+
+	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 }
 
 void GameScene::clickHandler(const ASGE::SharedEventData data)

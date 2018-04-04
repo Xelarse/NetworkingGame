@@ -17,14 +17,15 @@ public:
 	bool isConnected() const;
 	bool isConnecting() const;
 
-	std::string getUsername() const {return username; };
-	void setUsername(std::string str) { username = str; };
+	std::string getUsername();
+	void setUsername(std::string str);
 	void killThread() { kill_thread = true; };
 
 private:
 	std::atomic<bool> kill_thread = false;
 
 	std::string username = "";
+	std::mutex username_mtx;
 
 	// the client thread
 	enetpp::client client;

@@ -59,5 +59,17 @@ bool ClientComponent::isConnecting() const
 		client.get_connection_status() == enetpp::client::CONNECTING;
 }
 
+std::string ClientComponent::getUsername()
+{
+	std::lock_guard<std::mutex> lock(username_mtx);
+	return username;
+}
+
+void ClientComponent::setUsername(std::string str)
+{
+	std::lock_guard<std::mutex> lock(username_mtx);
+	username = str;
+}
+
 
 
