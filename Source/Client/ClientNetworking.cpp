@@ -7,23 +7,6 @@ bool ClientComponent::initialize()
 		.set_channel_count(channel_count)
 		.set_server_host_name_and_port("localhost", 8888));
 
-
-	on_connected = [&]()
-	{
-		trace("on_connected");
-	};
-
-	on_disconnected = [&]()
-	{
-		trace("on_disconnected");
-	};
-
-	on_data_received = [&](const enet_uint8* data, size_t data_size)
-	{
-		trace("received packet from server : '" +
-			std::string(reinterpret_cast<const char*>(data), data_size) + "'");
-	};
-
 	return true;
 }
 
@@ -38,13 +21,30 @@ void ClientComponent::consumeEvents()
 {
 	while (client.is_connecting_or_connected() && !kill_thread)
 	{
+		using namespace std::placeholders;
 		client.consume_events(
-			on_connected,
-			on_disconnected,
-			on_data_received);
+			std::bind(&ClientComponent::on_connect, this),
+			std::bind(&ClientComponent::on_disconnect, this),
+			std::bind(&ClientComponent::on_data, this, _1, _2));
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
+}
+
+void ClientComponent::on_connect()
+{
+	trace("on_connected");
+}
+
+void ClientComponent::on_disconnect()
+{
+	trace("on_disconnected");
+}
+
+void ClientComponent::on_data(const enet_uint8* data, size_t data_size)
+{
+	trace("received packet from server : '" +
+		std::string(reinterpret_cast<const char*>(data), data_size) + "'");
 }
 
 bool ClientComponent::isConnected() const

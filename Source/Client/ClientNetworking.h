@@ -14,6 +14,10 @@ public:
 	virtual bool deinitialize() override;
 	virtual void consumeEvents() override;
 
+	void on_connect();
+	void on_disconnect();
+	void on_data(const enet_uint8* data, size_t data_size);
+
 	bool isConnected() const;
 	bool isConnecting() const;
 
@@ -31,9 +35,9 @@ private:
 	enetpp::client client;
 
 	// three consume functions to process networking
-	std::function<void()> on_connected;
-	std::function<void()> on_disconnected;
-	std::function<void(const enet_uint8* data, size_t data_size)> on_data_received;
+	//std::function<void()> on_connected;
+	//std::function<void()> on_disconnected;
+	//std::function<void(const enet_uint8* data, size_t data_size)> on_data_received;
 	
 	int channel_count = 2;
 };
