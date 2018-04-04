@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Collision.h"
 #include <Engine\InputEvents.h>
+#include <Client\ClientNetworking.h>
 
 
 class GameScene : public Scene
@@ -25,6 +26,10 @@ public:
 	void clickHandler(const ASGE::SharedEventData data);
 
 private:
+
+	std::thread chat_thread;
+
+	ClientComponent chat_component;
 
 	GameScene();
 

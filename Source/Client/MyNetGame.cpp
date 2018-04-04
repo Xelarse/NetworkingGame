@@ -38,10 +38,6 @@ bool MyNetGame::init()
 	LoadedGameFont::loaded_fonts.push_back(
 		LoadedGameFont(font_idx, "zorque", 60));
 
-	network.initialize();
-	th = std::thread(&ClientComponent::consumeEvents, &network);
-	th.detach();
-
 	//init of scene manager and adding menu scene to it
 	scene_manager = std::make_unique<SceneManager>();
 	scene_manager->init();
