@@ -2,10 +2,20 @@
 #include "Unit.h"
 #include <jsoncons/json.hpp>
 
-UnitType::UnitType(int hp, int atk, int armour, std::string name, std::string attack_str) :
-	health(hp), attack_rating(atk), armour_rating(armour), sprite_name(name), attack_name(attack_str)
+UnitType::UnitType(std::string name, int squad, int hp, int atk, int armour, int mov_rng, int atk_rng, std::string sprite_name, std::string attack_sprite_name) :
+	unit_name(name), squad_size(squad), health(hp), attack_rating(atk), armour_rating(armour), move_range(mov_rng), attack_range(atk_rng), sprite_name(sprite_name),
+	attack_name(attack_sprite_name)
 {
+}
 
+std::string UnitType::getUnitName() const
+{
+	return unit_name;
+}
+
+int UnitType::getSquadSize() const
+{
+	return squad_size;
 }
 
 int UnitType::getHealth() const
@@ -16,6 +26,16 @@ int UnitType::getHealth() const
 int UnitType::getArmourRating() const
 {
 	return armour_rating;
+}
+
+int UnitType::getMoveRange() const
+{
+	return move_range;
+}
+
+int UnitType::getAttackRange() const
+{
+	return attack_range;
 }
 
 int UnitType::getAttackRating() const
@@ -51,14 +71,18 @@ void UnitType::load()
 		const auto& name = type.name();
 		const auto& data = type.value();
 
+		std::string unitname = data["name"].as_string();
+		int squad = data["squad_size"].as_int();
 		int health = data["health"].as_int();
 		int damage = data["damage"].as_int();
 		int armour = data["armour"].as_int();
+		int move = data["move_range"].as_int();
+		int attack = data["attack_range"].as_int();
 
 		std::string sprite = data["sprite"].as_string();
 		std::string attack_sprite = data["attack_sprite"].as_string();
 
-		unit_types.push_back(UnitType(health, damage, armour, sprite, attack_sprite));
+		unit_types.push_back(UnitType(name, squad, health, damage, armour, move, attack, sprite, attack_sprite));
 	}
 }
 

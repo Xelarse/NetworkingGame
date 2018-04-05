@@ -14,7 +14,7 @@
 	"Sniper": {
 	  "name": "Sniper",
 	  "squad_size": 2,
-      "health": 2.5,
+      "health": 3,
       "damage": 8,
       "armour": 0,
 	  "move_range": 3,
