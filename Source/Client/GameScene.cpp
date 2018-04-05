@@ -44,6 +44,9 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 
 	initEnemies();
 	
+
+	UnitType::load();
+	test_unit.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
 }
 
 void GameScene::initEnemies()
@@ -82,6 +85,8 @@ void GameScene::update(const ASGE::GameTime & ms)
 			chat_timer += ms.delta_time.count() / 1000;
 		}
 	}
+
+	test_unit->update(ms);
 }
 
 void GameScene::render(ASGE::Renderer * renderer)
@@ -126,6 +131,7 @@ void GameScene::render(ASGE::Renderer * renderer)
 	}
 
 	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+	renderer->renderSprite(*test_unit->getObjectSprite(), FOREGROUND);
 }
 
 void GameScene::clickHandler(const ASGE::SharedEventData data)
