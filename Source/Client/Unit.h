@@ -28,6 +28,9 @@ private:
 	int armour = 0;
 
 	std::string sprite_name = "";
+	std::string attack_name = "";
+
+	std::unique_ptr<ASGE::Sprite> attack_sprite = nullptr;
 
 	Unit(UnitType&, ASGE::Renderer* renderer);
 	UnitType& type;
