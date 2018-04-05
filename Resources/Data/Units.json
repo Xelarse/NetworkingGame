@@ -4,6 +4,7 @@
       "damage": 2,
       "armour": 0,
       "sprite": "Gunner.png",
+	  "attack_sprite": "Swag.png",
       "sprite_scale": 1.0
     },
 	
@@ -12,6 +13,7 @@
       "damage": 5,
       "armour": 5,
       "sprite": "Swag.png",
+	  "attack_sprite": "Gunner.png",
       "sprite_scale": 1.0
     }
   }

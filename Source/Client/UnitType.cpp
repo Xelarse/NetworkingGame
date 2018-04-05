@@ -2,8 +2,8 @@
 #include "Unit.h"
 #include <jsoncons/json.hpp>
 
-UnitType::UnitType(int hp, int atk, int armour, std::string name) :
-	health(hp), attack_rating(atk), armour_rating(armour), sprite_name(name)
+UnitType::UnitType(int hp, int atk, int armour, std::string name, std::string attack_str) :
+	health(hp), attack_rating(atk), armour_rating(armour), sprite_name(name), attack_name(attack_str)
 {
 
 }
@@ -26,6 +26,11 @@ int UnitType::getAttackRating() const
 std::string UnitType::getSpriteName() const
 {
 	return sprite_name;
+}
+
+std::string UnitType::getSpriteAttackName() const
+{
+	return attack_name;
 }
 
 Unit* UnitType::createUnit(ASGE::Renderer* renderer)
@@ -51,8 +56,9 @@ void UnitType::load()
 		int armour = data["armour"].as_int();
 
 		std::string sprite = data["sprite"].as_string();
+		std::string attack_sprite = data["attack_sprite"].as_string();
 
-		unit_types.push_back(UnitType(health, damage, armour, sprite));
+		unit_types.push_back(UnitType(health, damage, armour, sprite, attack_sprite));
 	}
 }
 

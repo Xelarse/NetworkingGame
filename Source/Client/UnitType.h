@@ -9,13 +9,14 @@ class UnitType
 {
 public:
 
-	UnitType(int hp, int atk, int armour, std::string sprite_name);
+	UnitType(int hp, int atk, int armour, std::string sprite_name, std::string attack_sprite_name);
 	~UnitType() = default;
 
 	int getHealth() const;
 	int getArmourRating() const;
 	int getAttackRating() const;
 	std::string getSpriteName() const;
+	std::string getSpriteAttackName() const;
 
 
 	Unit* createUnit(ASGE::Renderer* renderer);
@@ -28,8 +29,8 @@ private:
 	int attack_rating = 0;
 
 	std::string sprite_name;
+	std::string attack_name;
 
 public:
 	static std::vector<UnitType> unit_types;
-
 };
