@@ -28,8 +28,12 @@ void Unit::init(ASGE::Renderer * renderer)
 	object_sprite->loadTexture(sprite_string);
 	attack_sprite->loadTexture(attack_string);
 
-	object_sprite->width(200);
-	object_sprite->height(200);
+
+	object_sprite->xPos(100);
+	object_sprite->yPos(520);
+	object_sprite->width(117);
+	object_sprite->height(117);
+
 }
 
 void Unit::update(const ASGE::GameTime & ms)
@@ -44,6 +48,11 @@ void Unit::update(const ASGE::GameTime & ms)
 int Unit::getSquadSize() const
 {
 	return squad_size;
+}
+
+ASGE::Sprite * Unit::getAttackSprite() const
+{
+	return attack_sprite.get();
 }
 
 int Unit::getHealth() const
