@@ -17,6 +17,7 @@ public:
 	int getAttackRating() const;
 	std::string getSpriteName() const;
 	std::string getSpriteAttackName() const;
+	std::string getUnitName() const;
 
 
 	Unit* createUnit(ASGE::Renderer* renderer);
@@ -28,6 +29,7 @@ private:
 	int armour_rating = 0;
 	int attack_rating = 0;
 
+	std::string unit_name;
 	std::string sprite_name;
 	std::string attack_name;
 
