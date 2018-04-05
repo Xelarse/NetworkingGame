@@ -4,11 +4,15 @@
 
 Unit::Unit(UnitType& T, ASGE::Renderer* renderer) : type(T)
 {
+	squad_size = T.getSquadSize();
 	health = T.getHealth();
 	attack = T.getAttackRating();
 	armour = T.getArmourRating();
+	move_range = T.getMoveRange();
+	attack_range = T.getAttackRange();
 	sprite_name = T.getSpriteName();
 	attack_name = T.getSpriteAttackName();
+	unit_name = T.getUnitName();
 
 	init(renderer);
 }
@@ -24,14 +28,22 @@ void Unit::init(ASGE::Renderer * renderer)
 	object_sprite->loadTexture(sprite_string);
 	attack_sprite->loadTexture(attack_string);
 
-	object_sprite->xPos(100);
-	object_sprite->yPos(520);
 	object_sprite->width(200);
 	object_sprite->height(200);
 }
 
 void Unit::update(const ASGE::GameTime & ms)
 {
+	object_sprite->xPos(x_pos);
+	object_sprite->yPos(y_pos);
+
+	attack_sprite->xPos(x_pos);
+	attack_sprite->yPos(y_pos);
+}
+
+int Unit::getSquadSize() const
+{
+	return squad_size;
 }
 
 int Unit::getHealth() const
@@ -47,4 +59,19 @@ int Unit::getAttack() const
 int Unit::getArmour() const
 {
 	return armour;
+}
+
+int Unit::getMoveRange() const
+{
+	return move_range;
+}
+
+int Unit::getAttackRange() const
+{
+	return attack_range;
+}
+
+std::string Unit::getUnitName() const
+{
+	return unit_name;
 }

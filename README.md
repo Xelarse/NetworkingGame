@@ -2,6 +2,8 @@ Low-Level Programming
 ==================
 Ths is the brief for the 5th and final game that will form  part of your portfolio. 
 
+TO GET THIS TO BUILD ADD THE 3 DLLS FROM /Libs/irrKlang/bin TO YOUR BUILD FOLDER OTHERWISE CLIENT WONT RUN AS ITS MISSING THEM!
+
 \
 Prologue
 ------
