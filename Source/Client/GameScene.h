@@ -3,6 +3,8 @@
 #include <Engine\InputEvents.h>
 #include <Client\ClientNetworking.h>
 #include <Common\CustomPacket.h>
+#include "Unit.h"
+#include "UnitType.h"
 
 #include "Unit.h"
 #include "UnitType.h"

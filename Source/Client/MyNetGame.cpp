@@ -48,8 +48,8 @@ bool MyNetGame::init()
 	initAudioEngine();
 
 	////Loading in units and initialising one, Change the number index in unit types to determine which unit is loaded from the json file
-	UnitType::load();
-	gunner_enemy.reset(UnitType::unit_types[0].createUnit(renderer.get()));
+	//UnitType::load();
+	//gunner_enemy.reset(UnitType::unit_types[0].createUnit(renderer.get()));
 
 	return true;
 }

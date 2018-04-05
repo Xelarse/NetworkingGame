@@ -86,4 +86,17 @@ void UnitType::load()
 	}
 }
 
+int UnitType::find(std::string name)
+{
+	for (int i = 0; i < unit_types.size(); i++)
+	{
+		if (unit_types[i].unit_name == name)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 std::vector<UnitType> UnitType::unit_types;
