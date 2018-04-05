@@ -1,9 +1,15 @@
 #pragma once
-#include "Scene.h"
-#include "Collision.h"
+
 #include <Engine\InputEvents.h>
 #include <Client\ClientNetworking.h>
 #include <Common\CustomPacket.h>
+
+#include "Unit.h"
+#include "UnitType.h"
+#include "SceneManager.h"
+#include "Scene.h"
+#include "Collision.h"
+
 
 
 class GameScene : public Scene
@@ -28,6 +34,10 @@ public:
 	void keyHandler(const ASGE::SharedEventData data);
 
 private:
+	void initEnemies();
+
+
+
 	float chat_timer = 0;
 	float msg_duration = 5;
 	
@@ -37,10 +47,14 @@ private:
 
 	ClientComponent chat_component;
 
+	std::unique_ptr<SceneManager> scene_manager;
+
 	GameScene();
 
 	std::unique_ptr<ASGE::Sprite> game_background;
 	std::unique_ptr<ASGE::Sprite> x_button;
+
+	std::unique_ptr<Unit> gunner_enemy = nullptr;
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
 
