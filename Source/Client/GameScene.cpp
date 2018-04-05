@@ -41,7 +41,15 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	x_button->yPos(610);
 	x_button->height(100);
 	x_button->width(100);
+
+	initEnemies();
 	
+}
+
+void GameScene::initEnemies()
+{
+	UnitType::load();
+	gunner_enemy.reset(UnitType::unit_types[0].createUnit(main_renderer));
 }
 
 void GameScene::update(const ASGE::GameTime & ms)
@@ -82,6 +90,10 @@ void GameScene::render(ASGE::Renderer * renderer)
 	ss << "> " << chat_str;
 	renderer->renderSprite(*game_background.get(), BACKGROUND);
 	renderer->renderSprite(*x_button.get(), MIDDLE_GROUND);
+
+	renderer->renderSprite(*gunner_enemy->getObjectSprite(), FOREGROUND);
+	//renderer->renderSprite(*gunner_enemy->getAttackSprite(), FOREGROUND);
+
 
 	if (chat_component.getUsername() == "")
 	{
@@ -168,6 +180,8 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 		}
 	}
 }
+
+
 
 void GameScene::gameSceneReset()
 {

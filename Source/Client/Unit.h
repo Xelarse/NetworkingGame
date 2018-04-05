@@ -31,6 +31,9 @@ public:
 	void xPos(int pos) { x_pos = pos; };
 	void yPos(int pos) { y_pos = pos; };
 
+	ASGE::Sprite* getAttackSprite() const;
+
+
 private:
 
 	int x_pos = 100;

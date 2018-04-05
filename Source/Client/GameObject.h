@@ -14,6 +14,7 @@ public:
 
 
 	ASGE::Sprite* getObjectSprite();
+
 	float getSpriteY() const;
 	float getSpriteX() const;
 	float getSpriteMaxY() const;
@@ -25,7 +26,10 @@ public:
 	void setIsRendering(bool value);
 
 protected:
+
 	std::unique_ptr<ASGE::Sprite> object_sprite = nullptr;
+	std::unique_ptr<ASGE::Sprite> attack_sprite = nullptr;
+
 	bool is_rendering = false;
 	bool is_end_block = false;
 };
