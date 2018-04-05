@@ -3,6 +3,8 @@
 #include <Engine\InputEvents.h>
 #include <Client\ClientNetworking.h>
 #include <Common\CustomPacket.h>
+#include <string>
+#include <iostream>
 #include "Unit.h"
 #include "UnitType.h"
 
@@ -37,16 +39,14 @@ public:
 
 private:
 
-	std::atomic<bool> infantry_atk = false;
-	std::atomic<bool> tank_atk = false;
-	std::atomic<bool> artillery_atk = false;
-	std::atomic<bool> sniper_atk = false;
-
-
+	std::atomic<bool> infantry_select = false;
+	std::atomic<bool> tank_select = false;
+	std::atomic<bool> artillery_select = false;
+	std::atomic<bool> sniper_select = false;
 
 	void initEnemies();
 
-
+	void gridSnapping(float xpos, float ypos, Unit* enemy_type);
 
 	float chat_timer = 0;
 	float msg_duration = 5;

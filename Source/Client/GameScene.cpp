@@ -54,6 +54,8 @@ void GameScene::initEnemies()
 	infantry_enemy.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
 }
 
+
+
 void GameScene::update(const ASGE::GameTime & ms)
 {
 	if (next_scene != SceneTransitions::NONE)
@@ -103,7 +105,6 @@ void GameScene::render(ASGE::Renderer * renderer)
 	renderer->renderSprite(*tank_enemy->getObjectSprite(), FOREGROUND);
 	renderer->renderSprite(*artillery_enemy->getObjectSprite(), FOREGROUND);
 	renderer->renderSprite(*sniper_enemy->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*gunner_enemy->getAttackSprite(), MIDDLE_GROUND);
 
 
 	if (chat_component.getUsername() == "")
@@ -136,19 +137,19 @@ void GameScene::render(ASGE::Renderer * renderer)
 		renderer->renderText(msg1, 800, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
 
-	if (infantry_atk)
+	if (infantry_select)
 	{
 		renderer->renderSprite(*infantry_enemy->getAttackSprite(), MIDDLE_GROUND);
 	}
-	if (tank_atk)
+	if (tank_select)
 	{
 		renderer->renderSprite(*tank_enemy->getAttackSprite(), MIDDLE_GROUND);
 	}
-	if (artillery_atk)
+	if (artillery_select)
 	{
 		renderer->renderSprite(*artillery_enemy->getAttackSprite(), MIDDLE_GROUND);
 	}
-	if (sniper_atk)
+	if (sniper_select)
 	{
 		renderer->renderSprite(*sniper_enemy->getAttackSprite(), MIDDLE_GROUND);
 	}
@@ -175,70 +176,162 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 			{
 				next_scene.store(SceneTransitions::TO_MENU);
 			}
+
+			if (infantry_select || tank_select || sniper_select || artillery_select)
+			{
+				if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getAttackSprite()) && infantry_select)
+				{
+					gridSnapping(xpos, ypos, Unit *infantry_enemy);
+					infantry_enemy->xPos(xpos);
+					infantry_enemy->yPos(ypos);
+				}
+				if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getAttackSprite()) && artillery_select)
+				{
+					gridSnapping(xpos, ypos, *artillery_enemy);
+					artillery_enemy->xPos(xpos);
+					artillery_enemy->yPos(ypos);
+				}
+				if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getAttackSprite()) && tank_select)
+				
+					gridSnapping(xpos, ypos, &tank_enemy);
+					tank_enemy->xPos(xpos);
+					tank_enemy->yPos(ypos);
+				}
+				if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getAttackSprite()) && sniper_select)
+				{
+					gridSnapping(xpos, ypos, ASGE::Sprite * sniper_enemy);
+					sniper_enemy->xPos(xpos);
+					sniper_enemy->yPos(ypos);
+				}
+			}
+
+
+
 			if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite()))
 			{
-				if (!infantry_atk)
+				if (!infantry_select)
 				{
-					infantry_atk = true;
-					tank_atk = false;
-					artillery_atk = false;
-					sniper_atk = false;
+					infantry_select = true;
+					tank_select = false;
+					artillery_select = false;
+					sniper_select = false;
 				}
 
 				else
 				{
-					infantry_atk = false;
+					infantry_select = false;
 				}
 			}
 
 			if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getObjectSprite()))
 			{
-				if (!tank_atk)
+				if (!tank_select)
 				{
-					infantry_atk = false;
-					tank_atk = true;
-					artillery_atk = false;
-					sniper_atk = false;
+					infantry_select = false;
+					tank_select = true;
+					artillery_select = false;
+					sniper_select = false;
 				}
 				else
 				{
-					tank_atk = false;
+					tank_select = false;
 				}
 			}
 
 			if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getObjectSprite()))
 			{
-				if (!sniper_atk)
+				if (!sniper_select)
 				{
-					infantry_atk = false;
-					tank_atk = false;
-					artillery_atk = false;
-					sniper_atk = true;
+					infantry_select = false;
+					tank_select = false;
+					artillery_select = false;
+					sniper_select = true;
 				}
 
 				else
 				{
-					sniper_atk = false;
+					sniper_select = false;
 				}
 			}
 
 			if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getObjectSprite()))
 			{
-				if (!artillery_atk)
+				if (!artillery_select)
 				{
-					infantry_atk = false;
-					tank_atk = false;
-					artillery_atk = true;
-					sniper_atk = false;
+					infantry_select = false;
+					tank_select = false;
+					artillery_select = true;
+					sniper_select = false;
 				}
 
 				else
 				{
-					artillery_atk = false;
+					artillery_select = false;
 				}
 			}
 		}
 	}
+}
+
+void GameScene::gridSnapping(float xpos, float ypos, Unit* enemy_type )
+{
+	if (xpos > 40 && ypos > 3 && xpos < 160 && ypos < 123) { enemy_type->xPos(40); enemy_type->yPos(3); }
+	if (xpos > 160 && ypos > 3 && xpos < 280 && ypos < 123) { enemy_type->xPos(160); enemy_type->yPos(3); }
+	if (xpos > 280 && ypos > 3 && xpos < 400 && ypos < 123) { enemy_type->xPos(280); enemy_type->yPos(3); }
+	if (xpos > 400 && ypos > 3 && xpos < 520 && ypos < 123) { enemy_type->xPos(400); enemy_type->yPos(3); }
+	if (xpos > 520 && ypos > 3 && xpos < 640 && ypos < 123) { enemy_type->xPos(520); enemy_type->yPos(3); }
+	if (xpos > 640 && ypos > 3 && xpos < 760 && ypos < 123) { enemy_type->xPos(640); enemy_type->yPos(3); }
+	if (xpos > 760 && ypos > 3 && xpos < 880 && ypos < 123) { enemy_type->xPos(760); enemy_type->yPos(3); }
+	if (xpos > 880 && ypos > 3 && xpos < 1000 && ypos < 123) { enemy_type->xPos(880); enemy_type->yPos(3); }
+	if (xpos > 1000 && ypos > 3 && xpos < 1120 && ypos < 123) { enemy_type->xPos(1000); enemy_type->yPos(3); }
+	if (xpos > 1120 && ypos > 3 && xpos < 1240 && ypos < 123) { enemy_type->xPos(1120); enemy_type->yPos(3); }
+
+	if (xpos > 40 && ypos > 123 && xpos < 160 && ypos < 243) { enemy_type->xPos(40); enemy_type->yPos(123); }
+	if (xpos > 160 && ypos > 123 && xpos < 280 && ypos < 243) { enemy_type->xPos(160); enemy_type->yPos(123); }
+	if (xpos > 280 && ypos > 123 && xpos < 400 && ypos < 243) { enemy_type->xPos(280); enemy_type->yPos(123); }
+	if (xpos > 400 && ypos > 123 && xpos < 520 && ypos < 243) { enemy_type->xPos(400); enemy_type->yPos(123); }
+	if (xpos > 520 && ypos > 123 && xpos < 640 && ypos < 243) { enemy_type->xPos(520); enemy_type->yPos(123); }
+	if (xpos > 640 && ypos > 123 && xpos < 760 && ypos < 243) { enemy_type->xPos(640); enemy_type->yPos(123); }
+	if (xpos > 760 && ypos > 123 && xpos < 880 && ypos < 243) { enemy_type->xPos(760); enemy_type->yPos(123); }
+	if (xpos > 880 && ypos > 123 && xpos < 1000 && ypos < 243) { enemy_type->xPos(880); enemy_type->yPos(123); }
+	if (xpos > 1000 && ypos > 123 && xpos < 1120 && ypos < 243) { enemy_type->xPos(1000); enemy_type->yPos(123); }
+	if (xpos > 1120 && ypos > 123 && xpos < 1240 && ypos < 243) { enemy_type->xPos(1120); enemy_type->yPos(123); }
+
+	if (xpos > 40 && ypos > 243 && xpos < 160 && ypos < 363) { enemy_type->xPos(40); enemy_type->yPos(243); }
+	if (xpos > 160 && ypos > 243 && xpos < 280 && ypos < 363) { enemy_type->xPos(160); enemy_type->yPos(243); }
+	if (xpos > 280 && ypos > 243 && xpos < 400 && ypos < 363) { enemy_type->xPos(280); enemy_type->yPos(243); }
+	if (xpos > 400 && ypos > 243 && xpos < 520 && ypos < 363) { enemy_type->xPos(400); enemy_type->yPos(243); }
+	if (xpos > 520 && ypos > 243 && xpos < 640 && ypos < 363) { enemy_type->xPos(520); enemy_type->yPos(243); }
+	if (xpos > 640 && ypos > 243 && xpos < 760 && ypos < 363) { enemy_type->xPos(640); enemy_type->yPos(243); }
+	if (xpos > 760 && ypos > 243 && xpos < 880 && ypos < 363) { enemy_type->xPos(760); enemy_type->yPos(243); }
+	if (xpos > 880 && ypos > 243 && xpos < 1000 && ypos < 363) { enemy_type->xPos(880); enemy_type->yPos(243); }
+	if (xpos > 1000 && ypos > 243 && xpos < 1120 && ypos < 363) { enemy_type->xPos(1000); enemy_type->yPos(243); }
+	if (xpos > 1120 && ypos > 243 && xpos < 1240 && ypos < 363) { enemy_type->xPos(1120); enemy_type->yPos(243); }
+
+	if (xpos > 40 && ypos > 363 && xpos < 160 && ypos < 483) { enemy_type->xPos(40); enemy_type->yPos(363); }
+	if (xpos > 160 && ypos > 363 && xpos < 280 && ypos < 483) { enemy_type->xPos(160); enemy_type->yPos(363); }
+	if (xpos > 280 && ypos > 363 && xpos < 400 && ypos < 483) { enemy_type->xPos(280); enemy_type->yPos(363); }
+	if (xpos > 400 && ypos > 363 && xpos < 520 && ypos < 483) { enemy_type->xPos(400); enemy_type->yPos(363); }
+	if (xpos > 520 && ypos > 363 && xpos < 640 && ypos < 483) { enemy_type->xPos(520); enemy_type->yPos(363); }
+	if (xpos > 640 && ypos > 363 && xpos < 760 && ypos < 483) { enemy_type->xPos(640); enemy_type->yPos(363); }
+	if (xpos > 760 && ypos > 363 && xpos < 880 && ypos < 483) { enemy_type->xPos(760); enemy_type->yPos(363); }
+	if (xpos > 880 && ypos > 363 && xpos < 1000 && ypos < 483) { enemy_type->xPos(880); enemy_type->yPos(363); }
+	if (xpos > 1000 && ypos > 363 && xpos < 1120 && ypos < 483) { enemy_type->xPos(1000); enemy_type->yPos(363); }
+	if (xpos > 1120 && ypos > 363 && xpos < 1240 && ypos < 483) { enemy_type->xPos(1120); enemy_type->yPos(363); }
+
+	if (xpos > 40 && ypos > 483 && xpos < 160 && ypos < 603) { enemy_type->xPos(40); enemy_type->yPos(483); }
+	if (xpos > 160 && ypos > 483 && xpos < 280 && ypos < 603) { enemy_type->xPos(160); enemy_type->yPos(483); }
+	if (xpos > 280 && ypos > 483 && xpos < 400 && ypos < 603) { enemy_type->xPos(280); enemy_type->yPos(483); }
+	if (xpos > 400 && ypos > 483 && xpos < 520 && ypos < 603) { enemy_type->xPos(400); enemy_type->yPos(483); }
+	if (xpos > 520 && ypos > 483 && xpos < 640 && ypos < 603) { enemy_type->xPos(520); enemy_type->yPos(483); }
+	if (xpos > 640 && ypos > 483 && xpos < 760 && ypos < 603) { enemy_type->xPos(640); enemy_type->yPos(483); }
+	if (xpos > 760 && ypos > 483 && xpos < 880 && ypos < 603) { enemy_type->xPos(760); enemy_type->yPos(483); }
+	if (xpos > 880 && ypos > 483 && xpos < 1000 && ypos < 603) { enemy_type->xPos(880); enemy_type->yPos(483); }
+	if (xpos > 1000 && ypos > 483 && xpos < 1120 && ypos < 603) { enemy_type->xPos(1000); enemy_type->yPos(483); }
+	if (xpos > 1120 && ypos > 483 && xpos < 1240 && ypos < 603) { enemy_type->xPos(1120); enemy_type->yPos(483); }
+	
+
+
 }
 
 void GameScene::keyHandler(const ASGE::SharedEventData data)
