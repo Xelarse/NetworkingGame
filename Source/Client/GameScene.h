@@ -36,6 +36,14 @@ public:
 	void keyHandler(const ASGE::SharedEventData data);
 
 private:
+
+	std::atomic<bool> infantry_atk = false;
+	std::atomic<bool> tank_atk = false;
+	std::atomic<bool> artillery_atk = false;
+	std::atomic<bool> sniper_atk = false;
+
+
+
 	void initEnemies();
 
 
@@ -56,7 +64,10 @@ private:
 	std::unique_ptr<ASGE::Sprite> game_background;
 	std::unique_ptr<ASGE::Sprite> x_button;
 
-	std::unique_ptr<Unit> gunner_enemy = nullptr;
+	std::unique_ptr<Unit> infantry_enemy = nullptr;
+	std::unique_ptr<Unit> artillery_enemy = nullptr;
+	std::unique_ptr<Unit> sniper_enemy = nullptr;
+	std::unique_ptr<Unit> tank_enemy = nullptr;
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
 

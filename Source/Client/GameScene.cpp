@@ -48,7 +48,10 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 void GameScene::initEnemies()
 {
 	UnitType::load();
-	gunner_enemy.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
+	sniper_enemy.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
+	tank_enemy.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
+	artillery_enemy.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
+	infantry_enemy.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
 }
 
 void GameScene::update(const ASGE::GameTime & ms)
@@ -83,7 +86,10 @@ void GameScene::update(const ASGE::GameTime & ms)
 	}
 
 	//Testing for sprite
-	gunner_enemy->update(ms);
+	infantry_enemy->update(ms);
+	tank_enemy->update(ms);
+	artillery_enemy->update(ms);
+	sniper_enemy->update(ms);
 }
 
 void GameScene::render(ASGE::Renderer * renderer)
@@ -93,8 +99,11 @@ void GameScene::render(ASGE::Renderer * renderer)
 	renderer->renderSprite(*game_background.get(), BACKGROUND);
 	renderer->renderSprite(*x_button.get(), MIDDLE_GROUND);
 
-	renderer->renderSprite(*gunner_enemy->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*gunner_enemy->getAttackSprite(), FOREGROUND);
+	renderer->renderSprite(*infantry_enemy->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*tank_enemy->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*artillery_enemy->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*sniper_enemy->getObjectSprite(), FOREGROUND);
+	//renderer->renderSprite(*gunner_enemy->getAttackSprite(), MIDDLE_GROUND);
 
 
 	if (chat_component.getUsername() == "")
@@ -127,11 +136,26 @@ void GameScene::render(ASGE::Renderer * renderer)
 		renderer->renderText(msg1, 800, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
 
-	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+	if (infantry_atk)
+	{
+		renderer->renderSprite(*infantry_enemy->getAttackSprite(), MIDDLE_GROUND);
+	}
+	if (tank_atk)
+	{
+		renderer->renderSprite(*tank_enemy->getAttackSprite(), MIDDLE_GROUND);
+	}
+	if (artillery_atk)
+	{
+		renderer->renderSprite(*artillery_enemy->getAttackSprite(), MIDDLE_GROUND);
+	}
+	if (sniper_atk)
+	{
+		renderer->renderSprite(*sniper_enemy->getAttackSprite(), MIDDLE_GROUND);
+	}
 
-	//Just to test to see unit on screen
-	renderer->renderSprite(*gunner_enemy->getObjectSprite(), FOREGROUND);
+	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 }
+
 
 void GameScene::clickHandler(const ASGE::SharedEventData data)
 {
@@ -150,6 +174,68 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 			if (Collision::mouseOnSprite(xpos, ypos, x_button.get()))
 			{
 				next_scene.store(SceneTransitions::TO_MENU);
+			}
+			if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite()))
+			{
+				if (!infantry_atk)
+				{
+					infantry_atk = true;
+					tank_atk = false;
+					artillery_atk = false;
+					sniper_atk = false;
+				}
+
+				else
+				{
+					infantry_atk = false;
+				}
+			}
+
+			if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getObjectSprite()))
+			{
+				if (!tank_atk)
+				{
+					infantry_atk = false;
+					tank_atk = true;
+					artillery_atk = false;
+					sniper_atk = false;
+				}
+				else
+				{
+					tank_atk = false;
+				}
+			}
+
+			if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getObjectSprite()))
+			{
+				if (!sniper_atk)
+				{
+					infantry_atk = false;
+					tank_atk = false;
+					artillery_atk = false;
+					sniper_atk = true;
+				}
+
+				else
+				{
+					sniper_atk = false;
+				}
+			}
+
+			if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getObjectSprite()))
+			{
+				if (!artillery_atk)
+				{
+					infantry_atk = false;
+					tank_atk = false;
+					artillery_atk = true;
+					sniper_atk = false;
+				}
+
+				else
+				{
+					artillery_atk = false;
+				}
 			}
 		}
 	}

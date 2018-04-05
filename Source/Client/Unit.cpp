@@ -19,6 +19,8 @@ Unit::Unit(UnitType& T, ASGE::Renderer* renderer) : type(T)
 
 void Unit::init(ASGE::Renderer * renderer)
 {
+
+
 	object_sprite = renderer->createUniqueSprite();
 	attack_sprite = renderer->createUniqueSprite();
 
@@ -29,10 +31,49 @@ void Unit::init(ASGE::Renderer * renderer)
 	attack_sprite->loadTexture(attack_string);
 
 
-	object_sprite->xPos(100);
-	object_sprite->yPos(520);
+	object_sprite->xPos(40);
+	object_sprite->yPos(3);
 	object_sprite->width(117);
 	object_sprite->height(117);
+
+
+	if (unit_name == "Infantry")
+	{
+		attack_sprite->width(237);
+		attack_sprite->height(117);
+		object_sprite->xPos(40);
+		object_sprite->yPos(3);
+		x_pos = 40;
+		y_pos = 3;
+	}
+	if (unit_name == "Sniper")
+	{
+		attack_sprite->width(477);
+		attack_sprite->height(117);
+		object_sprite->xPos(40);
+		object_sprite->yPos(123);
+		x_pos = 40;
+		y_pos = 123;
+	}
+
+	if (unit_name == "Artillery")
+	{
+		attack_sprite->width(957);
+		attack_sprite->height(117);
+		object_sprite->xPos(40);
+		object_sprite->yPos(243);
+		x_pos = 40;
+		y_pos = 243;
+	}
+	if (unit_name == "Tank")
+	{
+		attack_sprite->width(237);
+		attack_sprite->height(237);
+		object_sprite->xPos(40);
+		object_sprite->yPos(363);
+		x_pos = 40;
+		y_pos = 363;
+	}
 
 }
 
@@ -50,7 +91,7 @@ int Unit::getSquadSize() const
 	return squad_size;
 }
 
-ASGE::Sprite * Unit::getAttackSprite() const
+ASGE::Sprite * Unit::getAttackSprite()
 {
 	return attack_sprite.get();
 }
