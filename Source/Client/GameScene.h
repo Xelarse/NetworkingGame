@@ -55,7 +55,6 @@ private:
 
 	std::unique_ptr<ASGE::Sprite> game_background;
 	std::unique_ptr<ASGE::Sprite> x_button;
-	std::unique_ptr<Unit> test_unit;
 
 	std::unique_ptr<Unit> gunner_enemy = nullptr;
 

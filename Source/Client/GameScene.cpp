@@ -43,16 +43,12 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	x_button->width(100);
 
 	initEnemies();
-	
-
-	UnitType::load();
-	test_unit.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
 }
 
 void GameScene::initEnemies()
 {
 	UnitType::load();
-	gunner_enemy.reset(UnitType::unit_types[0].createUnit(main_renderer));
+	gunner_enemy.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
 }
 
 void GameScene::update(const ASGE::GameTime & ms)
@@ -86,7 +82,8 @@ void GameScene::update(const ASGE::GameTime & ms)
 		}
 	}
 
-	test_unit->update(ms);
+	//Testing for sprite
+	gunner_enemy->update(ms);
 }
 
 void GameScene::render(ASGE::Renderer * renderer)
@@ -131,7 +128,9 @@ void GameScene::render(ASGE::Renderer * renderer)
 	}
 
 	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-	renderer->renderSprite(*test_unit->getObjectSprite(), FOREGROUND);
+
+	//Just to test to see unit on screen
+	renderer->renderSprite(*gunner_enemy->getObjectSprite(), FOREGROUND);
 }
 
 void GameScene::clickHandler(const ASGE::SharedEventData data)
