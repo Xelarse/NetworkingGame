@@ -197,7 +197,7 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 				}
 			}
 
-			if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite())) //set selected
+			if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite())) //set selected boi
 			{
 				if (!infantry_select)
 				{
