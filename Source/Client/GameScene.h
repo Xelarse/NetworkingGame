@@ -46,7 +46,8 @@ private:
 
 	void initEnemies();
 
-	void gridSnapping(float xpos, float ypos, Unit* enemy_type);
+	void gridSnapping(float xpos, float ypos, ASGE::Sprite* enemy_type);
+
 
 	float chat_timer = 0;
 	float msg_duration = 5;

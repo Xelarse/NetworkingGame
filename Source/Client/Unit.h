@@ -20,6 +20,9 @@ public:
 	int getMoveRange() const;
 	int getAttackRange() const;
 
+	void setXpos(int xPos);
+	void setYpos(int xPos);
+
 	std::string getUnitName() const;
 
 	// Inherited via GameObject

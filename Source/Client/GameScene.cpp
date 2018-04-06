@@ -172,42 +172,32 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 	{
 		if (action == ASGE::MOUSE::BUTTON_PRESSED)
 		{
-			if (Collision::mouseOnSprite(xpos, ypos, x_button.get()))
+			if (Collision::mouseOnSprite(xpos, ypos, x_button.get())) //if clicked on the exit button
 			{
 				next_scene.store(SceneTransitions::TO_MENU);
 			}
 
-			if (infantry_select || tank_select || sniper_select || artillery_select)
+			if (infantry_select || tank_select || sniper_select || artillery_select) //if unit is selected
 			{
 				if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getAttackSprite()) && infantry_select)
 				{
-					gridSnapping(xpos, ypos, Unit *infantry_enemy);
-					infantry_enemy->xPos(xpos);
-					infantry_enemy->yPos(ypos);
+					gridSnapping(xpos, ypos, infantry_enemy->getObjectSprite()); // place unit in clicked location
 				}
-				if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getAttackSprite()) && artillery_select)
+				else if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getAttackSprite()) && artillery_select)
 				{
-					gridSnapping(xpos, ypos, *artillery_enemy);
-					artillery_enemy->xPos(xpos);
-					artillery_enemy->yPos(ypos);
+					gridSnapping(xpos, ypos, artillery_enemy->getObjectSprite()); // place unit in clicked location
 				}
-				if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getAttackSprite()) && tank_select)
-				
-					gridSnapping(xpos, ypos, &tank_enemy);
-					tank_enemy->xPos(xpos);
-					tank_enemy->yPos(ypos);
-				}
-				if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getAttackSprite()) && sniper_select)
+				else if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getAttackSprite()) && tank_select)
 				{
-					gridSnapping(xpos, ypos, ASGE::Sprite * sniper_enemy);
-					sniper_enemy->xPos(xpos);
-					sniper_enemy->yPos(ypos);
+					gridSnapping(xpos, ypos, tank_enemy->getObjectSprite()); // place unit in clicked location
+				}
+				else if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getAttackSprite()) && sniper_select)
+				{
+					gridSnapping(xpos, ypos, sniper_enemy->getObjectSprite()); // place unit in clicked location
 				}
 			}
 
-
-
-			if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite()))
+			if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite())) //set selected
 			{
 				if (!infantry_select)
 				{
@@ -216,14 +206,13 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 					artillery_select = false;
 					sniper_select = false;
 				}
-
 				else
 				{
 					infantry_select = false;
 				}
 			}
 
-			if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getObjectSprite()))
+			if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getObjectSprite())) //set selected
 			{
 				if (!tank_select)
 				{
@@ -238,7 +227,7 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 				}
 			}
 
-			if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getObjectSprite()))
+			if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getObjectSprite())) //set selected
 			{
 				if (!sniper_select)
 				{
@@ -247,14 +236,13 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 					artillery_select = false;
 					sniper_select = true;
 				}
-
 				else
 				{
 					sniper_select = false;
 				}
 			}
 
-			if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getObjectSprite()))
+			if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getObjectSprite())) //set selected
 			{
 				if (!artillery_select)
 				{
@@ -263,7 +251,6 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 					artillery_select = true;
 					sniper_select = false;
 				}
-
 				else
 				{
 					artillery_select = false;
@@ -273,65 +260,65 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 	}
 }
 
-void GameScene::gridSnapping(float xpos, float ypos, Unit* enemy_type )
+void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite * enemy_type ) //logic for snapping to grid
 {
 	if (xpos > 40 && ypos > 3 && xpos < 160 && ypos < 123) { enemy_type->xPos(40); enemy_type->yPos(3); }
-	if (xpos > 160 && ypos > 3 && xpos < 280 && ypos < 123) { enemy_type->xPos(160); enemy_type->yPos(3); }
-	if (xpos > 280 && ypos > 3 && xpos < 400 && ypos < 123) { enemy_type->xPos(280); enemy_type->yPos(3); }
-	if (xpos > 400 && ypos > 3 && xpos < 520 && ypos < 123) { enemy_type->xPos(400); enemy_type->yPos(3); }
-	if (xpos > 520 && ypos > 3 && xpos < 640 && ypos < 123) { enemy_type->xPos(520); enemy_type->yPos(3); }
-	if (xpos > 640 && ypos > 3 && xpos < 760 && ypos < 123) { enemy_type->xPos(640); enemy_type->yPos(3); }
-	if (xpos > 760 && ypos > 3 && xpos < 880 && ypos < 123) { enemy_type->xPos(760); enemy_type->yPos(3); }
-	if (xpos > 880 && ypos > 3 && xpos < 1000 && ypos < 123) { enemy_type->xPos(880); enemy_type->yPos(3); }
-	if (xpos > 1000 && ypos > 3 && xpos < 1120 && ypos < 123) { enemy_type->xPos(1000); enemy_type->yPos(3); }
-	if (xpos > 1120 && ypos > 3 && xpos < 1240 && ypos < 123) { enemy_type->xPos(1120); enemy_type->yPos(3); }
+	else if (xpos > 160 && ypos > 3 && xpos < 280 && ypos < 123) { enemy_type->xPos(160); enemy_type->yPos(3); }
+	else if (xpos > 280 && ypos > 3 && xpos < 400 && ypos < 123) { enemy_type->xPos(280); enemy_type->yPos(3); }
+	else if (xpos > 400 && ypos > 3 && xpos < 520 && ypos < 123) { enemy_type->xPos(400); enemy_type->yPos(3); }
+	else if (xpos > 520 && ypos > 3 && xpos < 640 && ypos < 123) { enemy_type->xPos(520); enemy_type->yPos(3); }
+	else if (xpos > 640 && ypos > 3 && xpos < 760 && ypos < 123) { enemy_type->xPos(640); enemy_type->yPos(3); }
+	else if (xpos > 760 && ypos > 3 && xpos < 880 && ypos < 123) { enemy_type->xPos(760); enemy_type->yPos(3); }
+	else if (xpos > 880 && ypos > 3 && xpos < 1000 && ypos < 123) { enemy_type->xPos(880); enemy_type->yPos(3); }
+	else if (xpos > 1000 && ypos > 3 && xpos < 1120 && ypos < 123) { enemy_type->xPos(1000); enemy_type->yPos(3); }
+	else if (xpos > 1120 && ypos > 3 && xpos < 1240 && ypos < 123) { enemy_type->xPos(1120); enemy_type->yPos(3); }
 
-	if (xpos > 40 && ypos > 123 && xpos < 160 && ypos < 243) { enemy_type->xPos(40); enemy_type->yPos(123); }
-	if (xpos > 160 && ypos > 123 && xpos < 280 && ypos < 243) { enemy_type->xPos(160); enemy_type->yPos(123); }
-	if (xpos > 280 && ypos > 123 && xpos < 400 && ypos < 243) { enemy_type->xPos(280); enemy_type->yPos(123); }
-	if (xpos > 400 && ypos > 123 && xpos < 520 && ypos < 243) { enemy_type->xPos(400); enemy_type->yPos(123); }
-	if (xpos > 520 && ypos > 123 && xpos < 640 && ypos < 243) { enemy_type->xPos(520); enemy_type->yPos(123); }
-	if (xpos > 640 && ypos > 123 && xpos < 760 && ypos < 243) { enemy_type->xPos(640); enemy_type->yPos(123); }
-	if (xpos > 760 && ypos > 123 && xpos < 880 && ypos < 243) { enemy_type->xPos(760); enemy_type->yPos(123); }
-	if (xpos > 880 && ypos > 123 && xpos < 1000 && ypos < 243) { enemy_type->xPos(880); enemy_type->yPos(123); }
-	if (xpos > 1000 && ypos > 123 && xpos < 1120 && ypos < 243) { enemy_type->xPos(1000); enemy_type->yPos(123); }
-	if (xpos > 1120 && ypos > 123 && xpos < 1240 && ypos < 243) { enemy_type->xPos(1120); enemy_type->yPos(123); }
+	else if (xpos > 40 && ypos > 123 && xpos < 160 && ypos < 243) { enemy_type->xPos(40); enemy_type->yPos(123); }
+	else if (xpos > 160 && ypos > 123 && xpos < 280 && ypos < 243) { enemy_type->xPos(160); enemy_type->yPos(123); }
+	else if (xpos > 280 && ypos > 123 && xpos < 400 && ypos < 243) { enemy_type->xPos(280); enemy_type->yPos(123); }
+	else if (xpos > 400 && ypos > 123 && xpos < 520 && ypos < 243) { enemy_type->xPos(400); enemy_type->yPos(123); }
+	else if (xpos > 520 && ypos > 123 && xpos < 640 && ypos < 243) { enemy_type->xPos(520); enemy_type->yPos(123); }
+	else if (xpos > 640 && ypos > 123 && xpos < 760 && ypos < 243) { enemy_type->xPos(640); enemy_type->yPos(123); }
+	else if (xpos > 760 && ypos > 123 && xpos < 880 && ypos < 243) { enemy_type->xPos(760); enemy_type->yPos(123); }
+	else if (xpos > 880 && ypos > 123 && xpos < 1000 && ypos < 243) { enemy_type->xPos(880); enemy_type->yPos(123); }
+	else if (xpos > 1000 && ypos > 123 && xpos < 1120 && ypos < 243) { enemy_type->xPos(1000); enemy_type->yPos(123); }
+	else if (xpos > 1120 && ypos > 123 && xpos < 1240 && ypos < 243) { enemy_type->xPos(1120); enemy_type->yPos(123); }
 
-	if (xpos > 40 && ypos > 243 && xpos < 160 && ypos < 363) { enemy_type->xPos(40); enemy_type->yPos(243); }
-	if (xpos > 160 && ypos > 243 && xpos < 280 && ypos < 363) { enemy_type->xPos(160); enemy_type->yPos(243); }
-	if (xpos > 280 && ypos > 243 && xpos < 400 && ypos < 363) { enemy_type->xPos(280); enemy_type->yPos(243); }
-	if (xpos > 400 && ypos > 243 && xpos < 520 && ypos < 363) { enemy_type->xPos(400); enemy_type->yPos(243); }
-	if (xpos > 520 && ypos > 243 && xpos < 640 && ypos < 363) { enemy_type->xPos(520); enemy_type->yPos(243); }
-	if (xpos > 640 && ypos > 243 && xpos < 760 && ypos < 363) { enemy_type->xPos(640); enemy_type->yPos(243); }
-	if (xpos > 760 && ypos > 243 && xpos < 880 && ypos < 363) { enemy_type->xPos(760); enemy_type->yPos(243); }
-	if (xpos > 880 && ypos > 243 && xpos < 1000 && ypos < 363) { enemy_type->xPos(880); enemy_type->yPos(243); }
-	if (xpos > 1000 && ypos > 243 && xpos < 1120 && ypos < 363) { enemy_type->xPos(1000); enemy_type->yPos(243); }
-	if (xpos > 1120 && ypos > 243 && xpos < 1240 && ypos < 363) { enemy_type->xPos(1120); enemy_type->yPos(243); }
+	else if (xpos > 40 && ypos > 243 && xpos < 160 && ypos < 363) { enemy_type->xPos(40); enemy_type->yPos(243); }
+	else if (xpos > 160 && ypos > 243 && xpos < 280 && ypos < 363) { enemy_type->xPos(160); enemy_type->yPos(243); }
+	else if (xpos > 280 && ypos > 243 && xpos < 400 && ypos < 363) { enemy_type->xPos(280); enemy_type->yPos(243); }
+	else if (xpos > 400 && ypos > 243 && xpos < 520 && ypos < 363) { enemy_type->xPos(400); enemy_type->yPos(243); }
+	else if (xpos > 520 && ypos > 243 && xpos < 640 && ypos < 363) { enemy_type->xPos(520); enemy_type->yPos(243); }
+	else if (xpos > 640 && ypos > 243 && xpos < 760 && ypos < 363) { enemy_type->xPos(640); enemy_type->yPos(243); }
+	else if (xpos > 760 && ypos > 243 && xpos < 880 && ypos < 363) { enemy_type->xPos(760); enemy_type->yPos(243); }
+	else if (xpos > 880 && ypos > 243 && xpos < 1000 && ypos < 363) { enemy_type->xPos(880); enemy_type->yPos(243); }
+	else if (xpos > 1000 && ypos > 243 && xpos < 1120 && ypos < 363) { enemy_type->xPos(1000); enemy_type->yPos(243); }
+	else if (xpos > 1120 && ypos > 243 && xpos < 1240 && ypos < 363) { enemy_type->xPos(1120); enemy_type->yPos(243); }
 
-	if (xpos > 40 && ypos > 363 && xpos < 160 && ypos < 483) { enemy_type->xPos(40); enemy_type->yPos(363); }
-	if (xpos > 160 && ypos > 363 && xpos < 280 && ypos < 483) { enemy_type->xPos(160); enemy_type->yPos(363); }
-	if (xpos > 280 && ypos > 363 && xpos < 400 && ypos < 483) { enemy_type->xPos(280); enemy_type->yPos(363); }
-	if (xpos > 400 && ypos > 363 && xpos < 520 && ypos < 483) { enemy_type->xPos(400); enemy_type->yPos(363); }
-	if (xpos > 520 && ypos > 363 && xpos < 640 && ypos < 483) { enemy_type->xPos(520); enemy_type->yPos(363); }
-	if (xpos > 640 && ypos > 363 && xpos < 760 && ypos < 483) { enemy_type->xPos(640); enemy_type->yPos(363); }
-	if (xpos > 760 && ypos > 363 && xpos < 880 && ypos < 483) { enemy_type->xPos(760); enemy_type->yPos(363); }
-	if (xpos > 880 && ypos > 363 && xpos < 1000 && ypos < 483) { enemy_type->xPos(880); enemy_type->yPos(363); }
-	if (xpos > 1000 && ypos > 363 && xpos < 1120 && ypos < 483) { enemy_type->xPos(1000); enemy_type->yPos(363); }
-	if (xpos > 1120 && ypos > 363 && xpos < 1240 && ypos < 483) { enemy_type->xPos(1120); enemy_type->yPos(363); }
+	else if (xpos > 40 && ypos > 363 && xpos < 160 && ypos < 483) { enemy_type->xPos(40); enemy_type->yPos(363); }
+	else if (xpos > 160 && ypos > 363 && xpos < 280 && ypos < 483) { enemy_type->xPos(160); enemy_type->yPos(363); }
+	else if (xpos > 280 && ypos > 363 && xpos < 400 && ypos < 483) { enemy_type->xPos(280); enemy_type->yPos(363); }
+	else if (xpos > 400 && ypos > 363 && xpos < 520 && ypos < 483) { enemy_type->xPos(400); enemy_type->yPos(363); }
+	else if (xpos > 520 && ypos > 363 && xpos < 640 && ypos < 483) { enemy_type->xPos(520); enemy_type->yPos(363); }
+	else if (xpos > 640 && ypos > 363 && xpos < 760 && ypos < 483) { enemy_type->xPos(640); enemy_type->yPos(363); }
+	else if (xpos > 760 && ypos > 363 && xpos < 880 && ypos < 483) { enemy_type->xPos(760); enemy_type->yPos(363); }
+	else if (xpos > 880 && ypos > 363 && xpos < 1000 && ypos < 483) { enemy_type->xPos(880); enemy_type->yPos(363); }
+	else if (xpos > 1000 && ypos > 363 && xpos < 1120 && ypos < 483) { enemy_type->xPos(1000); enemy_type->yPos(363); }
+	else if (xpos > 1120 && ypos > 363 && xpos < 1240 && ypos < 483) { enemy_type->xPos(1120); enemy_type->yPos(363); }
 
-	if (xpos > 40 && ypos > 483 && xpos < 160 && ypos < 603) { enemy_type->xPos(40); enemy_type->yPos(483); }
-	if (xpos > 160 && ypos > 483 && xpos < 280 && ypos < 603) { enemy_type->xPos(160); enemy_type->yPos(483); }
-	if (xpos > 280 && ypos > 483 && xpos < 400 && ypos < 603) { enemy_type->xPos(280); enemy_type->yPos(483); }
-	if (xpos > 400 && ypos > 483 && xpos < 520 && ypos < 603) { enemy_type->xPos(400); enemy_type->yPos(483); }
-	if (xpos > 520 && ypos > 483 && xpos < 640 && ypos < 603) { enemy_type->xPos(520); enemy_type->yPos(483); }
-	if (xpos > 640 && ypos > 483 && xpos < 760 && ypos < 603) { enemy_type->xPos(640); enemy_type->yPos(483); }
-	if (xpos > 760 && ypos > 483 && xpos < 880 && ypos < 603) { enemy_type->xPos(760); enemy_type->yPos(483); }
-	if (xpos > 880 && ypos > 483 && xpos < 1000 && ypos < 603) { enemy_type->xPos(880); enemy_type->yPos(483); }
-	if (xpos > 1000 && ypos > 483 && xpos < 1120 && ypos < 603) { enemy_type->xPos(1000); enemy_type->yPos(483); }
-	if (xpos > 1120 && ypos > 483 && xpos < 1240 && ypos < 603) { enemy_type->xPos(1120); enemy_type->yPos(483); }
-	
+	else if (xpos > 40 && ypos > 483 && xpos < 160 && ypos < 603) { enemy_type->xPos(40); enemy_type->yPos(483); }
+	else if (xpos > 160 && ypos > 483 && xpos < 280 && ypos < 603) { enemy_type->xPos(160); enemy_type->yPos(483); }
+	else if (xpos > 280 && ypos > 483 && xpos < 400 && ypos < 603) { enemy_type->xPos(280); enemy_type->yPos(483); }
+	else if (xpos > 400 && ypos > 483 && xpos < 520 && ypos < 603) { enemy_type->xPos(400); enemy_type->yPos(483); }
+	else if (xpos > 520 && ypos > 483 && xpos < 640 && ypos < 603) { enemy_type->xPos(520); enemy_type->yPos(483); }
+	else if (xpos > 640 && ypos > 483 && xpos < 760 && ypos < 603) { enemy_type->xPos(640); enemy_type->yPos(483); }
+	else if (xpos > 760 && ypos > 483 && xpos < 880 && ypos < 603) { enemy_type->xPos(760); enemy_type->yPos(483); }
+	else if (xpos > 880 && ypos > 483 && xpos < 1000 && ypos < 603) { enemy_type->xPos(880); enemy_type->yPos(483); }
+	else if (xpos > 1000 && ypos > 483 && xpos < 1120 && ypos < 603) { enemy_type->xPos(1000); enemy_type->yPos(483); }
+	else if (xpos > 1120 && ypos > 483 && xpos < 1240 && ypos < 603) { enemy_type->xPos(1120); enemy_type->yPos(483); }
 
-
+	// floor() and ceiling() so x snaps every 120, Y snaps every 120 so divide current number by 120 round it up or down depending on
+	//What its closest to and then multiply by 120 to get it co ords for the screen.
 }
 
 void GameScene::keyHandler(const ASGE::SharedEventData data)
