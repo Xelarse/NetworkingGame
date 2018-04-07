@@ -71,40 +71,29 @@ void Unit::init(ASGE::Renderer * renderer)
 
 void Unit::update(const ASGE::GameTime & ms)
 {
-
 	x_pos = object_sprite->xPos();
 	y_pos = object_sprite->yPos();
 
+	object_sprite->xPos(x_pos);
+	object_sprite->yPos(y_pos);
+
 	if (unit_name == "Infantry")
 	{
-		object_sprite->xPos(x_pos);
-		object_sprite->yPos(y_pos);
-
 		attack_sprite->xPos(x_pos - 237);
 		attack_sprite->yPos(y_pos);
 	}
 	if (unit_name == "Sniper")
 	{
-		object_sprite->xPos(x_pos);
-		object_sprite->yPos(y_pos);
-
 		attack_sprite->xPos(x_pos - 117);
 		attack_sprite->yPos(y_pos);
 	}
-
 	if (unit_name == "Artillery")
 	{
-		object_sprite->xPos(x_pos);
-		object_sprite->yPos(y_pos);
-
 		attack_sprite->xPos(x_pos - 237);
 		attack_sprite->yPos(y_pos);
 	}
 	if (unit_name == "Tank")
 	{
-		object_sprite->xPos(x_pos);
-		object_sprite->yPos(y_pos);
-
 		attack_sprite->xPos(x_pos-117);
 		attack_sprite->yPos(y_pos);
 	}
@@ -151,9 +140,9 @@ void Unit::setXpos(int xPos)
 	x_pos = xPos;
 }
 
-void Unit::setYpos(int xPos)
+void Unit::setYpos(int yPos)
 {
-	x_pos = xPos;
+	y_pos = yPos;
 }
 
 std::string Unit::getUnitName() const
