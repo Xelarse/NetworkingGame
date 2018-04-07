@@ -93,7 +93,7 @@ void GameScene::render(ASGE::Renderer * renderer)
 	renderer->renderSprite(*game_background.get(), BACKGROUND);
 	renderer->renderSprite(*x_button.get(), MIDDLE_GROUND);
 
-	renderer->renderSprite(*gunner_enemy->getObjectSprite(), FOREGROUND);
+	//renderer->renderSprite(*gunner_enemy->getObjectSprite(), FOREGROUND);
 	//renderer->renderSprite(*gunner_enemy->getAttackSprite(), FOREGROUND);
 
 
@@ -128,9 +128,6 @@ void GameScene::render(ASGE::Renderer * renderer)
 	}
 
 	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-
-	//Just to test to see unit on screen
-	renderer->renderSprite(*gunner_enemy->getObjectSprite(), FOREGROUND);
 }
 
 void GameScene::clickHandler(const ASGE::SharedEventData data)
