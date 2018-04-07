@@ -3,6 +3,8 @@
 #include <Engine\InputEvents.h>
 #include <Client\ClientNetworking.h>
 #include <Common\CustomPacket.h>
+#include <string>
+#include <iostream>
 #include "Unit.h"
 #include "UnitType.h"
 
@@ -36,8 +38,15 @@ public:
 	void keyHandler(const ASGE::SharedEventData data);
 
 private:
+
+	std::atomic<bool> infantry_select = false;
+	std::atomic<bool> tank_select = false;
+	std::atomic<bool> artillery_select = false;
+	std::atomic<bool> sniper_select = false;
+
 	void initEnemies();
 
+	void gridSnapping(float xpos, float ypos, ASGE::Sprite* unit);
 
 
 	float chat_timer = 0;
@@ -56,7 +65,10 @@ private:
 	std::unique_ptr<ASGE::Sprite> game_background;
 	std::unique_ptr<ASGE::Sprite> x_button;
 
-	std::unique_ptr<Unit> gunner_enemy = nullptr;
+	std::unique_ptr<Unit> infantry_enemy = nullptr;
+	std::unique_ptr<Unit> artillery_enemy = nullptr;
+	std::unique_ptr<Unit> sniper_enemy = nullptr;
+	std::unique_ptr<Unit> tank_enemy = nullptr;
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
 

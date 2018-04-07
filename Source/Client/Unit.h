@@ -20,6 +20,9 @@ public:
 	int getMoveRange() const;
 	int getAttackRange() const;
 
+	void setXpos(int xPos);
+	void setYpos(int xPos);
+
 	std::string getUnitName() const;
 
 	// Inherited via GameObject
@@ -31,13 +34,13 @@ public:
 	void xPos(int pos) { x_pos = pos; };
 	void yPos(int pos) { y_pos = pos; };
 
-	ASGE::Sprite* getAttackSprite() const;
+	ASGE::Sprite* getAttackSprite();
 
 
 private:
 
-	int x_pos = 100;
-	int y_pos = 520;
+	int x_pos = 40;
+	int y_pos = 3;
 
 	int squad_size = 0;
 	int health = 0;

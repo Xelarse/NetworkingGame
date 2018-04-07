@@ -28,21 +28,76 @@ void Unit::init(ASGE::Renderer * renderer)
 	object_sprite->loadTexture(sprite_string);
 	attack_sprite->loadTexture(attack_string);
 
-
-	object_sprite->xPos(100);
-	object_sprite->yPos(520);
+	object_sprite->xPos(40);
+	object_sprite->yPos(3);
 	object_sprite->width(117);
 	object_sprite->height(117);
+
+	if (unit_name == "Infantry")
+	{
+		attack_sprite->width(594);
+		attack_sprite->height(117);
+		object_sprite->xPos(40);
+		object_sprite->yPos(3);
+
+	}
+	if (unit_name == "Sniper")
+	{
+		attack_sprite->width(477);
+		attack_sprite->height(117);
+		object_sprite->xPos(40);
+		object_sprite->yPos(123);
+
+	}
+
+	if (unit_name == "Artillery")
+	{
+		attack_sprite->width(957);
+		attack_sprite->height(117);
+		object_sprite->xPos(40);
+		object_sprite->yPos(243);
+
+	}
+	if (unit_name == "Tank")
+	{
+		attack_sprite->width(597);
+		attack_sprite->height(117);
+		object_sprite->xPos(40);
+		object_sprite->yPos(363);
+
+	}
 
 }
 
 void Unit::update(const ASGE::GameTime & ms)
 {
+	x_pos = object_sprite->xPos();
+	y_pos = object_sprite->yPos();
+
 	object_sprite->xPos(x_pos);
 	object_sprite->yPos(y_pos);
 
-	attack_sprite->xPos(x_pos);
-	attack_sprite->yPos(y_pos);
+	if (unit_name == "Infantry")
+	{
+		attack_sprite->xPos(x_pos - 237);
+		attack_sprite->yPos(y_pos);
+	}
+	if (unit_name == "Sniper")
+	{
+		attack_sprite->xPos(x_pos - 117);
+		attack_sprite->yPos(y_pos);
+	}
+	if (unit_name == "Artillery")
+	{
+		attack_sprite->xPos(x_pos - 237);
+		attack_sprite->yPos(y_pos);
+	}
+	if (unit_name == "Tank")
+	{
+		attack_sprite->xPos(x_pos-117);
+		attack_sprite->yPos(y_pos);
+	}
+
 }
 
 int Unit::getSquadSize() const
@@ -50,7 +105,7 @@ int Unit::getSquadSize() const
 	return squad_size;
 }
 
-ASGE::Sprite * Unit::getAttackSprite() const
+ASGE::Sprite * Unit::getAttackSprite()
 {
 	return attack_sprite.get();
 }
@@ -78,6 +133,16 @@ int Unit::getMoveRange() const
 int Unit::getAttackRange() const
 {
 	return attack_range;
+}
+
+void Unit::setXpos(int xPos)
+{
+	x_pos = xPos;
+}
+
+void Unit::setYpos(int yPos)
+{
+	y_pos = yPos;
 }
 
 std::string Unit::getUnitName() const

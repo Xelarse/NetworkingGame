@@ -1,5 +1,6 @@
 #include <sstream>
 #include "GameScene.h"
+#include <math.h>
 
 GameScene::GameScene(ASGE::Renderer * renderer, ASGE::Input * input, SceneManager * host)
 {
@@ -48,8 +49,13 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 void GameScene::initEnemies()
 {
 	UnitType::load();
-	gunner_enemy.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
+	sniper_enemy.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
+	tank_enemy.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
+	artillery_enemy.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
+	infantry_enemy.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
 }
+
+
 
 void GameScene::update(const ASGE::GameTime & ms)
 {
@@ -83,7 +89,10 @@ void GameScene::update(const ASGE::GameTime & ms)
 	}
 
 	//Testing for sprite
-	gunner_enemy->update(ms);
+	infantry_enemy->update(ms);
+	tank_enemy->update(ms);
+	artillery_enemy->update(ms);
+	sniper_enemy->update(ms);
 }
 
 void GameScene::render(ASGE::Renderer * renderer)
@@ -93,8 +102,10 @@ void GameScene::render(ASGE::Renderer * renderer)
 	renderer->renderSprite(*game_background.get(), BACKGROUND);
 	renderer->renderSprite(*x_button.get(), MIDDLE_GROUND);
 
-	//renderer->renderSprite(*gunner_enemy->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*gunner_enemy->getAttackSprite(), FOREGROUND);
+	renderer->renderSprite(*infantry_enemy->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*tank_enemy->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*artillery_enemy->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*sniper_enemy->getObjectSprite(), FOREGROUND);
 
 
 	if (chat_component.getUsername() == "")
@@ -127,8 +138,26 @@ void GameScene::render(ASGE::Renderer * renderer)
 		renderer->renderText(msg1, 800, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
 
+	if (infantry_select)
+	{
+		renderer->renderSprite(*infantry_enemy->getAttackSprite(), MIDDLE_GROUND);
+	}
+	if (tank_select)
+	{
+		renderer->renderSprite(*tank_enemy->getAttackSprite(), MIDDLE_GROUND);
+	}
+	if (artillery_select)
+	{
+		renderer->renderSprite(*artillery_enemy->getAttackSprite(), MIDDLE_GROUND);
+	}
+	if (sniper_select)
+	{
+		renderer->renderSprite(*sniper_enemy->getAttackSprite(), MIDDLE_GROUND);
+	}
+
 	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 }
+
 
 void GameScene::clickHandler(const ASGE::SharedEventData data)
 {
@@ -144,12 +173,139 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 	{
 		if (action == ASGE::MOUSE::BUTTON_PRESSED)
 		{
-			if (Collision::mouseOnSprite(xpos, ypos, x_button.get()))
+			if (Collision::mouseOnSprite(xpos, ypos, x_button.get())) //if clicked on the exit button
 			{
 				next_scene.store(SceneTransitions::TO_MENU);
 			}
+
+			if (infantry_select || tank_select || sniper_select || artillery_select) //if unit is selected
+			{
+				if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getAttackSprite()) && infantry_select)
+				{
+					gridSnapping(xpos, ypos, infantry_enemy->getObjectSprite()); // place unit in clicked location
+				}
+				else if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getAttackSprite()) && artillery_select)
+				{
+					gridSnapping(xpos, ypos, artillery_enemy->getObjectSprite()); // place unit in clicked location
+				}
+				else if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getAttackSprite()) && tank_select)
+				{
+					gridSnapping(xpos, ypos, tank_enemy->getObjectSprite()); // place unit in clicked location
+				}
+				else if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getAttackSprite()) && sniper_select)
+				{
+					gridSnapping(xpos, ypos, sniper_enemy->getObjectSprite()); // place unit in clicked location
+				}
+			}
+
+			if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite())) //set selected boi
+			{
+				if (!infantry_select)
+				{
+					infantry_select = true;
+					tank_select = false;
+					artillery_select = false;
+					sniper_select = false;
+				}
+				else
+				{
+					infantry_select = false;
+				}
+			}
+
+			if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getObjectSprite())) //set selected
+			{
+				if (!tank_select)
+				{
+					infantry_select = false;
+					tank_select = true;
+					artillery_select = false;
+					sniper_select = false;
+				}
+				else
+				{
+					tank_select = false;
+				}
+			}
+
+			if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getObjectSprite())) //set selected
+			{
+				if (!sniper_select)
+				{
+					infantry_select = false;
+					tank_select = false;
+					artillery_select = false;
+					sniper_select = true;
+				}
+				else
+				{
+					sniper_select = false;
+				}
+			}
+
+			if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getObjectSprite())) //set selected
+			{
+				if (!artillery_select)
+				{
+					infantry_select = false;
+					tank_select = false;
+					artillery_select = true;
+					sniper_select = false;
+				}
+				else
+				{
+					artillery_select = false;
+				}
+			}
 		}
 	}
+}
+
+void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logic for snapping to grid
+{
+	// floor() and ceiling() so x snaps every 120, Y snaps every 120 so divide current number by 120 round it up or down depending on
+	//What its closest to and then multiply by 120 to get it co ords for the screen.
+
+	int new_xpos = 0;
+	int new_ypos = 0;
+
+	float current_xpos = xpos;
+	float current_ypos = ypos;
+
+	//// For X calculation
+	current_xpos /= 120; // Getting individual grid pos
+	current_xpos = floor(current_xpos); //rounding down to get an exact grid value
+	current_xpos *= 120; //remultiplying back to an actual screen value
+	
+	if (current_xpos == 0) //If it rounded down to 0
+	{
+		new_xpos = 40; // Just the standard grid offset
+	}
+
+	else
+	{
+		new_xpos = current_xpos + 40; // Else takes the actual screen value and adds the x offset.
+	}
+
+	//// For Y calculation, done in the same way as X
+	current_ypos /= 120;
+	current_ypos = floor(current_ypos);
+	current_ypos *= 120;
+
+	if (current_ypos == 0)
+	{
+		new_ypos = 3;
+	}
+
+	else
+	{
+		new_ypos = current_ypos + 3;
+	}
+
+	//Finally reapplying the new co ords to the passed in object
+	unit->xPos(new_xpos);
+	unit->yPos(new_ypos);
+
 }
 
 void GameScene::keyHandler(const ASGE::SharedEventData data)
