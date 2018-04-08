@@ -128,14 +128,14 @@ void GameScene::render(ASGE::Renderer * renderer)
 		}
 	}
 
-	renderer->renderText("Latest Message:", 800, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+	renderer->renderText("Latest Message:", 350, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 
 	if (chat_component.recieved_queue.size())
 	{
 		std::lock_guard<std::mutex> lock(chat_component.recieved_mtx);
 
 		std::string msg1 = chat_component.recieved_queue.front().getUsername() + ": " + chat_component.recieved_queue.front().getMsg();
-		renderer->renderText(msg1, 800, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+		renderer->renderText(msg1, 350, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
 
 	if (infantry_select)
