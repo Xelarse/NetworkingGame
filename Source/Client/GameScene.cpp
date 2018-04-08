@@ -99,10 +99,10 @@ void GameScene::render(ASGE::Renderer * renderer)
 {
 	std::stringstream ss;
 	ss << "> " << chat_str;
-	renderer->renderSprite(*game_background.get(), BACKGROUND);
-	renderer->renderSprite(*x_button.get(), MIDDLE_GROUND);
+	renderer->renderSprite(*game_background.get(), BACKGROUND); //background is game board 
+	renderer->renderSprite(*x_button.get(), MIDDLE_GROUND); // sprite attack and sprite movement
 
-	renderer->renderSprite(*infantry_enemy->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*infantry_enemy->getObjectSprite(), FOREGROUND); //sprites
 	renderer->renderSprite(*tank_enemy->getObjectSprite(), FOREGROUND);
 	renderer->renderSprite(*artillery_enemy->getObjectSprite(), FOREGROUND);
 	renderer->renderSprite(*sniper_enemy->getObjectSprite(), FOREGROUND);
