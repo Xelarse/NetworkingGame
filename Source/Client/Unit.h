@@ -40,6 +40,8 @@ public:
 	ASGE::Sprite* getAttackSprite();
 	ASGE::Sprite* getMoveSprite();
 
+	//TODO add a take damage function that takes two units as parameters that works out the damage calc
+
 
 private:
 
