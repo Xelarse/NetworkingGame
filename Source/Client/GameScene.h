@@ -44,6 +44,11 @@ private:
 	std::atomic<bool> artillery_select = false;
 	std::atomic<bool> sniper_select = false;
 
+	std::atomic<bool> infantry2_select = false;
+	std::atomic<bool> tank2_select = false;
+	std::atomic<bool> artillery2_select = false;
+	std::atomic<bool> sniper2_select = false;
+
 	void initEnemies();
 
 	void gridSnapping(float xpos, float ypos, ASGE::Sprite* unit);
@@ -65,11 +70,21 @@ private:
 	std::unique_ptr<ASGE::Sprite> game_background;
 	std::unique_ptr<ASGE::Sprite> x_button;
 
+
+	//team 1
 	std::unique_ptr<Unit> infantry_enemy = nullptr;
 	std::unique_ptr<Unit> artillery_enemy = nullptr;
 	std::unique_ptr<Unit> sniper_enemy = nullptr;
 	std::unique_ptr<Unit> tank_enemy = nullptr;
 	std::unique_ptr<ASGE::Sprite> UIbox;
+
+	//team 2
+	std::unique_ptr<Unit> infantry_ally = nullptr;
+	std::unique_ptr<Unit> artillery_ally = nullptr;
+	std::unique_ptr<Unit> sniper_ally = nullptr;
+	std::unique_ptr<Unit> tank_ally = nullptr;
+
+
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
 

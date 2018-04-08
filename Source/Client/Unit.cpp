@@ -38,46 +38,95 @@ void Unit::init(ASGE::Renderer * renderer)
 	object_sprite->width(117);
 	object_sprite->height(117);
 
-	if (unit_name == "Infantry")
-	{
-		attack_sprite->width(360);
-		attack_sprite->height(360);
-		move_sprite->width(600);
-		move_sprite->height(600);
-		object_sprite->xPos(40);
-		object_sprite->yPos(3);
 
+	if (left)
+	{
+		if (unit_name == "Infantry")
+		{
+			attack_sprite->width(360);
+			attack_sprite->height(360);
+			move_sprite->width(600);
+			move_sprite->height(600);
+			object_sprite->xPos(40);
+			object_sprite->yPos(3);
+
+		}
+		if (unit_name == "Sniper")
+		{
+			attack_sprite->width(720);
+			attack_sprite->height(120);
+			move_sprite->width(360);
+			move_sprite->height(360);
+			object_sprite->xPos(40);
+			object_sprite->yPos(123);
+
+		}
+
+		if (unit_name == "Artillery")
+		{
+			attack_sprite->width(360);
+			attack_sprite->height(360);
+			move_sprite->width(120);
+			move_sprite->height(360);
+			object_sprite->xPos(40);
+			object_sprite->yPos(243);
+
+		}
+		if (unit_name == "Tank")
+		{
+			attack_sprite->width(240);
+			attack_sprite->height(360);
+			move_sprite->width(600);
+			move_sprite->height(360);
+			object_sprite->xPos(40);
+			object_sprite->yPos(363);
+
+		}
 	}
-	if (unit_name == "Sniper")
+
+	if (!left)
 	{
-		attack_sprite->width(720);
-		attack_sprite->height(120);
-		move_sprite->width(360);
-		move_sprite->height(360);
-		object_sprite->xPos(40);
-		object_sprite->yPos(123);
+		if (unit_name == "Infantry")
+		{
+			attack_sprite->width(360);
+			attack_sprite->height(360);
+			move_sprite->width(600);
+			move_sprite->height(600);
+			object_sprite->xPos(1120);
+			object_sprite->yPos(3);
 
-	}
+		}
+		if (unit_name == "Sniper")
+		{
+			attack_sprite->width(720);
+			attack_sprite->height(120);
+			move_sprite->width(360);
+			move_sprite->height(360);
+			object_sprite->xPos(1120);
+			object_sprite->yPos(123);
 
-	if (unit_name == "Artillery")
-	{
-		attack_sprite->width(360);
-		attack_sprite->height(360);
-		move_sprite->width(120);
-		move_sprite->height(120);
-		object_sprite->xPos(40);
-		object_sprite->yPos(243);
+		}
 
-	}
-	if (unit_name == "Tank")
-	{
-		attack_sprite->width(240);
-		attack_sprite->height(360);
-		move_sprite->width(600);
-		move_sprite->height(360);
-		object_sprite->xPos(40);
-		object_sprite->yPos(363);
+		if (unit_name == "Artillery")
+		{
+			attack_sprite->width(360);
+			attack_sprite->height(360);
+			move_sprite->width(120);
+			move_sprite->height(360);
+			object_sprite->xPos(1120);
+			object_sprite->yPos(243);
 
+		}
+		if (unit_name == "Tank")
+		{
+			attack_sprite->width(240);
+			attack_sprite->height(360);
+			move_sprite->width(600);
+			move_sprite->height(360);
+			object_sprite->xPos(1120);
+			object_sprite->yPos(363);
+
+		}
 	}
 }
 
@@ -86,36 +135,85 @@ void Unit::update(const ASGE::GameTime & ms)
 	x_pos = object_sprite->xPos();
 	y_pos = object_sprite->yPos();
 
-	object_sprite->xPos(x_pos);
-	object_sprite->yPos(y_pos);
 
-	if (unit_name == "Infantry")
+	if (left)
 	{
-		move_sprite->xPos(x_pos - 240);
-		move_sprite->yPos(y_pos - 240);
-		attack_sprite->xPos(x_pos - 120);
-		attack_sprite->yPos(y_pos - 120);
+		if (unit_name == "Infantry")
+		{
+			object_sprite->xPos(x_pos);
+			object_sprite->yPos(y_pos);
+			move_sprite->xPos(x_pos - 240);
+			move_sprite->yPos(y_pos - 240);
+			attack_sprite->xPos(x_pos - 120);
+			attack_sprite->yPos(y_pos - 120);
+		}
+		if (unit_name == "Sniper")
+		{
+			object_sprite->xPos(x_pos);
+			object_sprite->yPos(y_pos);
+			move_sprite->xPos(x_pos - 120);
+			move_sprite->yPos(y_pos - 120);
+			attack_sprite->xPos(x_pos);
+			attack_sprite->yPos(y_pos);
+		}
+		if (unit_name == "Artillery")
+		{
+			object_sprite->xPos(x_pos);
+			object_sprite->yPos(y_pos);
+			move_sprite->xPos(x_pos);
+			move_sprite->yPos(y_pos - 120);
+			attack_sprite->xPos(x_pos + 600);
+			attack_sprite->yPos(y_pos - 120);
+		}
+		if (unit_name == "Tank")
+		{
+			object_sprite->xPos(x_pos);
+			object_sprite->yPos(y_pos);
+			move_sprite->xPos(x_pos - 240);
+			move_sprite->yPos(y_pos - 120);
+			attack_sprite->xPos(x_pos + 120);
+			attack_sprite->yPos(y_pos - 120);
+		}
 	}
-	if (unit_name == "Sniper")
+
+	if (!left)
 	{
-		move_sprite->xPos(x_pos - 120);
-		move_sprite->yPos(y_pos - 120);
-		attack_sprite->xPos(x_pos);
-		attack_sprite->yPos(y_pos);
-	}
-	if (unit_name == "Artillery")
-	{
-		move_sprite->xPos(x_pos - 240);
-		move_sprite->yPos(y_pos - 120);
-		attack_sprite->xPos(x_pos + 600);
-		attack_sprite->yPos(y_pos -120);
-	}
-	if (unit_name == "Tank")
-	{
-		move_sprite->xPos(x_pos - 240);
-		move_sprite->yPos(y_pos - 120);
-		attack_sprite->xPos(x_pos + 120);
-		attack_sprite->yPos(y_pos - 120);
+		if (unit_name == "Infantry")
+		{
+			object_sprite->xPos(x_pos);
+			object_sprite->yPos(y_pos);
+			move_sprite->xPos(x_pos - 240);
+			move_sprite->yPos(y_pos - 240);
+			attack_sprite->xPos(x_pos - 120);
+			attack_sprite->yPos(y_pos - 120);
+		}
+		if (unit_name == "Sniper")
+		{
+			object_sprite->xPos(x_pos);
+			object_sprite->yPos(y_pos);
+			move_sprite->xPos(x_pos - 120);
+			move_sprite->yPos(y_pos - 120);
+			attack_sprite->xPos(x_pos);
+			attack_sprite->yPos(y_pos);
+		}
+		if (unit_name == "Artillery")
+		{
+			object_sprite->xPos(x_pos);
+			object_sprite->yPos(y_pos);
+			move_sprite->xPos(x_pos);
+			move_sprite->yPos(y_pos - 120);
+			attack_sprite->xPos(x_pos + 600);
+			attack_sprite->yPos(y_pos - 120);
+		}
+		if (unit_name == "Tank")
+		{
+			object_sprite->xPos(x_pos);
+			object_sprite->yPos(y_pos);
+			move_sprite->xPos(x_pos - 240);
+			move_sprite->yPos(y_pos - 120);
+			attack_sprite->xPos(x_pos + 120);
+			attack_sprite->yPos(y_pos - 120);
+		}
 	}
 }
 
@@ -178,6 +276,11 @@ void Unit::setXpos(int xPos)
 void Unit::setYpos(int yPos)
 {
 	y_pos = yPos;
+}
+
+void Unit::setSide(bool left_side)
+{
+	left = left_side;
 }
 
 std::string Unit::getUnitName() const

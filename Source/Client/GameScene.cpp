@@ -60,6 +60,15 @@ void GameScene::initEnemies()
 	tank_enemy.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
 	artillery_enemy.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
 	infantry_enemy.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
+
+	sniper_ally.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
+	sniper_ally->setSide(false);
+	tank_ally.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
+	tank_ally->setSide(false);
+	artillery_ally.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
+	artillery_ally->setSide(false);
+	infantry_ally.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
+	infantry_ally->setSide(false);
 }
 
 
@@ -100,6 +109,11 @@ void GameScene::update(const ASGE::GameTime & ms)
 	tank_enemy->update(ms);
 	artillery_enemy->update(ms);
 	sniper_enemy->update(ms);
+
+	infantry_ally->update(ms);
+	tank_ally->update(ms);
+	artillery_ally->update(ms);
+	sniper_ally->update(ms);
 }
 
 void GameScene::render(ASGE::Renderer * renderer)
@@ -114,8 +128,10 @@ void GameScene::render(ASGE::Renderer * renderer)
 	renderer->renderSprite(*artillery_enemy->getObjectSprite(), FOREGROUND);
 	renderer->renderSprite(*sniper_enemy->getObjectSprite(), FOREGROUND);
 
-	
-	
+	renderer->renderSprite(*infantry_ally->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*tank_ally->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*artillery_ally->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*sniper_ally->getObjectSprite(), FOREGROUND);
 
 
 	if (chat_component.getUsername() == "")
@@ -228,6 +244,27 @@ void GameScene::render(ASGE::Renderer * renderer)
 		renderer->renderText(attackrange, 1000, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
 
+	if (infantry2_select)
+	{
+		renderer->renderSprite(*infantry_enemy->getAttackSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*infantry_enemy->getMoveSprite(), MIDDLE_GROUND);
+	}
+	if (tank2_select)
+	{
+		renderer->renderSprite(*tank_enemy->getAttackSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*tank_enemy->getMoveSprite(), MIDDLE_GROUND);
+	}
+	if (artillery2_select)
+	{
+		renderer->renderSprite(*artillery_enemy->getAttackSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*artillery_enemy->getMoveSprite(), MIDDLE_GROUND);
+	}
+	if (sniper2_select)
+	{
+		renderer->renderSprite(*sniper_enemy->getAttackSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*sniper_enemy->getMoveSprite(), MIDDLE_GROUND);
+	}
+
 	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 
 }
@@ -272,6 +309,27 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 				}
 			}
 
+			if (infantry2_select || tank2_select || sniper2_select || artillery2_select) //if unit is selected
+			{
+				if (Collision::mouseOnSprite(xpos, ypos, infantry_ally->getMoveSprite()) && infantry2_select)
+				{
+					gridSnapping(xpos, ypos, infantry_ally->getObjectSprite()); // place unit in clicked location
+				}
+				else if (Collision::mouseOnSprite(xpos, ypos, artillery_ally->getMoveSprite()) && artillery2_select)
+				{
+					gridSnapping(xpos, ypos, artillery_ally->getObjectSprite()); // place unit in clicked location
+				}
+				else if (Collision::mouseOnSprite(xpos, ypos, tank_ally->getMoveSprite()) && tank2_select)
+				{
+					gridSnapping(xpos, ypos, tank_ally->getObjectSprite()); // place unit in clicked location
+				}
+				else if (Collision::mouseOnSprite(xpos, ypos, sniper_ally->getMoveSprite()) && sniper2_select)
+				{
+					gridSnapping(xpos, ypos, sniper_ally->getObjectSprite()); // place unit in clicked location
+				}
+			}
+
+
 			if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite())) //set selected boi
 			{
 				if (!infantry_select)
@@ -286,7 +344,6 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 					infantry_select = false;
 				}
 			}
-
 			if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getObjectSprite())) //set selected
 			{
 				if (!tank_select)
@@ -301,7 +358,6 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 					tank_select = false;
 				}
 			}
-
 			if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getObjectSprite())) //set selected
 			{
 				if (!sniper_select)
@@ -316,7 +372,6 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 					sniper_select = false;
 				}
 			}
-
 			if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getObjectSprite())) //set selected
 			{
 				if (!artillery_select)
@@ -329,6 +384,63 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 				else
 				{
 					artillery_select = false;
+				}
+			}
+
+			if (Collision::mouseOnSprite(xpos, ypos, infantry_ally->getObjectSprite())) //set selected boi
+			{
+				if (!infantry2_select)
+				{
+					infantry2_select = true;
+					tank2_select = false;
+					artillery2_select = false;
+					sniper2_select = false;
+				}
+				else
+				{
+					infantry2_select = false;
+				}
+			}
+			if (Collision::mouseOnSprite(xpos, ypos, tank_ally->getObjectSprite())) //set selected
+			{
+				if (!tank2_select)
+				{
+					infantry2_select = false;
+					tank2_select = true;
+					artillery2_select = false;
+					sniper2_select = false;
+				}
+				else
+				{
+					tank2_select = false;
+				}
+			}
+			if (Collision::mouseOnSprite(xpos, ypos, sniper_ally->getObjectSprite())) //set selected
+			{
+				if (!sniper2_select)
+				{
+					infantry2_select = false;
+					tank2_select = false;
+					artillery2_select = false;
+					sniper2_select = true;
+				}
+				else
+				{
+					sniper2_select = false;
+				}
+			}
+			if (Collision::mouseOnSprite(xpos, ypos, artillery_ally->getObjectSprite())) //set selected
+			{
+				if (!artillery2_select)
+				{
+					infantry2_select = false;
+					tank2_select = false;
+					artillery2_select = true;
+					sniper2_select = false;
+				}
+				else
+				{
+					artillery2_select = false;
 				}
 			}
 		}
