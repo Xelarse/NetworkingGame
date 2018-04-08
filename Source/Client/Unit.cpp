@@ -13,6 +13,7 @@ Unit::Unit(UnitType& T, ASGE::Renderer* renderer) : type(T)
 	sprite_name = T.getSpriteName();
 	attack_name = T.getSpriteAttackName();
 	unit_name = T.getUnitName();
+	move_name = T.getSpriteMoveName();
 
 	init(renderer);
 }
@@ -21,12 +22,15 @@ void Unit::init(ASGE::Renderer * renderer)
 {
 	object_sprite = renderer->createUniqueSprite();
 	attack_sprite = renderer->createUniqueSprite();
+	move_sprite = renderer->createUniqueSprite();
 
 	std::string sprite_string = "..\\..\\Resources\\Sprites\\" + sprite_name;
 	std::string attack_string = "..\\..\\Resources\\Sprites\\" + attack_name;
+	std::string move_string = "..\\..\\Resources\\Sprites\\" + move_name;
 
 	object_sprite->loadTexture(sprite_string);
 	attack_sprite->loadTexture(attack_string);
+	move_sprite->loadTexture(move_string);
 
 	object_sprite->xPos(40);
 	object_sprite->yPos(3);
