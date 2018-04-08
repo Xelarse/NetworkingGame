@@ -9,7 +9,7 @@
 	  "attack_range": 1,
       "sprite": "infantry.png",
 	  "attack_sprite": "Attack_Default.png",
-	  "move_sprite": "Attack_Default.png"
+	  "move_sprite": "Move_Default.png"
     },
 	
 	"Sniper": {
@@ -22,7 +22,7 @@
 	  "attack_range": 3,
       "sprite": "sniper.png",
 	  "attack_sprite": "Attack_Default.png",
-	  "move_sprite": "Attack_Default.png"
+	  "move_sprite": "Move_Default.png"
     },
 	
 	"Artillery": {
@@ -35,7 +35,7 @@
 	  "attack_range": 4,
       "sprite": "artillery.png",
 	  "attack_sprite": "Attack_Default.png",
-	  "move_sprite": "Attack_Default.png"
+	  "move_sprite": "Move_Default.png"
     },
 	
 	"Tank": {
@@ -48,6 +48,6 @@
 	  "attack_range": 2,
       "sprite": "tank.png",
 	  "attack_sprite": "Attack_Default.png",
-	  "move_sprite": "Attack_Default.png"
+	  "move_sprite": "Move_Default.png"
     }
   }

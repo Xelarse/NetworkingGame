@@ -39,16 +39,20 @@ void Unit::init(ASGE::Renderer * renderer)
 
 	if (unit_name == "Infantry")
 	{
-		attack_sprite->width(594);
-		attack_sprite->height(117);
+		attack_sprite->width(360);
+		attack_sprite->height(360);
+		move_sprite->width(600);
+		move_sprite->height(600);
 		object_sprite->xPos(40);
 		object_sprite->yPos(3);
 
 	}
 	if (unit_name == "Sniper")
 	{
-		attack_sprite->width(477);
-		attack_sprite->height(117);
+		attack_sprite->width(720);
+		attack_sprite->height(120);
+		move_sprite->width(360);
+		move_sprite->height(360);
 		object_sprite->xPos(40);
 		object_sprite->yPos(123);
 
@@ -56,21 +60,24 @@ void Unit::init(ASGE::Renderer * renderer)
 
 	if (unit_name == "Artillery")
 	{
-		attack_sprite->width(957);
-		attack_sprite->height(117);
+		attack_sprite->width(360);
+		attack_sprite->height(360);
+		move_sprite->width(120);
+		move_sprite->height(120);
 		object_sprite->xPos(40);
 		object_sprite->yPos(243);
 
 	}
 	if (unit_name == "Tank")
 	{
-		attack_sprite->width(597);
-		attack_sprite->height(117);
+		attack_sprite->width(240);
+		attack_sprite->height(360);
+		move_sprite->width(600);
+		move_sprite->height(360);
 		object_sprite->xPos(40);
 		object_sprite->yPos(363);
 
 	}
-
 }
 
 void Unit::update(const ASGE::GameTime & ms)
@@ -83,23 +90,31 @@ void Unit::update(const ASGE::GameTime & ms)
 
 	if (unit_name == "Infantry")
 	{
-		attack_sprite->xPos(x_pos - 237);
-		attack_sprite->yPos(y_pos);
+		move_sprite->xPos(x_pos - 240);
+		move_sprite->yPos(y_pos - 240);
+		attack_sprite->xPos(x_pos - 120);
+		attack_sprite->yPos(y_pos - 120);
 	}
 	if (unit_name == "Sniper")
 	{
-		attack_sprite->xPos(x_pos - 117);
+		move_sprite->xPos(x_pos - 120);
+		move_sprite->yPos(y_pos - 120);
+		attack_sprite->xPos(x_pos);
 		attack_sprite->yPos(y_pos);
 	}
 	if (unit_name == "Artillery")
 	{
-		attack_sprite->xPos(x_pos - 237);
-		attack_sprite->yPos(y_pos);
+		move_sprite->xPos(x_pos - 240);
+		move_sprite->yPos(y_pos - 120);
+		attack_sprite->xPos(x_pos + 600);
+		attack_sprite->yPos(y_pos -120);
 	}
 	if (unit_name == "Tank")
 	{
-		attack_sprite->xPos(x_pos-117);
-		attack_sprite->yPos(y_pos);
+		move_sprite->xPos(x_pos - 240);
+		move_sprite->yPos(y_pos - 120);
+		attack_sprite->xPos(x_pos + 120);
+		attack_sprite->yPos(y_pos - 120);
 	}
 
 }

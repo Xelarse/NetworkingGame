@@ -141,18 +141,22 @@ void GameScene::render(ASGE::Renderer * renderer)
 	if (infantry_select)
 	{
 		renderer->renderSprite(*infantry_enemy->getAttackSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*infantry_enemy->getMoveSprite(), MIDDLE_GROUND);
 	}
 	if (tank_select)
 	{
 		renderer->renderSprite(*tank_enemy->getAttackSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*tank_enemy->getMoveSprite(), MIDDLE_GROUND);
 	}
 	if (artillery_select)
 	{
 		renderer->renderSprite(*artillery_enemy->getAttackSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*artillery_enemy->getMoveSprite(), MIDDLE_GROUND);
 	}
 	if (sniper_select)
 	{
 		renderer->renderSprite(*sniper_enemy->getAttackSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*sniper_enemy->getMoveSprite(), MIDDLE_GROUND);
 	}
 
 	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
@@ -180,19 +184,19 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 
 			if (infantry_select || tank_select || sniper_select || artillery_select) //if unit is selected
 			{
-				if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getAttackSprite()) && infantry_select)
+				if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getMoveSprite()) && infantry_select)
 				{
 					gridSnapping(xpos, ypos, infantry_enemy->getObjectSprite()); // place unit in clicked location
 				}
-				else if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getAttackSprite()) && artillery_select)
+				else if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getMoveSprite()) && artillery_select)
 				{
 					gridSnapping(xpos, ypos, artillery_enemy->getObjectSprite()); // place unit in clicked location
 				}
-				else if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getAttackSprite()) && tank_select)
+				else if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getMoveSprite()) && tank_select)
 				{
 					gridSnapping(xpos, ypos, tank_enemy->getObjectSprite()); // place unit in clicked location
 				}
-				else if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getAttackSprite()) && sniper_select)
+				else if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getMoveSprite()) && sniper_select)
 				{
 					gridSnapping(xpos, ypos, sniper_enemy->getObjectSprite()); // place unit in clicked location
 				}
