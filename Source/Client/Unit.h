@@ -23,6 +23,7 @@ public:
 
 	void setXpos(int xPos);
 	void setYpos(int xPos);
+	void setSide(bool left);
 	void setActionPoints(int action_point);
 
 	std::string getUnitName() const;
@@ -52,6 +53,8 @@ private:
 	int move_range = 0;
 	int attack_range = 0;
 	int action_points = 0;
+
+	bool left = true;
 
 	std::string sprite_name = "";
 	std::string attack_name = "";
