@@ -10,6 +10,7 @@ Unit::Unit(UnitType& T, ASGE::Renderer* renderer) : type(T)
 	armour = T.getArmourRating();
 	move_range = T.getMoveRange();
 	attack_range = T.getAttackRange();
+	action_points = T.getActionPoints();
 	sprite_name = T.getSpriteName();
 	attack_name = T.getSpriteAttackName();
 	unit_name = T.getUnitName();
@@ -153,9 +154,20 @@ int Unit::getMoveRange() const
 	return move_range;
 }
 
+
+void Unit::setActionPoints(int action_point)
+{
+	action_points = action_point;
+}
+
 int Unit::getAttackRange() const
 {
 	return attack_range;
+}
+
+int Unit::getActionPoints() const
+{
+	return action_points;
 }
 
 void Unit::setXpos(int xPos)
