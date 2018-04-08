@@ -116,7 +116,6 @@ void Unit::update(const ASGE::GameTime & ms)
 		attack_sprite->xPos(x_pos + 120);
 		attack_sprite->yPos(y_pos - 120);
 	}
-
 }
 
 int Unit::getSquadSize() const
