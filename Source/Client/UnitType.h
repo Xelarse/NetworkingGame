@@ -9,7 +9,7 @@ class UnitType
 {
 public:
 
-	UnitType(std::string name, int squad, int hp, int atk, int armour, int mov_rng, int atk_rng, std::string sprite_name, std::string attack_sprite_name);
+	UnitType(std::string name, int squad, int hp, int atk, int armour, int mov_rng, int atk_rng, std::string sprite_name, std::string attack_sprite_name, std::string move_sprite_name);
 	~UnitType() = default;
 
 	//Units data getters (Sorted in the same order as the json file)
@@ -22,6 +22,7 @@ public:
 	int getAttackRange() const;
 	std::string getSpriteName() const;
 	std::string getSpriteAttackName() const;
+	std::string getSpriteMoveName() const;
 
 
 
@@ -42,6 +43,7 @@ private:
 	int attack_range = 0;
 	std::string sprite_name;
 	std::string attack_name;
+	std::string move_name;
 
 public:
 	static std::vector<UnitType> unit_types;

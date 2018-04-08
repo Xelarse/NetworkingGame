@@ -35,6 +35,7 @@ public:
 	void yPos(int pos) { y_pos = pos; };
 
 	ASGE::Sprite* getAttackSprite();
+	ASGE::Sprite* getMoveSprite();
 
 
 private:
@@ -51,9 +52,11 @@ private:
 
 	std::string sprite_name = "";
 	std::string attack_name = "";
+	std::string move_name = "";
 	std::string unit_name = "";
 
 	std::unique_ptr<ASGE::Sprite> attack_sprite = nullptr;
+	std::unique_ptr<ASGE::Sprite> move_sprite = nullptr;
 
 	Unit(UnitType&, ASGE::Renderer* renderer);
 	UnitType& type;

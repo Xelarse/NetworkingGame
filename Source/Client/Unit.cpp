@@ -110,6 +110,11 @@ ASGE::Sprite * Unit::getAttackSprite()
 	return attack_sprite.get();
 }
 
+ASGE::Sprite * Unit::getMoveSprite()
+{
+	return move_sprite.get();
+}
+
 int Unit::getHealth() const
 {
 	return health;
