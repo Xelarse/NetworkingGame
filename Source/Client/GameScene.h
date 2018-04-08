@@ -69,6 +69,7 @@ private:
 	std::unique_ptr<Unit> artillery_enemy = nullptr;
 	std::unique_ptr<Unit> sniper_enemy = nullptr;
 	std::unique_ptr<Unit> tank_enemy = nullptr;
+	std::unique_ptr<ASGE::Sprite> UIbox;
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
 
