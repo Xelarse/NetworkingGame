@@ -64,16 +64,26 @@ void GameScene::initEnemies()
 	sniper_ally.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
 	sniper_ally->setSide(false);
 	sniper_ally->getObjectSprite()->xPos(1120);
+	sniper_ally->getAttackSprite()->xPos(1120);
+	sniper_ally->getMoveSprite()->xPos(1120);
 	tank_ally.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
 	tank_ally->setSide(false);
 	tank_ally->getObjectSprite()->xPos(1120);
+	tank_ally->getAttackSprite()->xPos(1120);
+	tank_ally->getMoveSprite()->xPos(1120);
 	artillery_ally.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
 	artillery_ally->setSide(false);
 	artillery_ally->getObjectSprite()->xPos(1120);
+	artillery_ally->getAttackSprite()->xPos(1120);
+	artillery_ally->getMoveSprite()->xPos(1120);
 	infantry_ally.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
 	infantry_ally->setSide(false);
 	infantry_ally->getObjectSprite()->xPos(1120);
+	infantry_ally->getAttackSprite()->xPos(1120);
+	infantry_ally->getMoveSprite()->xPos(1120);
 }
+
+
 
 
 
@@ -293,163 +303,174 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 				next_scene.store(SceneTransitions::TO_MENU);
 			}
 
-			if (infantry_select || tank_select || sniper_select || artillery_select) //if unit is selected
-			{
-				if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getMoveSprite()) && infantry_select)
-				{
-					gridSnapping(xpos, ypos, infantry_enemy->getObjectSprite()); // place unit in clicked location
-				}
-				else if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getMoveSprite()) && artillery_select)
-				{
-					gridSnapping(xpos, ypos, artillery_enemy->getObjectSprite()); // place unit in clicked location
-				}
-				else if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getMoveSprite()) && tank_select)
-				{
-					gridSnapping(xpos, ypos, tank_enemy->getObjectSprite()); // place unit in clicked location
-				}
-				else if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getMoveSprite()) && sniper_select)
-				{
-					gridSnapping(xpos, ypos, sniper_enemy->getObjectSprite()); // place unit in clicked location
-				}
-			}
+			placeUnitAtClick(xpos, ypos);
 
-			if (infantry2_select || tank2_select || sniper2_select || artillery2_select) //if unit is selected
-			{
-				if (Collision::mouseOnSprite(xpos, ypos, infantry_ally->getMoveSprite()) && infantry2_select)
-				{
-					gridSnapping(xpos, ypos, infantry_ally->getObjectSprite()); // place unit in clicked location
-				}
-				else if (Collision::mouseOnSprite(xpos, ypos, artillery_ally->getMoveSprite()) && artillery2_select)
-				{
-					gridSnapping(xpos, ypos, artillery_ally->getObjectSprite()); // place unit in clicked location
-				}
-				else if (Collision::mouseOnSprite(xpos, ypos, tank_ally->getMoveSprite()) && tank2_select)
-				{
-					gridSnapping(xpos, ypos, tank_ally->getObjectSprite()); // place unit in clicked location
-				}
-				else if (Collision::mouseOnSprite(xpos, ypos, sniper_ally->getMoveSprite()) && sniper2_select)
-				{
-					gridSnapping(xpos, ypos, sniper_ally->getObjectSprite()); // place unit in clicked location
-				}
-			}
-
-
-			if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite())) //set selected boi
-			{
-				if (!infantry_select)
-				{
-					infantry_select = true;
-					tank_select = false;
-					artillery_select = false;
-					sniper_select = false;
-				}
-				else
-				{
-					infantry_select = false;
-				}
-			}
-			if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getObjectSprite())) //set selected
-			{
-				if (!tank_select)
-				{
-					infantry_select = false;
-					tank_select = true;
-					artillery_select = false;
-					sniper_select = false;
-				}
-				else
-				{
-					tank_select = false;
-				}
-			}
-			if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getObjectSprite())) //set selected
-			{
-				if (!sniper_select)
-				{
-					infantry_select = false;
-					tank_select = false;
-					artillery_select = false;
-					sniper_select = true;
-				}
-				else
-				{
-					sniper_select = false;
-				}
-			}
-			if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getObjectSprite())) //set selected
-			{
-				if (!artillery_select)
-				{
-					infantry_select = false;
-					tank_select = false;
-					artillery_select = true;
-					sniper_select = false;
-				}
-				else
-				{
-					artillery_select = false;
-				}
-			}
-
-			if (Collision::mouseOnSprite(xpos, ypos, infantry_ally->getObjectSprite())) //set selected boi
-			{
-				if (!infantry2_select)
-				{
-					infantry2_select = true;
-					tank2_select = false;
-					artillery2_select = false;
-					sniper2_select = false;
-				}
-				else
-				{
-					infantry2_select = false;
-				}
-			}
-			if (Collision::mouseOnSprite(xpos, ypos, tank_ally->getObjectSprite())) //set selected
-			{
-				if (!tank2_select)
-				{
-					infantry2_select = false;
-					tank2_select = true;
-					artillery2_select = false;
-					sniper2_select = false;
-				}
-				else
-				{
-					tank2_select = false;
-				}
-			}
-			if (Collision::mouseOnSprite(xpos, ypos, sniper_ally->getObjectSprite())) //set selected
-			{
-				if (!sniper2_select)
-				{
-					infantry2_select = false;
-					tank2_select = false;
-					artillery2_select = false;
-					sniper2_select = true;
-				}
-				else
-				{
-					sniper2_select = false;
-				}
-			}
-			if (Collision::mouseOnSprite(xpos, ypos, artillery_ally->getObjectSprite())) //set selected
-			{
-				if (!artillery2_select)
-				{
-					infantry2_select = false;
-					tank2_select = false;
-					artillery2_select = true;
-					sniper2_select = false;
-				}
-				else
-				{
-					artillery2_select = false;
-				}
-			}
+			setSelected(xpos, ypos);
 		}
 	}
 }
+
+void GameScene::placeUnitAtClick(int xpos, int ypos)
+{
+	if (infantry_select || tank_select || sniper_select || artillery_select) //if unit is selected
+	{
+		if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getMoveSprite()) && infantry_select)
+		{
+			gridSnapping(xpos, ypos, infantry_enemy->getObjectSprite()); // place unit in clicked location
+		}
+		else if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getMoveSprite()) && artillery_select)
+		{
+			gridSnapping(xpos, ypos, artillery_enemy->getObjectSprite()); // place unit in clicked location
+		}
+		else if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getMoveSprite()) && tank_select)
+		{
+			gridSnapping(xpos, ypos, tank_enemy->getObjectSprite()); // place unit in clicked location
+		}
+		else if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getMoveSprite()) && sniper_select)
+		{
+			gridSnapping(xpos, ypos, sniper_enemy->getObjectSprite()); // place unit in clicked location
+		}
+	}
+
+	if (infantry2_select || tank2_select || sniper2_select || artillery2_select) //if unit is selected
+	{
+		if (Collision::mouseOnSprite(xpos, ypos, infantry_ally->getMoveSprite()) && infantry2_select)
+		{
+			gridSnapping(xpos, ypos, infantry_ally->getObjectSprite()); // place unit in clicked location
+		}
+		else if (Collision::mouseOnSprite(xpos, ypos, artillery_ally->getMoveSprite()) && artillery2_select)
+		{
+			gridSnapping(xpos, ypos, artillery_ally->getObjectSprite()); // place unit in clicked location
+		}
+		else if (Collision::mouseOnSprite(xpos, ypos, tank_ally->getMoveSprite()) && tank2_select)
+		{
+			gridSnapping(xpos, ypos, tank_ally->getObjectSprite()); // place unit in clicked location
+		}
+		else if (Collision::mouseOnSprite(xpos, ypos, sniper_ally->getMoveSprite()) && sniper2_select)
+		{
+			gridSnapping(xpos, ypos, sniper_ally->getObjectSprite()); // place unit in clicked location
+		}
+	}
+}
+
+void GameScene::setSelected(int xpos, int ypos)
+{
+	if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite())) //set selected
+	{
+		if (!infantry_select)
+		{
+			infantry_select = true;
+			tank_select = false;
+			artillery_select = false;
+			sniper_select = false;
+		}
+		else
+		{
+			infantry_select = false;
+		}
+	}
+	if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getObjectSprite())) //set selected
+	{
+		if (!tank_select)
+		{
+			infantry_select = false;
+			tank_select = true;
+			artillery_select = false;
+			sniper_select = false;
+		}
+		else
+		{
+			tank_select = false;
+		}
+	}
+	if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getObjectSprite())) //set selected
+	{
+		if (!sniper_select)
+		{
+			infantry_select = false;
+			tank_select = false;
+			artillery_select = false;
+			sniper_select = true;
+		}
+		else
+		{
+			sniper_select = false;
+		}
+	}
+	if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getObjectSprite())) //set selected
+	{
+		if (!artillery_select)
+		{
+			infantry_select = false;
+			tank_select = false;
+			artillery_select = true;
+			sniper_select = false;
+		}
+		else
+		{
+			artillery_select = false;
+		}
+	}
+
+	if (Collision::mouseOnSprite(xpos, ypos, infantry_ally->getObjectSprite())) //set selected boi
+	{
+		if (!infantry2_select)
+		{
+			infantry2_select = true;
+			tank2_select = false;
+			artillery2_select = false;
+			sniper2_select = false;
+		}
+		else
+		{
+			infantry2_select = false;
+		}
+	}
+	if (Collision::mouseOnSprite(xpos, ypos, tank_ally->getObjectSprite())) //set selected
+	{
+		if (!tank2_select)
+		{
+			infantry2_select = false;
+			tank2_select = true;
+			artillery2_select = false;
+			sniper2_select = false;
+		}
+		else
+		{
+			tank2_select = false;
+		}
+	}
+	if (Collision::mouseOnSprite(xpos, ypos, sniper_ally->getObjectSprite())) //set selected
+	{
+		if (!sniper2_select)
+		{
+			infantry2_select = false;
+			tank2_select = false;
+			artillery2_select = false;
+			sniper2_select = true;
+		}
+		else
+		{
+			sniper2_select = false;
+		}
+	}
+	if (Collision::mouseOnSprite(xpos, ypos, artillery_ally->getObjectSprite())) //set selected
+	{
+		if (!artillery2_select)
+		{
+			infantry2_select = false;
+			tank2_select = false;
+			artillery2_select = true;
+			sniper2_select = false;
+		}
+		else
+		{
+			artillery2_select = false;
+		}
+	}
+}
+
+
 
 void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logic for snapping to grid
 {
