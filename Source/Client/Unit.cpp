@@ -92,7 +92,7 @@ void Unit::init(ASGE::Renderer * renderer)
 			attack_sprite->height(360);
 			move_sprite->width(600);
 			move_sprite->height(600);
-			object_sprite->xPos(1120);
+			object_sprite->xPos(1000);
 			object_sprite->yPos(3);
 
 		}
@@ -102,7 +102,7 @@ void Unit::init(ASGE::Renderer * renderer)
 			attack_sprite->height(120);
 			move_sprite->width(360);
 			move_sprite->height(360);
-			object_sprite->xPos(1120);
+			object_sprite->xPos(880);
 			object_sprite->yPos(123);
 
 		}
@@ -113,7 +113,7 @@ void Unit::init(ASGE::Renderer * renderer)
 			attack_sprite->height(360);
 			move_sprite->width(120);
 			move_sprite->height(360);
-			object_sprite->xPos(1120);
+			object_sprite->xPos(880);
 			object_sprite->yPos(243);
 
 		}
@@ -123,7 +123,7 @@ void Unit::init(ASGE::Renderer * renderer)
 			attack_sprite->height(360);
 			move_sprite->width(600);
 			move_sprite->height(360);
-			object_sprite->xPos(1120);
+			object_sprite->xPos(880);
 			object_sprite->yPos(363);
 
 		}

@@ -63,12 +63,16 @@ void GameScene::initEnemies()
 
 	sniper_ally.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
 	sniper_ally->setSide(false);
+	sniper_ally->getObjectSprite()->xPos(1120);
 	tank_ally.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
 	tank_ally->setSide(false);
+	tank_ally->getObjectSprite()->xPos(1120);
 	artillery_ally.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
 	artillery_ally->setSide(false);
+	artillery_ally->getObjectSprite()->xPos(1120);
 	infantry_ally.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
 	infantry_ally->setSide(false);
+	infantry_ally->getObjectSprite()->xPos(1120);
 }
 
 
