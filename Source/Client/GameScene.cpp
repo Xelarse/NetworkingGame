@@ -276,14 +276,23 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logi
 	float current_xpos = xpos;
 	float current_ypos = ypos;
 
+	bool over_x_max = false;
+	bool over_y_max = false;
+
 	//// For X calculation
 	current_xpos /= 120; // Getting individual grid pos
+	if (current_xpos > 10) { over_x_max = true; };
 	current_xpos = floor(current_xpos); //rounding down to get an exact grid value
 	current_xpos *= 120; //remultiplying back to an actual screen value
 	
-	if (current_xpos == 0) //If it rounded down to 0
+	if (current_xpos <= 0) //If it rounded down to 0
 	{
 		new_xpos = 40; // Just the standard grid offset
+	}
+
+	else if (over_x_max)
+	{
+		new_xpos = 1120;
 	}
 
 	else
@@ -291,14 +300,21 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logi
 		new_xpos = current_xpos + 40; // Else takes the actual screen value and adds the x offset.
 	}
 
+
 	//// For Y calculation, done in the same way as X
 	current_ypos /= 120;
+	if (current_ypos > 5) { over_y_max = true; };
 	current_ypos = floor(current_ypos);
 	current_ypos *= 120;
 
-	if (current_ypos == 0)
+	if (current_ypos <= 0)
 	{
 		new_ypos = 3;
+	}
+
+	else if (over_y_max)
+	{
+		new_ypos = 483;
 	}
 
 	else
