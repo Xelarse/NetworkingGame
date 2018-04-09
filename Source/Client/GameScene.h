@@ -24,6 +24,13 @@ class GameScene : public Scene
 		TO_MENU
 	};
 
+	enum class PlayerTurn
+	{
+		PLAYER1,
+		PLAYER2
+	};
+
+
 public:
 
 	GameScene(ASGE::Renderer* renderer, ASGE::Input* input, SceneManager* host);
@@ -51,12 +58,13 @@ private:
 
 
 
-	std::atomic<int> user_ID = 1;
+	std::atomic<int> user_ID;
 
 	void initEnemies();
 	void placeUnitAtClick(int xpos, int ypos);
 	void setSelected(int xpos, int ypos);
 	void gridSnapping(float xpos, float ypos, ASGE::Sprite* unit);
+	void nextTurnPressed(int xpos, int ypos);
 
 	void unitsUpdate(const ASGE::GameTime& ms);
 	void chatUpdate(const ASGE::GameTime& ms);
@@ -100,6 +108,7 @@ private:
 
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
+	std::atomic<PlayerTurn> player_turn = PlayerTurn::PLAYER1;
 
 	std::string chat_str = "";
 	std::mutex chat_str_mutex;

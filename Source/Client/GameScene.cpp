@@ -128,10 +128,7 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 	{
 		if (action == ASGE::MOUSE::BUTTON_PRESSED)
 		{
-			if (Collision::mouseOnSprite(xpos, ypos, x_button.get())) //if clicked on the exit button
-			{
-				next_scene.store(SceneTransitions::TO_MENU);
-			}
+			nextTurnPressed(xpos, ypos);
 
 			setSelected(xpos, ypos);
 
@@ -187,7 +184,7 @@ void GameScene::placeUnitAtClick(int xpos, int ypos)
 
 void GameScene::setSelected(int xpos, int ypos)
 {
-	if (user_ID % 2 == 0)
+	if (user_ID % 2 == 0 && player_turn == PlayerTurn::PLAYER1)
 	{
 		if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite())) //set selected
 		{
@@ -248,7 +245,7 @@ void GameScene::setSelected(int xpos, int ypos)
 	}
 
 
-	if (user_ID %2 != 0)
+	if (user_ID %2 != 0 && player_turn == PlayerTurn::PLAYER2)
 	{
 		if (Collision::mouseOnSprite(xpos, ypos, infantry_ally->getObjectSprite())) //set selected boi
 		{
@@ -370,6 +367,23 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logi
 	unit->xPos(new_xpos);
 	unit->yPos(new_ypos);
 
+}
+
+void GameScene::nextTurnPressed(int xpos, int ypos)
+{
+	if (Collision::mouseOnSprite(xpos, ypos, x_button.get())) //if clicked on the exit button
+	{
+		//next_scene.store(SceneTransitions::TO_MENU);
+
+		if (player_turn == PlayerTurn::PLAYER1)
+		{
+			player_turn = PlayerTurn::PLAYER2;
+		}
+		else if (player_turn == PlayerTurn::PLAYER2)
+		{
+			player_turn = PlayerTurn::PLAYER1;
+		}
+	}
 }
 
 void GameScene::unitsUpdate(const ASGE::GameTime & ms)
