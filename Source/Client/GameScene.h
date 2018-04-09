@@ -50,6 +50,8 @@ private:
 	std::atomic<bool> sniper2_select = false;
 
 	void initEnemies();
+	void placeUnitAtClick(int xpos, int ypos);
+	void setSelected(int xpos, int ypos);
 
 	void gridSnapping(float xpos, float ypos, ASGE::Sprite* unit);
 
