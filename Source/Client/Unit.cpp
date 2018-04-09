@@ -47,7 +47,6 @@ void Unit::init(ASGE::Renderer * renderer)
 			move_sprite->height(600);
 			object_sprite->xPos(40);
 			object_sprite->yPos(3);
-
 		}
 		if (unit_name == "Sniper")
 		{
@@ -57,7 +56,6 @@ void Unit::init(ASGE::Renderer * renderer)
 			move_sprite->height(360);
 			object_sprite->xPos(40);
 			object_sprite->yPos(123);
-
 		}
 
 		if (unit_name == "Artillery")
@@ -68,7 +66,6 @@ void Unit::init(ASGE::Renderer * renderer)
 			move_sprite->height(360);
 			object_sprite->xPos(40);
 			object_sprite->yPos(243);
-
 		}
 		if (unit_name == "Tank")
 		{
@@ -78,7 +75,6 @@ void Unit::init(ASGE::Renderer * renderer)
 			move_sprite->height(360);
 			object_sprite->xPos(40);
 			object_sprite->yPos(363);
-
 		}
 	}
 
@@ -92,7 +88,6 @@ void Unit::init(ASGE::Renderer * renderer)
 			move_sprite->height(600);
 			object_sprite->xPos(880);
 			object_sprite->yPos(3);
-
 		}
 		if (unit_name == "Sniper")
 		{
@@ -102,7 +97,6 @@ void Unit::init(ASGE::Renderer * renderer)
 			move_sprite->height(360);
 			object_sprite->xPos(880);
 			object_sprite->yPos(123);
-
 		}
 
 		if (unit_name == "Artillery")
@@ -113,7 +107,6 @@ void Unit::init(ASGE::Renderer * renderer)
 			move_sprite->height(360);
 			object_sprite->xPos(880);
 			object_sprite->yPos(243);
-
 		}
 		if (unit_name == "Tank")
 		{
@@ -123,7 +116,6 @@ void Unit::init(ASGE::Renderer * renderer)
 			move_sprite->height(360);
 			object_sprite->xPos(880);
 			object_sprite->yPos(363);
-
 		}
 	}
 	
@@ -133,7 +125,6 @@ void Unit::update(const ASGE::GameTime & ms)
 {
 	x_pos = object_sprite->xPos();
 	y_pos = object_sprite->yPos();
-
 
 	if (left)
 	{
