@@ -50,9 +50,6 @@ private:
 	std::atomic<bool> sniper2_select = false;
 
 
-
-	std::atomic<int> user_ID = 1;
-
 	void initEnemies();
 	void placeUnitAtClick(int xpos, int ypos);
 	void setSelected(int xpos, int ypos);

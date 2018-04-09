@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ServerNetworking.h"
+#include <Common\CustomPacket.h>
 
 bool ServerComponent::initialize()
 {
@@ -18,6 +19,13 @@ bool ServerComponent::initialize()
 	on_connected = [&](server_client& client)
 	{
 		trace("on_client_connected id :" + std::to_string(client._uid));
+		CustomPacket initpacket("init", "", std::to_string(client._uid));
+
+		unsigned int packet_length = 0;
+		auto packet_data = initpacket.data(packet_length);
+
+		assert(sizeof(char) == sizeof(enet_uint8));
+		server.send_packet_to(client._uid, 0, reinterpret_cast<enet_uint8*>(packet_data), packet_length, ENET_PACKET_FLAG_RELIABLE);
 	};
 
 	 on_disconnected = [&](unsigned int client_uid)

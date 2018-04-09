@@ -23,6 +23,7 @@ public:
 	bool isConnecting() const;
 
 	std::string getUsername();
+	int getUserID() { return user_ID; };
 	void setUsername(std::string str);
 	void killThread() { kill_thread = true; };
 
@@ -38,6 +39,8 @@ private:
 
 	std::string username = "";
 	std::mutex username_mtx;
+
+	std::atomic<int> user_ID = -1;
 
 	// the client thread
 	enetpp::client client;
