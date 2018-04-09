@@ -52,9 +52,15 @@ private:
 	void initEnemies();
 	void placeUnitAtClick(int xpos, int ypos);
 	void setSelected(int xpos, int ypos);
-
 	void gridSnapping(float xpos, float ypos, ASGE::Sprite* unit);
+
+	void unitsUpdate(const ASGE::GameTime& ms);
+	void chatUpdate(const ASGE::GameTime& ms);
+
 	void unitInfoBox(ASGE::Renderer* renderer, Unit* unit_info);
+	void unitSelectionRender(ASGE::Renderer* renderer);
+	void chatRender(ASGE::Renderer* renderer);
+	void unitsRender(ASGE::Renderer* renderer);
 
 
 	float chat_timer = 0;

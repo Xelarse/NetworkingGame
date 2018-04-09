@@ -103,186 +103,20 @@ void GameScene::update(const ASGE::GameTime & ms)
 			}
 		}
 	}
-	if (chat_component.recieved_queue.size())
-	{
-		if (chat_timer > msg_duration)
-		{
-			std::lock_guard<std::mutex> lock(chat_component.recieved_mtx);
-			chat_component.recieved_queue.pop();
-			chat_timer = 0;
-		}
 
-		else
-		{
-			chat_timer += ms.delta_time.count() / 1000;
-		}
-	}
-
-	//Testing for sprite
-	infantry_enemy->update(ms);
-	tank_enemy->update(ms);
-	artillery_enemy->update(ms);
-	sniper_enemy->update(ms);
-
-	infantry_ally->update(ms);
-	tank_ally->update(ms);
-	artillery_ally->update(ms);
-	sniper_ally->update(ms);
+	chatUpdate(ms);
+	unitsUpdate(ms);
 }
 
 void GameScene::render(ASGE::Renderer * renderer)
 {
-	std::stringstream ss;
-	ss << "> " << chat_str;
 	renderer->renderSprite(*game_background.get(), BACKGROUND); //background is game board 
 	renderer->renderSprite(*x_button.get(), MIDDLE_GROUND_FRONT); // sprite attack and sprite movement
 
-	renderer->renderSprite(*infantry_enemy->getObjectSprite(), FOREGROUND); //sprites
-	renderer->renderSprite(*tank_enemy->getObjectSprite(), FOREGROUND);
-	renderer->renderSprite(*artillery_enemy->getObjectSprite(), FOREGROUND);
-	renderer->renderSprite(*sniper_enemy->getObjectSprite(), FOREGROUND);
-
-	renderer->renderSprite(*infantry_ally->getObjectSprite(), FOREGROUND);
-	renderer->renderSprite(*tank_ally->getObjectSprite(), FOREGROUND);
-	renderer->renderSprite(*artillery_ally->getObjectSprite(), FOREGROUND);
-	renderer->renderSprite(*sniper_ally->getObjectSprite(), FOREGROUND);
-
-
-	if (chat_component.getUsername() == "")
-	{
-		renderer->renderText("Please enter username:", 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-	}
-	
-	else
-	{
-		if (chat_component.isConnected())
-		{
-			std::string str = "Connected as : " + chat_component.getUsername();
-			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-		}
-
-		else
-		{
-			std::string str = "Once you connect your username will be: " + chat_component.getUsername();
-			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-		}
-	}
-
-	renderer->renderText("Latest Message:", 350, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-
-	if (chat_component.recieved_queue.size())
-	{
-		std::lock_guard<std::mutex> lock(chat_component.recieved_mtx);
-
-		std::string msg1 = chat_component.recieved_queue.front().getUsername() + ": " + chat_component.recieved_queue.front().getMsg();
-		renderer->renderText(msg1, 350, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-
-	}
-
-	if (infantry_select)
-	{
-		renderer->renderSprite(*infantry_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*infantry_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
-
-		renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND_FRONT);
-		std::string health = "HP: " + std::to_string(infantry_enemy->getHealth());
-		renderer->renderText(health, 900, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string squadsize = "Squad: " + std::to_string(infantry_enemy->getSquadSize());
-		renderer->renderText(squadsize, 900,650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string attack = "Attack: " + std::to_string(infantry_enemy->getAttack());
-		renderer->renderText(attack, 900, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string armour = "Armour: " + std::to_string(infantry_enemy->getArmour());
-		renderer->renderText(armour, 1000, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string moverange = "Movement: " + std::to_string(infantry_enemy->getMoveRange());
-		renderer->renderText(moverange, 1000, 650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string attackrange = "Attack Range: " + std::to_string(infantry_enemy->getAttackRange());
-		renderer->renderText(attackrange, 1000, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-	}
-	if (tank_select)
-	{
-		renderer->renderSprite(*tank_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*tank_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
-
-		renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND_FRONT);
-		std::string health = "HP: " + std::to_string(tank_enemy->getHealth());
-		renderer->renderText(health, 900, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string squadsize = "Squad: " + std::to_string(tank_enemy->getSquadSize());
-		renderer->renderText(squadsize, 900, 650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string attack = "Attack: " + std::to_string(tank_enemy->getAttack());
-		renderer->renderText(attack, 900, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string armour = "Armour: " + std::to_string(tank_enemy->getArmour());
-		renderer->renderText(armour, 1000, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string moverange = "Movement: " + std::to_string(tank_enemy->getMoveRange());
-		renderer->renderText(moverange, 1000, 650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string attackrange = "Attack Range: " + std::to_string(tank_enemy->getAttackRange());
-		renderer->renderText(attackrange, 1000, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-	}
-
-	if (artillery_select)
-	{
-		renderer->renderSprite(*artillery_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*artillery_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
-
-		renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND_FRONT);
-		std::string health = "HP: " + std::to_string(artillery_enemy->getHealth());
-		renderer->renderText(health, 900, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string squadsize = "Squad: " + std::to_string(artillery_enemy->getSquadSize());
-		renderer->renderText(squadsize, 900, 650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string attack = "Attack: " + std::to_string(artillery_enemy->getAttack());
-		renderer->renderText(attack, 900, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string armour = "Armour: " + std::to_string(artillery_enemy->getArmour());
-		renderer->renderText(armour, 1000, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string moverange = "Movement: " + std::to_string(artillery_enemy->getMoveRange());
-		renderer->renderText(moverange, 1000, 650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string attackrange = "Attack Range: " + std::to_string(artillery_enemy->getAttackRange());
-		renderer->renderText(attackrange, 1000, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-	}
-
-	if (sniper_select)
-	{
-		renderer->renderSprite(*sniper_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*sniper_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
-
-		renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND_FRONT);
-		std::string health = "HP: " + std::to_string(sniper_enemy->getHealth());
-		renderer->renderText(health, 900, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string squadsize = "Squad: " + std::to_string(sniper_enemy->getSquadSize());
-		renderer->renderText(squadsize, 900, 650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string attack = "Attack: " + std::to_string(sniper_enemy->getAttack());
-		renderer->renderText(attack, 900, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string armour = "Armour: " + std::to_string(sniper_enemy->getArmour());
-		renderer->renderText(armour, 1000, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string moverange = "Movement: " + std::to_string(sniper_enemy->getMoveRange());
-		renderer->renderText(moverange, 1000, 650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string attackrange = "Attack Range: " + std::to_string(sniper_enemy->getAttackRange());
-		renderer->renderText(attackrange, 1000, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-	}
-
-	if (infantry2_select)
-	{
-		renderer->renderSprite(*infantry_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*infantry_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
-	}
-	if (tank2_select)
-	{
-		renderer->renderSprite(*tank_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*tank_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
-	}
-	if (artillery2_select)
-	{
-		renderer->renderSprite(*artillery_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*artillery_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
-	}
-	if (sniper2_select)
-	{
-		renderer->renderSprite(*sniper_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*sniper_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
-	}
-
-	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-
+	unitsRender(renderer);
+	chatRender(renderer);
+	unitSelectionRender(renderer);
 }
-
 
 void GameScene::clickHandler(const ASGE::SharedEventData data)
 {
@@ -470,8 +304,6 @@ void GameScene::setSelected(int xpos, int ypos)
 	}
 }
 
-
-
 void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logic for snapping to grid
 {
 	// floor() and ceiling() so x snaps every 120, Y snaps every 120 so divide current number by 120 round it up or down depending on
@@ -535,6 +367,37 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logi
 
 }
 
+void GameScene::unitsUpdate(const ASGE::GameTime & ms)
+{
+	infantry_enemy->update(ms);
+	tank_enemy->update(ms);
+	artillery_enemy->update(ms);
+	sniper_enemy->update(ms);
+
+	infantry_ally->update(ms);
+	tank_ally->update(ms);
+	artillery_ally->update(ms);
+	sniper_ally->update(ms);
+}
+
+void GameScene::chatUpdate(const ASGE::GameTime & ms)
+{
+	if (chat_component.recieved_queue.size())
+	{
+		if (chat_timer > msg_duration)
+		{
+			std::lock_guard<std::mutex> lock(chat_component.recieved_mtx);
+			chat_component.recieved_queue.pop();
+			chat_timer = 0;
+		}
+
+		else
+		{
+			chat_timer += ms.delta_time.count() / 1000;
+		}
+	}
+}
+
 void GameScene::unitInfoBox(ASGE::Renderer* renderer, Unit * unit_info)
 {
 	renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND_FRONT);
@@ -543,13 +406,120 @@ void GameScene::unitInfoBox(ASGE::Renderer* renderer, Unit * unit_info)
 	std::string squadsize = "Squad: " + std::to_string(unit_info->getSquadSize());
 	renderer->renderText(squadsize, 900, 650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
 	std::string attack = "Attack: " + std::to_string(unit_info->getAttack());
-	renderer->renderText(attack, 900, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+	renderer->renderText(attack, 1000, 650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
 	std::string armour = "Armour: " + std::to_string(unit_info->getArmour());
 	renderer->renderText(armour, 1000, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-	std::string moverange = "Movement: " + std::to_string(unit_info->getMoveRange());
-	renderer->renderText(moverange, 1000, 650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-	std::string attackrange = "Attack Range: " + std::to_string(unit_info->getAttackRange());
-	renderer->renderText(attackrange, 1000, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+	std::string action = "AP: " + std::to_string(unit_info->getActionPoints());
+	renderer->renderText(action, 975, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+}
+
+void GameScene::unitSelectionRender(ASGE::Renderer * renderer)
+{
+	if (infantry_select)
+	{
+		renderer->renderSprite(*infantry_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*infantry_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, infantry_enemy.get());
+	}
+	if (tank_select)
+	{
+		renderer->renderSprite(*tank_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*tank_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, tank_enemy.get());
+	}
+
+	if (artillery_select)
+	{
+		renderer->renderSprite(*artillery_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*artillery_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, artillery_enemy.get());
+
+	}
+
+	if (sniper_select)
+	{
+		renderer->renderSprite(*sniper_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*sniper_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, artillery_enemy.get());
+	}
+
+	if (infantry2_select)
+	{
+		renderer->renderSprite(*infantry_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*infantry_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, infantry_ally.get());
+	}
+	if (tank2_select)
+	{
+		renderer->renderSprite(*tank_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*tank_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, tank_ally.get());
+	}
+	if (artillery2_select)
+	{
+		renderer->renderSprite(*artillery_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*artillery_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, artillery_ally.get());
+	}
+	if (sniper2_select)
+	{
+		renderer->renderSprite(*sniper_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*sniper_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, sniper_ally.get());
+	}
+}
+
+void GameScene::chatRender(ASGE::Renderer * renderer)
+{
+	std::stringstream ss;
+	ss << "> " << chat_str;
+
+	if (chat_component.getUsername() == "")
+	{
+		renderer->renderText("Please enter username:", 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+	}
+
+	else
+	{
+		if (chat_component.isConnected())
+		{
+			std::string str = "Connected as : " + chat_component.getUsername();
+			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+		}
+
+		else
+		{
+			std::string str = "Once you connect your username will be: " + chat_component.getUsername();
+			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+		}
+	}
+
+	renderer->renderText("Latest Message:", 350, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+
+
+	if (chat_component.recieved_queue.size())
+	{
+		std::lock_guard<std::mutex> lock(chat_component.recieved_mtx);
+
+		std::string msg1 = chat_component.recieved_queue.front().getUsername() + ": " + chat_component.recieved_queue.front().getMsg();
+		renderer->renderText(msg1, 350, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+
+	}
+
+	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+}
+
+void GameScene::unitsRender(ASGE::Renderer * renderer)
+{
+	renderer->renderSprite(*infantry_enemy->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*tank_enemy->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*artillery_enemy->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*sniper_enemy->getObjectSprite(), FOREGROUND);
+
+	renderer->renderSprite(*infantry_ally->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*tank_ally->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*artillery_ally->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*sniper_ally->getObjectSprite(), FOREGROUND);
 }
 
 void GameScene::keyHandler(const ASGE::SharedEventData data)
@@ -582,8 +552,6 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 		}
 	}
 }
-
-
 
 void GameScene::gameSceneReset()
 {
