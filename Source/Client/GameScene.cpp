@@ -135,7 +135,7 @@ void GameScene::render(ASGE::Renderer * renderer)
 	std::stringstream ss;
 	ss << "> " << chat_str;
 	renderer->renderSprite(*game_background.get(), BACKGROUND); //background is game board 
-	renderer->renderSprite(*x_button.get(), MIDDLE_GROUND); // sprite attack and sprite movement
+	renderer->renderSprite(*x_button.get(), MIDDLE_GROUND_FRONT); // sprite attack and sprite movement
 
 	renderer->renderSprite(*infantry_enemy->getObjectSprite(), FOREGROUND); //sprites
 	renderer->renderSprite(*tank_enemy->getObjectSprite(), FOREGROUND);
@@ -181,10 +181,10 @@ void GameScene::render(ASGE::Renderer * renderer)
 
 	if (infantry_select)
 	{
-		renderer->renderSprite(*infantry_enemy->getAttackSprite(), MIDDLE_GROUND);
-		renderer->renderSprite(*infantry_enemy->getMoveSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*infantry_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*infantry_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
 
-		renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND);
+		renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND_FRONT);
 		std::string health = "HP: " + std::to_string(infantry_enemy->getHealth());
 		renderer->renderText(health, 900, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
 		std::string squadsize = "Squad: " + std::to_string(infantry_enemy->getSquadSize());
@@ -200,10 +200,10 @@ void GameScene::render(ASGE::Renderer * renderer)
 	}
 	if (tank_select)
 	{
-		renderer->renderSprite(*tank_enemy->getAttackSprite(), MIDDLE_GROUND);
-		renderer->renderSprite(*tank_enemy->getMoveSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*tank_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*tank_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
 
-		renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND);
+		renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND_FRONT);
 		std::string health = "HP: " + std::to_string(tank_enemy->getHealth());
 		renderer->renderText(health, 900, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
 		std::string squadsize = "Squad: " + std::to_string(tank_enemy->getSquadSize());
@@ -220,10 +220,10 @@ void GameScene::render(ASGE::Renderer * renderer)
 
 	if (artillery_select)
 	{
-		renderer->renderSprite(*artillery_enemy->getAttackSprite(), MIDDLE_GROUND);
-		renderer->renderSprite(*artillery_enemy->getMoveSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*artillery_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*artillery_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
 
-		renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND);
+		renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND_FRONT);
 		std::string health = "HP: " + std::to_string(artillery_enemy->getHealth());
 		renderer->renderText(health, 900, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
 		std::string squadsize = "Squad: " + std::to_string(artillery_enemy->getSquadSize());
@@ -240,10 +240,10 @@ void GameScene::render(ASGE::Renderer * renderer)
 
 	if (sniper_select)
 	{
-		renderer->renderSprite(*sniper_enemy->getAttackSprite(), MIDDLE_GROUND);
-		renderer->renderSprite(*sniper_enemy->getMoveSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*sniper_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*sniper_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
 
-		renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND);
+		renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND_FRONT);
 		std::string health = "HP: " + std::to_string(sniper_enemy->getHealth());
 		renderer->renderText(health, 900, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
 		std::string squadsize = "Squad: " + std::to_string(sniper_enemy->getSquadSize());
@@ -260,23 +260,23 @@ void GameScene::render(ASGE::Renderer * renderer)
 
 	if (infantry2_select)
 	{
-		renderer->renderSprite(*infantry_ally->getAttackSprite(), MIDDLE_GROUND);
-		renderer->renderSprite(*infantry_ally->getMoveSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*infantry_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*infantry_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
 	}
 	if (tank2_select)
 	{
-		renderer->renderSprite(*tank_ally->getAttackSprite(), MIDDLE_GROUND);
-		renderer->renderSprite(*tank_ally->getMoveSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*tank_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*tank_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
 	}
 	if (artillery2_select)
 	{
-		renderer->renderSprite(*artillery_ally->getAttackSprite(), MIDDLE_GROUND);
-		renderer->renderSprite(*artillery_ally->getMoveSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*artillery_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*artillery_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
 	}
 	if (sniper2_select)
 	{
-		renderer->renderSprite(*sniper_ally->getAttackSprite(), MIDDLE_GROUND);
-		renderer->renderSprite(*sniper_ally->getMoveSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*sniper_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*sniper_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
 	}
 
 	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
@@ -533,6 +533,23 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logi
 	unit->xPos(new_xpos);
 	unit->yPos(new_ypos);
 
+}
+
+void GameScene::unitInfoBox(ASGE::Renderer* renderer, Unit * unit_info)
+{
+	renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND_FRONT);
+	std::string health = "HP: " + std::to_string(unit_info->getHealth());
+	renderer->renderText(health, 900, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+	std::string squadsize = "Squad: " + std::to_string(unit_info->getSquadSize());
+	renderer->renderText(squadsize, 900, 650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+	std::string attack = "Attack: " + std::to_string(unit_info->getAttack());
+	renderer->renderText(attack, 900, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+	std::string armour = "Armour: " + std::to_string(unit_info->getArmour());
+	renderer->renderText(armour, 1000, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+	std::string moverange = "Movement: " + std::to_string(unit_info->getMoveRange());
+	renderer->renderText(moverange, 1000, 650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+	std::string attackrange = "Attack Range: " + std::to_string(unit_info->getAttackRange());
+	renderer->renderText(attackrange, 1000, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
 }
 
 void GameScene::keyHandler(const ASGE::SharedEventData data)
