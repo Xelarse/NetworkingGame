@@ -54,6 +54,7 @@ private:
 	void setSelected(int xpos, int ypos);
 
 	void gridSnapping(float xpos, float ypos, ASGE::Sprite* unit);
+	void unitInfoBox(ASGE::Renderer* renderer, Unit* unit_info);
 
 
 	float chat_timer = 0;

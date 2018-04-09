@@ -535,6 +535,23 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logi
 
 }
 
+void GameScene::unitInfoBox(ASGE::Renderer* renderer, Unit * unit_info)
+{
+	renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND_FRONT);
+	std::string health = "HP: " + std::to_string(unit_info->getHealth());
+	renderer->renderText(health, 900, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+	std::string squadsize = "Squad: " + std::to_string(unit_info->getSquadSize());
+	renderer->renderText(squadsize, 900, 650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+	std::string attack = "Attack: " + std::to_string(unit_info->getAttack());
+	renderer->renderText(attack, 900, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+	std::string armour = "Armour: " + std::to_string(unit_info->getArmour());
+	renderer->renderText(armour, 1000, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+	std::string moverange = "Movement: " + std::to_string(unit_info->getMoveRange());
+	renderer->renderText(moverange, 1000, 650, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+	std::string attackrange = "Attack Range: " + std::to_string(unit_info->getAttackRange());
+	renderer->renderText(attackrange, 1000, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+}
+
 void GameScene::keyHandler(const ASGE::SharedEventData data)
 {
 	const ASGE::KeyEvent* key_event =
