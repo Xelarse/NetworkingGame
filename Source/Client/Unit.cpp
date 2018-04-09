@@ -143,7 +143,7 @@ void Unit::update(const ASGE::GameTime & ms)
 			object_sprite->yPos(y_pos);
 			move_sprite->xPos(x_pos - 240);
 			move_sprite->yPos(y_pos - 240);
-			attack_sprite->xPos(x_pos - 480);
+			attack_sprite->xPos(x_pos - 120);
 			attack_sprite->yPos(y_pos - 120);
 		}
 		if (unit_name == "Sniper")
