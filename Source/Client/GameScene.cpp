@@ -187,7 +187,7 @@ void GameScene::placeUnitAtClick(int xpos, int ypos)
 
 void GameScene::setSelected(int xpos, int ypos)
 {
-	if (user_ID % 2 == 0)
+	if (chat_component.getUserID() % 2 == 0)
 	{
 		if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite())) //set selected
 		{
@@ -248,7 +248,7 @@ void GameScene::setSelected(int xpos, int ypos)
 	}
 
 
-	if (user_ID %2 != 0)
+	if (chat_component.getUserID() %2 != 0)
 	{
 		if (Collision::mouseOnSprite(xpos, ypos, infantry_ally->getObjectSprite())) //set selected boi
 		{
