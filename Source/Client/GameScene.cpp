@@ -133,9 +133,11 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 				next_scene.store(SceneTransitions::TO_MENU);
 			}
 
+			setSelected(xpos, ypos);
+
 			placeUnitAtClick(xpos, ypos);
 
-			setSelected(xpos, ypos);
+
 		}
 	}
 }
@@ -185,117 +187,124 @@ void GameScene::placeUnitAtClick(int xpos, int ypos)
 
 void GameScene::setSelected(int xpos, int ypos)
 {
-	if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite())) //set selected
+	if (user_ID % 2 == 0)
 	{
-		if (!infantry_select)
+		if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite())) //set selected
 		{
-			infantry_select = true;
-			tank_select = false;
-			artillery_select = false;
-			sniper_select = false;
+			if (!infantry_select)
+			{
+				infantry_select = true;
+				tank_select = false;
+				artillery_select = false;
+				sniper_select = false;
+			}
+			else
+			{
+				infantry_select = false;
+			}
 		}
-		else
+		if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getObjectSprite())) //set selected
 		{
-			infantry_select = false;
+			if (!tank_select)
+			{
+				infantry_select = false;
+				tank_select = true;
+				artillery_select = false;
+				sniper_select = false;
+			}
+			else
+			{
+				tank_select = false;
+			}
 		}
-	}
-	if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getObjectSprite())) //set selected
-	{
-		if (!tank_select)
+		if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getObjectSprite())) //set selected
 		{
-			infantry_select = false;
-			tank_select = true;
-			artillery_select = false;
-			sniper_select = false;
+			if (!sniper_select)
+			{
+				infantry_select = false;
+				tank_select = false;
+				artillery_select = false;
+				sniper_select = true;
+			}
+			else
+			{
+				sniper_select = false;
+			}
 		}
-		else
+		if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getObjectSprite())) //set selected
 		{
-			tank_select = false;
-		}
-	}
-	if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getObjectSprite())) //set selected
-	{
-		if (!sniper_select)
-		{
-			infantry_select = false;
-			tank_select = false;
-			artillery_select = false;
-			sniper_select = true;
-		}
-		else
-		{
-			sniper_select = false;
-		}
-	}
-	if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getObjectSprite())) //set selected
-	{
-		if (!artillery_select)
-		{
-			infantry_select = false;
-			tank_select = false;
-			artillery_select = true;
-			sniper_select = false;
-		}
-		else
-		{
-			artillery_select = false;
+			if (!artillery_select)
+			{
+				infantry_select = false;
+				tank_select = false;
+				artillery_select = true;
+				sniper_select = false;
+			}
+			else
+			{
+				artillery_select = false;
+			}
 		}
 	}
 
-	if (Collision::mouseOnSprite(xpos, ypos, infantry_ally->getObjectSprite())) //set selected boi
+
+	if (user_ID %2 != 0)
 	{
-		if (!infantry2_select)
+		if (Collision::mouseOnSprite(xpos, ypos, infantry_ally->getObjectSprite())) //set selected boi
 		{
-			infantry2_select = true;
-			tank2_select = false;
-			artillery2_select = false;
-			sniper2_select = false;
+			if (!infantry2_select)
+			{
+				infantry2_select = true;
+				tank2_select = false;
+				artillery2_select = false;
+				sniper2_select = false;
+			}
+			else
+			{
+				infantry2_select = false;
+			}
 		}
-		else
+		if (Collision::mouseOnSprite(xpos, ypos, tank_ally->getObjectSprite())) //set selected
 		{
-			infantry2_select = false;
+			if (!tank2_select)
+			{
+				infantry2_select = false;
+				tank2_select = true;
+				artillery2_select = false;
+				sniper2_select = false;
+			}
+			else
+			{
+				tank2_select = false;
+			}
 		}
-	}
-	if (Collision::mouseOnSprite(xpos, ypos, tank_ally->getObjectSprite())) //set selected
-	{
-		if (!tank2_select)
+		if (Collision::mouseOnSprite(xpos, ypos, sniper_ally->getObjectSprite())) //set selected
 		{
-			infantry2_select = false;
-			tank2_select = true;
-			artillery2_select = false;
-			sniper2_select = false;
+			if (!sniper2_select)
+			{
+				infantry2_select = false;
+				tank2_select = false;
+				artillery2_select = false;
+				sniper2_select = true;
+			}
+			else
+			{
+				sniper2_select = false;
+			}
 		}
-		else
+		if (Collision::mouseOnSprite(xpos, ypos, artillery_ally->getObjectSprite())) //set selected
 		{
-			tank2_select = false;
-		}
-	}
-	if (Collision::mouseOnSprite(xpos, ypos, sniper_ally->getObjectSprite())) //set selected
-	{
-		if (!sniper2_select)
-		{
-			infantry2_select = false;
-			tank2_select = false;
-			artillery2_select = false;
-			sniper2_select = true;
-		}
-		else
-		{
-			sniper2_select = false;
-		}
-	}
-	if (Collision::mouseOnSprite(xpos, ypos, artillery_ally->getObjectSprite())) //set selected
-	{
-		if (!artillery2_select)
-		{
-			infantry2_select = false;
-			tank2_select = false;
-			artillery2_select = true;
-			sniper2_select = false;
-		}
-		else
-		{
-			artillery2_select = false;
+			if (!artillery2_select)
+			{
+				infantry2_select = false;
+				tank2_select = false;
+				artillery2_select = true;
+				sniper2_select = false;
+			}
+			else
+			{
+				artillery2_select = false;
+			}
 		}
 	}
 }
