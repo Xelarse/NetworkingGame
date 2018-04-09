@@ -83,10 +83,6 @@ void GameScene::initEnemies()
 	infantry_ally->getMoveSprite()->xPos(1120);
 }
 
-
-
-
-
 void GameScene::update(const ASGE::GameTime & ms)
 {
 	if (next_scene != SceneTransitions::NONE)
