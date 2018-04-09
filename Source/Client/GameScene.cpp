@@ -260,23 +260,23 @@ void GameScene::render(ASGE::Renderer * renderer)
 
 	if (infantry2_select)
 	{
-		renderer->renderSprite(*infantry_enemy->getAttackSprite(), MIDDLE_GROUND);
-		renderer->renderSprite(*infantry_enemy->getMoveSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*infantry_ally->getAttackSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*infantry_ally->getMoveSprite(), MIDDLE_GROUND);
 	}
 	if (tank2_select)
 	{
-		renderer->renderSprite(*tank_enemy->getAttackSprite(), MIDDLE_GROUND);
-		renderer->renderSprite(*tank_enemy->getMoveSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*tank_ally->getAttackSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*tank_ally->getMoveSprite(), MIDDLE_GROUND);
 	}
 	if (artillery2_select)
 	{
-		renderer->renderSprite(*artillery_enemy->getAttackSprite(), MIDDLE_GROUND);
-		renderer->renderSprite(*artillery_enemy->getMoveSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*artillery_ally->getAttackSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*artillery_ally->getMoveSprite(), MIDDLE_GROUND);
 	}
 	if (sniper2_select)
 	{
-		renderer->renderSprite(*sniper_enemy->getAttackSprite(), MIDDLE_GROUND);
-		renderer->renderSprite(*sniper_enemy->getMoveSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*sniper_ally->getAttackSprite(), MIDDLE_GROUND);
+		renderer->renderSprite(*sniper_ally->getMoveSprite(), MIDDLE_GROUND);
 	}
 
 	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
