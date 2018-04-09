@@ -18,28 +18,32 @@ bool ServerComponent::initialize()
 
 	on_connected = [&](server_client& client)
 	{
+		bool even_check = false;
+		int id = -1;
+
 		trace("on_client_connected id :" + std::to_string(client._uid));
 
-		bool even_check = false;
+		auto clients = server.get_connected_clients();
 
-		auto clients_connected = server.get_connected_clients();
-
-		for (auto& clientarray : clients_connected)
+		if (clients.size())
 		{
-			if (clientarray->get_id() % 2 == 0)
+			for (auto& conclients : clients)
 			{
-				even_check = true;
+				if (conclients->_uid % 2 == 0) { even_check = true; };
 			}
 		}
 
-		int sent_id = client.get_id();
-
-		if (even_check && sent_id % 2 == 0)
+		if (even_check)
 		{
-			sent_id++;
+			id = 1;
 		}
 
-		CustomPacket initpacket("init", "", std::to_string(sent_id));
+		else
+		{
+			id = 0;
+		}
+
+		CustomPacket initpacket("init", "", std::to_string(id));
 
 		unsigned int packet_length = 0;
 		auto packet_data = initpacket.data(packet_length);
