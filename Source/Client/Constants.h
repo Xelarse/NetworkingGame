@@ -1,5 +1,6 @@
-constexpr float BACKGROUND = 3;
-constexpr float MIDDLE_GROUND = 2;
+constexpr float BACKGROUND = 4;
+constexpr float MIDDLE_GROUND_BACK = 3;
+constexpr float MIDDLE_GROUND_FRONT = 2;
 constexpr float FOREGROUND = 1;
 
 //const std::map<int, std::string> key_translations
