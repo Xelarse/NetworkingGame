@@ -1,6 +1,7 @@
 #include "Unit.h"
 #include "UnitType.h"
 #include <sstream>
+#include <math.h>
 
 Unit::Unit(UnitType& T, ASGE::Renderer* renderer) : type(T)
 {
@@ -228,6 +229,21 @@ ASGE::Sprite * Unit::getAttackSprite()
 ASGE::Sprite * Unit::getMoveSprite()
 {
 	return move_sprite.get();
+}
+
+void Unit::takeDamage(Unit * damage_dealer)
+{
+	////Getting the damage the unit will take
+	float raw_damage = damage_dealer->getAttack() * damage_dealer->getSquadSize(); //Raw damage worked out by inividual unit damage multiplied my squadsize
+	float mitigated_damage = raw_damage * (armour / 100); //Gets the mitigated damage by taking the raw damage and finding how much its reduced by
+	int damage_taken = raw_damage - floor(mitigated_damage); //Total damage taken taken is the raw damage minus the damage that was mitigated
+
+	////Working out remaining hp and how much squad is lost
+	int squad_damage = floor(damage_taken / health);
+	int health_damage = damage_taken % health;
+
+	health -= health_damage;
+	squad_size -= squad_damage;
 }
 
 int Unit::getHealth() const
