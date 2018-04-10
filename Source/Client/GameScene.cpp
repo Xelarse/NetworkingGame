@@ -72,33 +72,44 @@ void GameScene::initUnits()
 
 	UnitType::load();
 	sniper_enemy.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
+	sniper_enemy->setRefName("sniper_enemy");
+
 	tank_enemy.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
+	tank_enemy->setRefName("tank_enemy");
+
 	artillery_enemy.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
+	artillery_enemy->setRefName("artillery_enemy");
+
 	infantry_enemy.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
+	infantry_enemy->setRefName("infantry_enemy");
 
 	sniper_ally.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
 	sniper_ally->setSide(false);
 	sniper_ally->getObjectSprite()->xPos(1120);
 	sniper_ally->getAttackSprite()->xPos(1120);
 	sniper_ally->getMoveSprite()->xPos(1120);
+	sniper_ally->setRefName("sniper_ally");
 
 	tank_ally.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
 	tank_ally->setSide(false);
 	tank_ally->getObjectSprite()->xPos(1120);
 	tank_ally->getAttackSprite()->xPos(1120);
 	tank_ally->getMoveSprite()->xPos(1120);
+	tank_ally->setRefName("tank_ally");
 
 	artillery_ally.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
 	artillery_ally->setSide(false);
 	artillery_ally->getObjectSprite()->xPos(1120);
 	artillery_ally->getAttackSprite()->xPos(1120);
 	artillery_ally->getMoveSprite()->xPos(1120);
+	artillery_ally->setRefName("artillery_ally");
 
 	infantry_ally.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
 	infantry_ally->setSide(false);
 	infantry_ally->getObjectSprite()->xPos(1120);
 	infantry_ally->getAttackSprite()->xPos(1120);
 	infantry_ally->getMoveSprite()->xPos(1120);
+	infantry_ally->setRefName("infantry_ally");
 	
 
 	units_vec.push_back(std::move(infantry_enemy));
