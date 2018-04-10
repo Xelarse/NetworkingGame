@@ -37,6 +37,8 @@ void Unit::init(ASGE::Renderer * renderer)
 	object_sprite->width(117);
 	object_sprite->height(117);
 
+	max_action_points = action_points;
+
 	if (left)
 	{
 		if (unit_name == "Infantry")
@@ -222,6 +224,11 @@ ASGE::Sprite * Unit::getMoveSprite()
 	return move_sprite.get();
 }
 
+ASGE::Sprite * Unit::getObjectSprite()
+{
+	return object_sprite.get();
+}
+
 void Unit::takeDamage(Unit * damage_dealer)
 {
 	////Getting the damage the unit will take
@@ -257,10 +264,19 @@ int Unit::getMoveRange() const
 	return move_range;
 }
 
-
 void Unit::setActionPoints(int action_point)
 {
 	action_points = action_point;
+}
+
+void Unit::reduceActionPoints(int reduction)
+{
+	action_points -= reduction;
+}
+
+void Unit::resetActionPoints()
+{
+	action_points = max_action_points;
 }
 
 int Unit::getAttackRange() const
@@ -271,6 +287,11 @@ int Unit::getAttackRange() const
 int Unit::getActionPoints() const
 {
 	return action_points;
+}
+
+int Unit::getMaxActionPoints() const
+{
+	return max_action_points;
 }
 
 void Unit::setXpos(int xPos)

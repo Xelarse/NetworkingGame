@@ -20,11 +20,14 @@ public:
 	int getMoveRange() const;
 	int getAttackRange() const;
 	int getActionPoints() const;
+	int getMaxActionPoints() const;
 
 	void setXpos(int xPos);
 	void setYpos(int xPos);
 	void setSide(bool left);
 	void setActionPoints(int action_point);
+	void reduceActionPoints(int reduction);
+	void resetActionPoints();
 
 	std::string getUnitName() const;
 
@@ -39,6 +42,7 @@ public:
 
 	ASGE::Sprite* getAttackSprite();
 	ASGE::Sprite* getMoveSprite();
+	ASGE::Sprite* getObjectSprite();
 
 	//TODO add a take damage function that takes two units as parameters that works out the damage calc
 	void takeDamage(Unit* damage_dealer);
@@ -55,6 +59,8 @@ private:
 	int move_range = 0;
 	int attack_range = 0;
 	int action_points = 0;
+
+	int max_action_points = 0;
 
 	bool left = true;
 
