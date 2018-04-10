@@ -34,6 +34,10 @@ public:
 	std::queue<CustomPacket> sending_queue;
 	std::mutex sending_mtx;
 
+	std::queue<CustomPacket> unit_update_queue;
+	std::mutex unit_update_mtx;
+
+
 private:
 	std::atomic<bool> kill_thread = false;
 

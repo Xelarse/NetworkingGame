@@ -62,12 +62,19 @@ void ClientComponent::on_data(const enet_uint8* data, size_t data_size)
 
 	if (msg.getType() == "chat")
 	{
+		std::lock_guard<std::mutex> lock(recieved_mtx);
 		recieved_queue.push(std::move(msg));
 	}
 
 	else if (msg.getType() == "init")
 	{
 		user_ID = std::stoi(msg.getMsg());
+	}
+
+	else if (msg.getType() == "unit")
+	{
+		std::lock_guard<std::mutex> lock(unit_update_mtx);
+		unit_update_queue.push(std::move(msg));
 	}
 }
 
