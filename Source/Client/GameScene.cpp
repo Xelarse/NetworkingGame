@@ -157,6 +157,8 @@ void GameScene::update(const ASGE::GameTime & ms)
 
 	chatUpdate(ms);
 	unitsUpdate(ms);
+
+	// if the turn currently in play is not mine then call unitnetworkupdate;
 }
 void GameScene::unitsUpdate(const ASGE::GameTime & ms)
 {
@@ -190,6 +192,37 @@ void GameScene::chatUpdate(const ASGE::GameTime & ms)
 		{
 			chat_timer += ms.delta_time.count() / 1000;
 		}
+	}
+}
+
+void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
+{
+	while (chat_component.unit_update_queue.size())
+	{
+		std::lock_guard<std::mutex> lock(chat_component.unit_update_mtx);
+
+		auto front_unit = chat_component.unit_update_queue.front();
+
+		std::string name = "";
+		int x_pos = 0;
+		int y_pos = 0;
+		int squad_size = 0;
+		int unit_hp = 0;
+
+		front_unit.unitDataDeciper(name, x_pos, y_pos, squad_size, unit_hp);
+
+		for (auto& unit : units_vec)
+		{
+			if (name == unit->getRefName())
+			{
+				unit->getObjectSprite()->xPos(x_pos);
+				unit->getObjectSprite()->yPos(y_pos);
+
+				unit->setSquadSize(squad_size);
+				unit->setHP(unit_hp);
+			}
+		}
+
 	}
 }
 

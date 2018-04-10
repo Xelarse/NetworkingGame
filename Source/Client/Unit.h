@@ -25,6 +25,8 @@ public:
 	void setXpos(int xPos);
 	void setYpos(int xPos);
 	void setSide(bool left);
+	void setSquadSize(int size);
+	void setHP(int hp);
 	void setActionPoints(int action_point);
 	void reduceActionPoints(int reduction);
 	void resetActionPoints();

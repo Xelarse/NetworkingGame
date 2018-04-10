@@ -309,6 +309,16 @@ void Unit::setSide(bool left_side)
 	left = left_side;
 }
 
+void Unit::setSquadSize(int size)
+{
+	squad_size = size;
+}
+
+void Unit::setHP(int hp)
+{
+	health = hp;
+}
+
 std::string Unit::getUnitName() const
 {
 	return unit_name;
