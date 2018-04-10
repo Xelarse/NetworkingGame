@@ -715,6 +715,11 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 				chat_str.clear();
 			}
 
+			else if (key == ASGE::KEYS::KEY_ESCAPE)
+			{
+				next_scene.store(SceneTransitions::TO_MENU);
+			}
+
 			else
 			{
 				chat_str += key;
