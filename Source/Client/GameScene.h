@@ -101,17 +101,17 @@ private:
 
 
 	//team 1
-	std::unique_ptr<Unit> infantry_enemy = nullptr;
-	std::unique_ptr<Unit> artillery_enemy = nullptr;
-	std::unique_ptr<Unit> sniper_enemy = nullptr;
-	std::unique_ptr<Unit> tank_enemy = nullptr;
+	Unit* infantry_enemy_ptr = nullptr;
+	Unit* artillery_enemy_ptr = nullptr;
+	Unit* sniper_enemy_ptr = nullptr;
+	Unit* tank_enemy_ptr = nullptr;
 	std::unique_ptr<ASGE::Sprite> UIbox;
 
 	//team 2
-	std::unique_ptr<Unit> infantry_ally = nullptr;
-	std::unique_ptr<Unit> artillery_ally = nullptr;
-	std::unique_ptr<Unit> sniper_ally = nullptr;
-	std::unique_ptr<Unit> tank_ally = nullptr;
+	Unit* infantry_ally_ptr = nullptr;
+	Unit* artillery_ally_ptr = nullptr;
+	Unit* sniper_ally_ptr = nullptr;
+	Unit* tank_ally_ptr = nullptr;
 
 
 
