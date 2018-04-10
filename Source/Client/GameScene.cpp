@@ -10,7 +10,6 @@ GameScene::GameScene(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 
 	init(main_renderer, main_inputs, host_manager);
 }
-
 GameScene::~GameScene()
 {
 	chat_component.deinitialize();
@@ -36,12 +35,12 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	game_background->xPos(0);
 	game_background->yPos(0);
 
-	x_button = renderer->createUniqueSprite();
-	x_button->loadTexture("..\\..\\Resources\\Buttons\\XButton.png");
-	x_button->xPos(1170);
-	x_button->yPos(610);
-	x_button->height(100);
-	x_button->width(100);
+	next_turn_button = renderer->createUniqueSprite();
+	next_turn_button->loadTexture("..\\..\\Resources\\Buttons\\XButton.png");
+	next_turn_button->xPos(1170);
+	next_turn_button->yPos(610);
+	next_turn_button->height(100);
+	next_turn_button->width(100);
 
 	UIbox = renderer->createUniqueSprite();
 	UIbox->loadTexture("..\\..\\Resources\\Buttons\\UIbox.png");
@@ -50,10 +49,16 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	UIbox->height(300);
 	UIbox->width(300);
 
-	initEnemies();
-}
+	turn_box = renderer->createUniqueSprite();
+	turn_box->loadTexture("..\\..\\Resources\\Sprites\\TurnTrapezoid.png");
+	turn_box->xPos(565);
+	turn_box->yPos(1);
+	turn_box->height(50);
+	turn_box->width(150);
 
-void GameScene::initEnemies()
+	initUnits();
+}
+void GameScene::initUnits()
 {
 	UnitType::load();
 	sniper_enemy.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
@@ -66,21 +71,35 @@ void GameScene::initEnemies()
 	sniper_ally->getObjectSprite()->xPos(1120);
 	sniper_ally->getAttackSprite()->xPos(1120);
 	sniper_ally->getMoveSprite()->xPos(1120);
+
 	tank_ally.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
 	tank_ally->setSide(false);
 	tank_ally->getObjectSprite()->xPos(1120);
 	tank_ally->getAttackSprite()->xPos(1120);
 	tank_ally->getMoveSprite()->xPos(1120);
+
 	artillery_ally.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
 	artillery_ally->setSide(false);
 	artillery_ally->getObjectSprite()->xPos(1120);
 	artillery_ally->getAttackSprite()->xPos(1120);
 	artillery_ally->getMoveSprite()->xPos(1120);
+
 	infantry_ally.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
 	infantry_ally->setSide(false);
 	infantry_ally->getObjectSprite()->xPos(1120);
 	infantry_ally->getAttackSprite()->xPos(1120);
 	infantry_ally->getMoveSprite()->xPos(1120);
+
+	units_vec.reserve(8);
+
+	//units_vec.push_back(std::move(infantry_enemy));
+	//units_vec.push_back(std::move(sniper_enemy));
+	//units_vec.push_back(std::move(artillery_enemy));
+	//units_vec.push_back(std::move(tank_enemy));
+	//units_vec.push_back(std::move(infantry_ally));
+	//units_vec.push_back(std::move(sniper_ally));
+	//units_vec.push_back(std::move(artillery_ally));
+	//units_vec.push_back(std::move(tank_ally));
 }
 
 void GameScene::update(const ASGE::GameTime & ms)
@@ -103,15 +122,167 @@ void GameScene::update(const ASGE::GameTime & ms)
 	chatUpdate(ms);
 	unitsUpdate(ms);
 }
+void GameScene::unitsUpdate(const ASGE::GameTime & ms)
+{
+	infantry_enemy->update(ms);
+	tank_enemy->update(ms);
+	artillery_enemy->update(ms);
+	sniper_enemy->update(ms);
+
+	infantry_ally->update(ms);
+	tank_ally->update(ms);
+	artillery_ally->update(ms);
+	sniper_ally->update(ms);
+
+	//for (auto& unit : units_vec)
+	//{
+	//	unit->update(ms);
+	//}
+}
+void GameScene::chatUpdate(const ASGE::GameTime & ms)
+{
+	if (chat_component.recieved_queue.size())
+	{
+		if (chat_timer > msg_duration)
+		{
+			std::lock_guard<std::mutex> lock(chat_component.recieved_mtx);
+			chat_component.recieved_queue.pop();
+			chat_timer = 0;
+		}
+
+		else
+		{
+			chat_timer += ms.delta_time.count() / 1000;
+		}
+	}
+}
 
 void GameScene::render(ASGE::Renderer * renderer)
 {
 	renderer->renderSprite(*game_background.get(), BACKGROUND); //background is game board 
-	renderer->renderSprite(*x_button.get(), MIDDLE_GROUND_FRONT); // sprite attack and sprite movement
+	renderer->renderSprite(*next_turn_button.get(), MIDDLE_GROUND_FRONT); // next turn button
+	renderer->renderSprite(*turn_box.get(), MIDDLE_GROUND_FRONT); // trapezoid for the turn display
+
+	std::string player_txt = "Player: " + std::to_string(whichTurn()) + "'s";
+	renderer->renderText(player_txt, 590, 25, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+
+	std::string turn_txt = "Turn";
+	renderer->renderText(turn_txt, 616, 45, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
 
 	unitsRender(renderer);
 	chatRender(renderer);
 	unitSelectionRender(renderer);
+}
+void GameScene::chatRender(ASGE::Renderer * renderer)
+{
+	std::stringstream ss;
+	ss << "> " << chat_str;
+
+	if (chat_component.getUsername() == "")
+	{
+		renderer->renderText("Please enter username:", 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+	}
+
+	else
+	{
+		if (chat_component.isConnected())
+		{
+			std::string str = "Connected as : " + chat_component.getUsername();
+			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+		}
+
+		else
+		{
+			std::string str = "Once you connect your username will be: " + chat_component.getUsername();
+			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+		}
+	}
+
+	renderer->renderText("Latest Message:", 350, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+
+
+	if (chat_component.recieved_queue.size())
+	{
+		std::lock_guard<std::mutex> lock(chat_component.recieved_mtx);
+
+		std::string msg1 = chat_component.recieved_queue.front().getUsername() + ": " + chat_component.recieved_queue.front().getMsg();
+		renderer->renderText(msg1, 350, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+
+	}
+
+	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+}
+void GameScene::unitsRender(ASGE::Renderer * renderer)
+{
+	renderer->renderSprite(*infantry_enemy->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*tank_enemy->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*artillery_enemy->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*sniper_enemy->getObjectSprite(), FOREGROUND);
+
+	renderer->renderSprite(*infantry_ally->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*tank_ally->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*artillery_ally->getObjectSprite(), FOREGROUND);
+	renderer->renderSprite(*sniper_ally->getObjectSprite(), FOREGROUND);
+
+	//for (auto& unit : units_vec)
+	//{
+	//	renderer->renderSprite(*unit->getObjectSprite(), FOREGROUND);
+	//}
+}
+void GameScene::unitSelectionRender(ASGE::Renderer * renderer)
+{
+	if (infantry_select)
+	{
+		renderer->renderSprite(*infantry_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*infantry_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, infantry_enemy.get());
+	}
+	if (tank_select)
+	{
+		renderer->renderSprite(*tank_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*tank_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, tank_enemy.get());
+	}
+
+	if (artillery_select)
+	{
+		renderer->renderSprite(*artillery_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*artillery_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, artillery_enemy.get());
+
+	}
+
+	if (sniper_select)
+	{
+		renderer->renderSprite(*sniper_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*sniper_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, sniper_enemy.get());
+	}
+
+	if (infantry2_select)
+	{
+		renderer->renderSprite(*infantry_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*infantry_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, infantry_ally.get());
+	}
+	if (tank2_select)
+	{
+		renderer->renderSprite(*tank_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*tank_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, tank_ally.get());
+	}
+	if (artillery2_select)
+	{
+		renderer->renderSprite(*artillery_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*artillery_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, artillery_ally.get());
+	}
+	if (sniper2_select)
+	{
+		renderer->renderSprite(*sniper_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*sniper_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
+		unitInfoBox(renderer, sniper_ally.get());
+	}
 }
 
 void GameScene::clickHandler(const ASGE::SharedEventData data)
@@ -130,61 +301,110 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 		{
 			nextTurnPressed(xpos, ypos);
 
-			setSelected(xpos, ypos);
-
 			placeUnitAtClick(xpos, ypos);
 
-
+			setSelected(xpos, ypos);
 		}
 	}
 }
-
-void GameScene::placeUnitAtClick(int xpos, int ypos)
+void GameScene::placeUnitAtClick(int xpos, int ypos) // also handles ap reduction
 {
 	if (infantry_select || tank_select || sniper_select || artillery_select) //if unit is selected
 	{
-		if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getMoveSprite()) && infantry_select)
+		bool sprite_on_target = false;
+
+		for (auto& Unit : units_vec)
 		{
-			gridSnapping(xpos, ypos, infantry_enemy->getObjectSprite()); // place unit in clicked location
+			if (Collision::mouseOnSprite(xpos, ypos, Unit->getObjectSprite()))
+			{
+				sprite_on_target = true;
+				break;
+			}
 		}
-		else if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getMoveSprite()) && artillery_select)
+		if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getMoveSprite()) && infantry_select && infantry_enemy->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
 		{
-			gridSnapping(xpos, ypos, artillery_enemy->getObjectSprite()); // place unit in clicked location
+			if (!sprite_on_target)
+			{
+				gridSnapping(xpos, ypos, infantry_enemy->getObjectSprite()); // place unit in clicked location
+				infantry_enemy->reduceActionPoints(1);
+			}
 		}
-		else if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getMoveSprite()) && tank_select)
+		else if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy->getMoveSprite()) && artillery_select && artillery_enemy->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
 		{
-			gridSnapping(xpos, ypos, tank_enemy->getObjectSprite()); // place unit in clicked location
+			if (!sprite_on_target)
+			{
+				gridSnapping(xpos, ypos, artillery_enemy->getObjectSprite()); // place unit in clicked location
+				artillery_enemy->reduceActionPoints(1);
+			}
 		}
-		else if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getMoveSprite()) && sniper_select)
+		else if (Collision::mouseOnSprite(xpos, ypos, tank_enemy->getMoveSprite()) && tank_select && tank_enemy->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
 		{
-			gridSnapping(xpos, ypos, sniper_enemy->getObjectSprite()); // place unit in clicked location
+			if (!sprite_on_target)
+			{
+				gridSnapping(xpos, ypos, tank_enemy->getObjectSprite()); // place unit in clicked location
+				tank_enemy->reduceActionPoints(1);
+			}
 		}
+		else if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy->getMoveSprite()) && sniper_select && sniper_enemy->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
+		{
+			if (!sprite_on_target)
+			{
+				gridSnapping(xpos, ypos, sniper_enemy->getObjectSprite()); // place unit in clicked location
+				sniper_enemy->reduceActionPoints(1);
+			}
+		}
+
 	}
 
 	if (infantry2_select || tank2_select || sniper2_select || artillery2_select) //if unit is selected
 	{
-		if (Collision::mouseOnSprite(xpos, ypos, infantry_ally->getMoveSprite()) && infantry2_select)
+		bool sprite_on_target = false;
+
+		for (auto& Unit : units_vec)
 		{
-			gridSnapping(xpos, ypos, infantry_ally->getObjectSprite()); // place unit in clicked location
+			if (Collision::mouseOnSprite(xpos, ypos, Unit->getObjectSprite()))
+			{
+				sprite_on_target = true;
+				break;
+			}
 		}
-		else if (Collision::mouseOnSprite(xpos, ypos, artillery_ally->getMoveSprite()) && artillery2_select)
+		if (Collision::mouseOnSprite(xpos, ypos, infantry_ally->getMoveSprite()) && infantry2_select && infantry_ally->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
 		{
-			gridSnapping(xpos, ypos, artillery_ally->getObjectSprite()); // place unit in clicked location
+			if (!sprite_on_target)
+			{
+				gridSnapping(xpos, ypos, infantry_ally->getObjectSprite()); // place unit in clicked location
+				infantry_ally->reduceActionPoints(1);
+			}
 		}
-		else if (Collision::mouseOnSprite(xpos, ypos, tank_ally->getMoveSprite()) && tank2_select)
+		else if (Collision::mouseOnSprite(xpos, ypos, artillery_ally->getMoveSprite()) && artillery2_select && artillery_ally->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
 		{
-			gridSnapping(xpos, ypos, tank_ally->getObjectSprite()); // place unit in clicked location
+			if (!sprite_on_target)
+			{
+				gridSnapping(xpos, ypos, artillery_ally->getObjectSprite()); // place unit in clicked location
+				artillery_ally->reduceActionPoints(1);
+			}
 		}
-		else if (Collision::mouseOnSprite(xpos, ypos, sniper_ally->getMoveSprite()) && sniper2_select)
+		else if (Collision::mouseOnSprite(xpos, ypos, tank_ally->getMoveSprite()) && tank2_select && tank_ally->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
 		{
-			gridSnapping(xpos, ypos, sniper_ally->getObjectSprite()); // place unit in clicked location
+			if (!sprite_on_target)
+			{
+				gridSnapping(xpos, ypos, tank_ally->getObjectSprite()); // place unit in clicked location
+				tank_ally->reduceActionPoints(1);
+			}
+		}
+		else if (Collision::mouseOnSprite(xpos, ypos, sniper_ally->getMoveSprite()) && sniper2_select && sniper_ally->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
+		{
+			if (!sprite_on_target)
+			{
+				gridSnapping(xpos, ypos, sniper_ally->getObjectSprite()); // place unit in clicked location
+				sniper_ally->reduceActionPoints(1);
+			}
 		}
 	}
 }
-
 void GameScene::setSelected(int xpos, int ypos)
 {
-	if (user_ID % 2 == 0 && player_turn == PlayerTurn::PLAYER1)
+	if (/*chat_component.getUserID()*/ user_ID % 2 == 0 && player_turn == PlayerTurn::PLAYER1)
 	{
 		if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy->getObjectSprite())) //set selected
 		{
@@ -244,8 +464,7 @@ void GameScene::setSelected(int xpos, int ypos)
 		}
 	}
 
-
-	if (user_ID %2 != 0 && player_turn == PlayerTurn::PLAYER2)
+	if (/*chat_component.getUserID()*/ user_ID %2 != 0 && player_turn == PlayerTurn::PLAYER2)
 	{
 		if (Collision::mouseOnSprite(xpos, ypos, infantry_ally->getObjectSprite())) //set selected boi
 		{
@@ -305,7 +524,6 @@ void GameScene::setSelected(int xpos, int ypos)
 		}
 	}
 }
-
 void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logic for snapping to grid
 {
 	// floor() and ceiling() so x snaps every 120, Y snaps every 120 so divide current number by 120 round it up or down depending on
@@ -326,12 +544,12 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logi
 	current_xpos = floor(current_xpos); //rounding down to get an exact grid value
 	current_xpos *= 120; //remultiplying back to an actual screen value
 	
-	if (current_xpos <= 0) //If it rounded down to 0
+	if (current_xpos < 0 && isAUnitSelected()) //If it rounded down to 0
 	{
 		new_xpos = 40; // Just the standard grid offset
 	}
 
-	else if (over_x_max)
+	else if (over_x_max && isAUnitSelected())
 	{
 		new_xpos = 1120;
 	}
@@ -348,12 +566,12 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logi
 	current_ypos = floor(current_ypos);
 	current_ypos *= 120;
 
-	if (current_ypos <= 0)
+	if (current_ypos < 0 && isAUnitSelected())
 	{
 		new_ypos = 3;
 	}
 
-	else if (over_y_max)
+	else if (over_y_max && isAUnitSelected())
 	{
 		new_ypos = 483;
 	}
@@ -371,49 +589,66 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logi
 
 void GameScene::nextTurnPressed(int xpos, int ypos)
 {
-	if (Collision::mouseOnSprite(xpos, ypos, x_button.get())) //if clicked on the exit button
+	if (Collision::mouseOnSprite(xpos, ypos, next_turn_button.get())) //if clicked on the exit button
 	{
 		//next_scene.store(SceneTransitions::TO_MENU);
 
 		if (player_turn == PlayerTurn::PLAYER1)
 		{
-			player_turn = PlayerTurn::PLAYER2;
+			player_turn.store(PlayerTurn::PLAYER2);
 		}
 		else if (player_turn == PlayerTurn::PLAYER2)
 		{
-			player_turn = PlayerTurn::PLAYER1;
+			player_turn.store(PlayerTurn::PLAYER1);
 		}
+
+		deselectAllUnits();
+
+		infantry_ally->resetActionPoints();
+		sniper_ally->resetActionPoints();
+		tank_ally->resetActionPoints();
+		artillery_ally->resetActionPoints();
+
+		infantry_enemy->resetActionPoints();
+		sniper_enemy->resetActionPoints();
+		tank_enemy->resetActionPoints();
+		artillery_enemy->resetActionPoints();
 	}
 }
 
-void GameScene::unitsUpdate(const ASGE::GameTime & ms)
+void GameScene::deselectAllUnits()
 {
-	infantry_enemy->update(ms);
-	tank_enemy->update(ms);
-	artillery_enemy->update(ms);
-	sniper_enemy->update(ms);
-
-	infantry_ally->update(ms);
-	tank_ally->update(ms);
-	artillery_ally->update(ms);
-	sniper_ally->update(ms);
+	infantry2_select = false;
+	tank2_select = false;
+	artillery2_select = false;
+	sniper2_select = false;
+	infantry_select = false;
+	tank_select = false;
+	artillery_select = false;
+	sniper_select = false;
 }
-
-void GameScene::chatUpdate(const ASGE::GameTime & ms)
+bool GameScene::isAUnitSelected()
 {
-	if (chat_component.recieved_queue.size())
+	if (infantry2_select == false || tank2_select == false || artillery2_select == false || sniper2_select == false ||
+		infantry_select == false || tank_select == false || artillery_select == false || sniper_select == false)
 	{
-		if (chat_timer > msg_duration)
-		{
-			std::lock_guard<std::mutex> lock(chat_component.recieved_mtx);
-			chat_component.recieved_queue.pop();
-			chat_timer = 0;
-		}
+		return false;
+	}
+	else
+	{
+		return true;
+	}
 
-		else
-		{
-			chat_timer += ms.delta_time.count() / 1000;
-		}
+}
+int GameScene::whichTurn()
+{
+	if (player_turn == PlayerTurn::PLAYER1)
+	{
+		return 1;
+	}
+	if (player_turn == PlayerTurn::PLAYER2)
+	{
+		return 2;
 	}
 }
 
@@ -430,115 +665,6 @@ void GameScene::unitInfoBox(ASGE::Renderer* renderer, Unit * unit_info)
 	renderer->renderText(armour, 1000, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
 	std::string action = "AP: " + std::to_string(unit_info->getActionPoints());
 	renderer->renderText(action, 975, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-}
-
-void GameScene::unitSelectionRender(ASGE::Renderer * renderer)
-{
-	if (infantry_select)
-	{
-		renderer->renderSprite(*infantry_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*infantry_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, infantry_enemy.get());
-	}
-	if (tank_select)
-	{
-		renderer->renderSprite(*tank_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*tank_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, tank_enemy.get());
-	}
-
-	if (artillery_select)
-	{
-		renderer->renderSprite(*artillery_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*artillery_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, artillery_enemy.get());
-
-	}
-
-	if (sniper_select)
-	{
-		renderer->renderSprite(*sniper_enemy->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*sniper_enemy->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, artillery_enemy.get());
-	}
-
-	if (infantry2_select)
-	{
-		renderer->renderSprite(*infantry_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*infantry_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, infantry_ally.get());
-	}
-	if (tank2_select)
-	{
-		renderer->renderSprite(*tank_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*tank_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, tank_ally.get());
-	}
-	if (artillery2_select)
-	{
-		renderer->renderSprite(*artillery_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*artillery_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, artillery_ally.get());
-	}
-	if (sniper2_select)
-	{
-		renderer->renderSprite(*sniper_ally->getAttackSprite(), MIDDLE_GROUND_FRONT);
-		renderer->renderSprite(*sniper_ally->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, sniper_ally.get());
-	}
-}
-
-void GameScene::chatRender(ASGE::Renderer * renderer)
-{
-	std::stringstream ss;
-	ss << "> " << chat_str;
-
-	if (chat_component.getUsername() == "")
-	{
-		renderer->renderText("Please enter username:", 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-	}
-
-	else
-	{
-		if (chat_component.isConnected())
-		{
-			std::string str = "Connected as : " + chat_component.getUsername();
-			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-		}
-
-		else
-		{
-			std::string str = "Once you connect your username will be: " + chat_component.getUsername();
-			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-		}
-	}
-
-	renderer->renderText("Latest Message:", 350, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-
-
-	if (chat_component.recieved_queue.size())
-	{
-		std::lock_guard<std::mutex> lock(chat_component.recieved_mtx);
-
-		std::string msg1 = chat_component.recieved_queue.front().getUsername() + ": " + chat_component.recieved_queue.front().getMsg();
-		renderer->renderText(msg1, 350, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-
-	}
-
-	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-}
-
-void GameScene::unitsRender(ASGE::Renderer * renderer)
-{
-	renderer->renderSprite(*infantry_enemy->getObjectSprite(), FOREGROUND);
-	renderer->renderSprite(*tank_enemy->getObjectSprite(), FOREGROUND);
-	renderer->renderSprite(*artillery_enemy->getObjectSprite(), FOREGROUND);
-	renderer->renderSprite(*sniper_enemy->getObjectSprite(), FOREGROUND);
-
-	renderer->renderSprite(*infantry_ally->getObjectSprite(), FOREGROUND);
-	renderer->renderSprite(*tank_ally->getObjectSprite(), FOREGROUND);
-	renderer->renderSprite(*artillery_ally->getObjectSprite(), FOREGROUND);
-	renderer->renderSprite(*sniper_ally->getObjectSprite(), FOREGROUND);
 }
 
 void GameScene::keyHandler(const ASGE::SharedEventData data)

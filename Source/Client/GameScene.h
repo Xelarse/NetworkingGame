@@ -60,14 +60,20 @@ private:
 
 	std::atomic<int> user_ID;
 
-	void initEnemies();
+	void initUnits();
+	
 	void placeUnitAtClick(int xpos, int ypos);
 	void setSelected(int xpos, int ypos);
 	void gridSnapping(float xpos, float ypos, ASGE::Sprite* unit);
 	void nextTurnPressed(int xpos, int ypos);
+	void deselectAllUnits();
+
+	bool isAUnitSelected();
 
 	void unitsUpdate(const ASGE::GameTime& ms);
 	void chatUpdate(const ASGE::GameTime& ms);
+
+	int whichTurn();
 
 	void unitInfoBox(ASGE::Renderer* renderer, Unit* unit_info);
 	void unitSelectionRender(ASGE::Renderer* renderer);
@@ -79,6 +85,7 @@ private:
 	float msg_duration = 5;
 	
 	void gameSceneReset();
+	void processString(std::string str);
 
 	std::thread chat_thread;
 
@@ -89,7 +96,8 @@ private:
 	GameScene();
 
 	std::unique_ptr<ASGE::Sprite> game_background;
-	std::unique_ptr<ASGE::Sprite> x_button;
+	std::unique_ptr<ASGE::Sprite> next_turn_button;
+	std::unique_ptr<ASGE::Sprite> turn_box;
 
 
 	//team 1
@@ -112,5 +120,7 @@ private:
 
 	std::string chat_str = "";
 	std::mutex chat_str_mutex;
-	void processString(std::string str);
+	std::vector<std::unique_ptr<Unit>> units_vec;
+	
+
 };

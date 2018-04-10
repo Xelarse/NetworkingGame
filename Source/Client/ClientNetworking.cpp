@@ -64,6 +64,11 @@ void ClientComponent::on_data(const enet_uint8* data, size_t data_size)
 	{
 		recieved_queue.push(std::move(msg));
 	}
+
+	else if (msg.getType() == "init")
+	{
+		user_ID = std::stoi(msg.getMsg());
+	}
 }
 
 bool ClientComponent::isConnected() const
