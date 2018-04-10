@@ -46,7 +46,6 @@ public:
 	ASGE::Sprite* getMoveSprite();
 	ASGE::Sprite* getObjectSprite();
 
-	//TODO add a take damage function that takes two units as parameters that works out the damage calc
 	void takeDamage(Unit* damage_dealer);
 
 private:
@@ -65,6 +64,7 @@ private:
 	int max_action_points = 0;
 
 	bool left = true;
+	std::atomic<bool> has_changed = false;
 
 	std::string sprite_name = "";
 	std::string attack_name = "";
