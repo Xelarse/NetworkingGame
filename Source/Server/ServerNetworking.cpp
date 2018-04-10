@@ -29,7 +29,7 @@ bool ServerComponent::initialize()
 		{
 			for (auto& conclients : clients)
 			{
-				if (conclients->_uid % 2 == 0) { even_check = true; };
+				if (conclients->_uid % 2 == 0 && conclients->get_id() != client.get_id()) { even_check = true; };
 			}
 		}
 
@@ -38,7 +38,7 @@ bool ServerComponent::initialize()
 			id = 1;
 		}
 
-		else
+		if (!even_check)
 		{
 			id = 0;
 		}
