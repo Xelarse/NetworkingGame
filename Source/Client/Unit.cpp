@@ -313,3 +313,13 @@ std::string Unit::getUnitName() const
 {
 	return unit_name;
 }
+
+std::string Unit::getRefName() const
+{
+	return ref_name;
+}
+
+void Unit::setRefName(std::string name)
+{
+	ref_name = name;
+}

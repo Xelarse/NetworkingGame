@@ -30,6 +30,8 @@ public:
 	void resetActionPoints();
 
 	std::string getUnitName() const;
+	std::string getRefName() const;
+	void setRefName(std::string name);
 
 	// Inherited via GameObject
 	virtual void init(ASGE::Renderer * renderer) override;
@@ -68,6 +70,7 @@ private:
 	std::string attack_name = "";
 	std::string move_name = "";
 	std::string unit_name = "";
+	std::string ref_name = "";
 
 	std::unique_ptr<ASGE::Sprite> attack_sprite = nullptr;
 	std::unique_ptr<ASGE::Sprite> move_sprite = nullptr;
