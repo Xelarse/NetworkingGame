@@ -710,7 +710,11 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 			}
 		}
 
-		CustomPacket endturn("unit", "", "endturn&0&0&0&0");
+		CustomPacket endturn("unit", "", "endturn&0&0&0&0&");
+
+		chat_component.sending_mtx.lock();
+		chat_component.sending_queue.push(std::move(endturn));
+		chat_component.sending_mtx.unlock();
 
 		if (player_turn == PlayerTurn::PLAYER1)
 		{
