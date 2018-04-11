@@ -140,6 +140,16 @@ void GameScene::initUnits()
 
 void GameScene::update(const ASGE::GameTime & ms)
 {
+	if (chat_component.getUserID() % 2 == 0 && assigned_team == PlayerTurn::NONE)
+	{
+		assigned_team = PlayerTurn::PLAYER1;
+	}
+
+	else if (chat_component.getUserID() % 2 != 0 && assigned_team == PlayerTurn::NONE)
+	{
+		assigned_team = PlayerTurn::PLAYER2;
+	}
+
 	if (next_scene != SceneTransitions::NONE)
 	{
 		switch (next_scene)
@@ -158,20 +168,18 @@ void GameScene::update(const ASGE::GameTime & ms)
 	chatUpdate(ms);
 	unitsUpdate(ms);
 
-	// if the turn currently in play is not mine then call unitnetworkupdate;
+	if (player_turn == PlayerTurn::PLAYER1 && assigned_team == PlayerTurn::PLAYER2)
+	{
+		unitNetworkUpdate(ms);
+	}
+
+	if (player_turn == PlayerTurn::PLAYER2 && assigned_team == PlayerTurn::PLAYER1)
+	{
+		unitNetworkUpdate(ms);
+	}
 }
 void GameScene::unitsUpdate(const ASGE::GameTime & ms)
 {
-	//infantry_enemy_ptr->update(ms);
-	//tank_enemy->update(ms);
-	//artillery_enemy->update(ms);
-	//sniper_enemy->update(ms);
-
-	//infantry_ally->update(ms);
-	//tank_ally->update(ms);
-	//artillery_ally->update(ms);
-	//sniper_ally->update(ms);
-
 	for (auto& unit : units_vec)
 	{
 		unit->update(ms);
@@ -194,7 +202,6 @@ void GameScene::chatUpdate(const ASGE::GameTime & ms)
 		}
 	}
 }
-
 void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 {
 	while (chat_component.unit_update_queue.size())
@@ -211,18 +218,25 @@ void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 
 		front_unit.unitDataDeciper(name, x_pos, y_pos, squad_size, unit_hp);
 
-		for (auto& unit : units_vec)
+		if (name == "endturn")
 		{
-			if (name == unit->getRefName())
-			{
-				unit->getObjectSprite()->xPos(x_pos);
-				unit->getObjectSprite()->yPos(y_pos);
 
-				unit->setSquadSize(squad_size);
-				unit->setHP(unit_hp);
-			}
 		}
 
+		else
+		{
+			for (auto& unit : units_vec)
+			{
+				if (name == unit->getRefName())
+				{
+					unit->getObjectSprite()->xPos(x_pos);
+					unit->getObjectSprite()->yPos(y_pos);
+
+					unit->setSquadSize(squad_size);
+					unit->setHP(unit_hp);
+				}
+			}
+		}
 	}
 }
 
@@ -283,16 +297,6 @@ void GameScene::chatRender(ASGE::Renderer * renderer)
 }
 void GameScene::unitsRender(ASGE::Renderer * renderer)
 {
-	//renderer->renderSprite(*infantry_enemy->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*tank_enemy->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*artillery_enemy->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*sniper_enemy->getObjectSprite(), FOREGROUND);
-
-	//renderer->renderSprite(*infantry_ally->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*tank_ally->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*artillery_ally->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*sniper_ally->getObjectSprite(), FOREGROUND);
-
 	for (auto& unit : units_vec)
 	{
 		renderer->renderSprite(*unit->getObjectSprite(), FOREGROUND);
@@ -668,8 +672,6 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 {
 	if (Collision::mouseOnSprite(xpos, ypos, next_turn_button.get())) //if clicked on the exit button
 	{
-		//next_scene.store(SceneTransitions::TO_MENU);
-
 		if (player_turn == PlayerTurn::PLAYER1)
 		{
 			player_turn.store(PlayerTurn::PLAYER2);
@@ -681,21 +683,32 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 
 		deselectAllUnits();
 
-		//infantry_ally_ptr->resetActionPoints();
-		//sniper_ally_ptr->resetActionPoints();
-		//tank_ally_ptr->resetActionPoints();
-		//artillery_ally_ptr->resetActionPoints();
-
-		//infantry_enemy_ptr->resetActionPoints();
-		//sniper_enemy_ptr->resetActionPoints();
-		//tank_enemy_ptr->resetActionPoints();
-		//artillery_enemy_ptr->resetActionPoints();
-
-
 		for (auto& Unit : units_vec)
 		{
 			Unit->resetActionPoints();
 		}
+
+		for (auto& unit : units_vec)
+		{
+			if (unit->getHasChanged())
+			{
+				std::string data = unit->getRefName() + "&" +
+					std::to_string(unit->getObjectSprite()->xPos()) + "&" +
+					std::to_string(unit->getObjectSprite()->yPos()) + "&" +
+					std::to_string(unit->getSquadSize()) + "&" +
+					std::to_string(unit->getHealth());
+
+				CustomPacket unit_data("unit", "", data);
+
+				chat_component.sending_mtx.lock();
+				chat_component.sending_queue.push(std::move(unit_data));
+				chat_component.sending_mtx.unlock();
+
+				unit->setHasChanged(false);
+			}
+		}
+
+		CustomPacket endturn("unit", "", "endturn&0&0&0&0");
 	}
 }
 
