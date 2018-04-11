@@ -242,9 +242,12 @@ void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 
 					unit->setSquadSize(squad_size);
 					unit->setHP(unit_hp);
+					break;
 				}
 			}
 		}
+
+		chat_component.unit_update_queue.pop();
 	}
 }
 
