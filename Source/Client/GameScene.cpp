@@ -140,12 +140,12 @@ void GameScene::initUnits()
 
 void GameScene::update(const ASGE::GameTime & ms)
 {
-	if (chat_component.getUserID() % 2 == 0 && assigned_team == PlayerTurn::NONE)
+	if (chat_component.getUserID() % 2 == 0 && assigned_team == PlayerTurn::NONE && chat_component.getUserID() != -1)
 	{
 		assigned_team = PlayerTurn::PLAYER1;
 	}
 
-	else if (chat_component.getUserID() % 2 != 0 && assigned_team == PlayerTurn::NONE)
+	else if (chat_component.getUserID() % 2 != 0 && assigned_team == PlayerTurn::NONE && chat_component.getUserID() != -1)
 	{
 		assigned_team = PlayerTurn::PLAYER2;
 	}
@@ -225,7 +225,7 @@ void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 				player_turn = PlayerTurn::PLAYER2;
 			}
 
-			else
+			else if (player_turn == PlayerTurn::PLAYER2)
 			{
 				player_turn = PlayerTurn::PLAYER1;
 			}
