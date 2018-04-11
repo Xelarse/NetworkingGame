@@ -386,6 +386,7 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 			nextTurnPressed(xpos, ypos);
 
 			placeUnitAtClick(xpos, ypos);
+			attackClickedUnit(xpos, ypos);
 
 			setSelected(xpos, ypos);
 		}
@@ -447,27 +448,6 @@ void GameScene::placeUnitAtClick(int xpos, int ypos) // also handles ap reductio
 		}
 	}
 }
-void GameScene::attackingOtherUnit(Unit * attacking_unit, int xpos, int ypos)
-{
-	for (auto& Unit : units_vec)
-	{
-		if (Collision::mouseOnSprite(xpos,ypos, Unit->getObjectSprite()))
-		{
-			if (attacking_unit->getIsEnemy() != Unit->getIsEnemy())
-			{
-				Unit->takeDamage(attacking_unit);
-			}
-		}
-	}
-	attacking_unit->reduceActionPoints(attack_AP_cost);
-}
-void GameScene::movingUnit(Unit * moving_unit, int xpos, int ypos)
-{
-	gridSnapping(xpos, ypos, moving_unit->getObjectSprite()); // place unit in clicked location
-	moving_unit->reduceActionPoints(1);
-	moving_unit->setHasChanged(true);
-}
-
 void GameScene::attackClickedUnit(int xpos, int ypos)
 {
 	bool sprite_on_target = false;
@@ -524,6 +504,29 @@ void GameScene::attackClickedUnit(int xpos, int ypos)
 		}
 	}
 }
+void GameScene::attackingOtherUnit(Unit * attacking_unit, int xpos, int ypos)
+{
+	for (auto& Unit : units_vec)
+	{
+		if (Collision::mouseOnSprite(xpos,ypos, Unit->getObjectSprite()))
+		{
+			if (attacking_unit->getIsEnemy() != Unit->getIsEnemy())
+			{
+				Unit->takeDamage(attacking_unit);
+				attacking_unit->reduceActionPoints(attack_AP_cost);
+			}
+		}
+	}
+}
+
+void GameScene::movingUnit(Unit * moving_unit, int xpos, int ypos)
+{
+	gridSnapping(xpos, ypos, moving_unit->getObjectSprite()); // place unit in clicked location
+	moving_unit->reduceActionPoints(1);
+	moving_unit->setHasChanged(true);
+}
+
+
 void GameScene::setSelected(int xpos, int ypos)
 {
 	if (chat_component.getUserID() /*user_ID*/ % 2 == 0 && player_turn == PlayerTurn::PLAYER1)
