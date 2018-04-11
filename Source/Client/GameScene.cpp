@@ -140,6 +140,16 @@ void GameScene::initUnits()
 
 void GameScene::update(const ASGE::GameTime & ms)
 {
+	if (chat_component.getUserID() % 2 == 0 && assigned_team == PlayerTurn::NONE && chat_component.getUserID() != -1)
+	{
+		assigned_team = PlayerTurn::PLAYER1;
+	}
+
+	else if (chat_component.getUserID() % 2 != 0 && assigned_team == PlayerTurn::NONE && chat_component.getUserID() != -1)
+	{
+		assigned_team = PlayerTurn::PLAYER2;
+	}
+
 	if (next_scene != SceneTransitions::NONE)
 	{
 		switch (next_scene)
@@ -157,19 +167,19 @@ void GameScene::update(const ASGE::GameTime & ms)
 
 	chatUpdate(ms);
 	unitsUpdate(ms);
+
+	if (player_turn == PlayerTurn::PLAYER1 && assigned_team == PlayerTurn::PLAYER2)
+	{
+		unitNetworkUpdate(ms);
+	}
+
+	if (player_turn == PlayerTurn::PLAYER2 && assigned_team == PlayerTurn::PLAYER1)
+	{
+		unitNetworkUpdate(ms);
+	}
 }
 void GameScene::unitsUpdate(const ASGE::GameTime & ms)
 {
-	//infantry_enemy_ptr->update(ms);
-	//tank_enemy->update(ms);
-	//artillery_enemy->update(ms);
-	//sniper_enemy->update(ms);
-
-	//infantry_ally->update(ms);
-	//tank_ally->update(ms);
-	//artillery_ally->update(ms);
-	//sniper_ally->update(ms);
-
 	for (auto& unit : units_vec)
 	{
 		unit->update(ms);
@@ -190,6 +200,54 @@ void GameScene::chatUpdate(const ASGE::GameTime & ms)
 		{
 			chat_timer += ms.delta_time.count() / 1000;
 		}
+	}
+}
+void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
+{
+	while (chat_component.unit_update_queue.size())
+	{
+		std::lock_guard<std::mutex> lock(chat_component.unit_update_mtx);
+
+		auto front_unit = chat_component.unit_update_queue.front();
+
+		std::string name = "";
+		int x_pos = 0;
+		int y_pos = 0;
+		int squad_size = 0;
+		int unit_hp = 0;
+
+		front_unit.unitDataDeciper(name, x_pos, y_pos, squad_size, unit_hp);
+
+		if (name == "endturn")
+		{
+			if (player_turn == PlayerTurn::PLAYER1)
+			{
+				player_turn = PlayerTurn::PLAYER2;
+			}
+
+			else if (player_turn == PlayerTurn::PLAYER2)
+			{
+				player_turn = PlayerTurn::PLAYER1;
+			}
+		}
+
+		else
+		{
+			for (auto& unit : units_vec)
+			{
+				if (name == unit->getRefName())
+				{
+					unit->getObjectSprite()->xPos(x_pos);
+					unit->getObjectSprite()->yPos(y_pos);
+
+					unit->setSquadSize(squad_size);
+					unit->setHP(unit_hp);
+					break;
+				}
+			}
+		}
+
+		chat_component.unit_update_queue.pop();
 	}
 }
 
@@ -652,6 +710,39 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 {
 	if (Collision::mouseOnSprite(xpos, ypos, next_turn_button.get())) //if clicked on the exit button
 	{
+		deselectAllUnits();
+
+		for (auto& Unit : units_vec)
+		{
+			Unit->resetActionPoints();
+		}
+
+		for (auto& unit : units_vec)
+		{
+			if (unit->getHasChanged())
+			{
+				std::string data = unit->getRefName() + "&" +
+					std::to_string(unit->getObjectSprite()->xPos()) + "&" +
+					std::to_string(unit->getObjectSprite()->yPos()) + "&" +
+					std::to_string(unit->getSquadSize()) + "&" +
+					std::to_string(unit->getHealth()) + "&";
+
+				CustomPacket unit_data("unit", "", data);
+
+				chat_component.sending_mtx.lock();
+				chat_component.sending_queue.push(std::move(unit_data));
+				chat_component.sending_mtx.unlock();
+
+				unit->setHasChanged(false);
+			}
+		}
+
+		CustomPacket endturn("unit", "", "endturn&0&0&0&0&");
+
+		chat_component.sending_mtx.lock();
+		chat_component.sending_queue.push(std::move(endturn));
+		chat_component.sending_mtx.unlock();
+
 		if (player_turn == PlayerTurn::PLAYER1)
 		{
 			player_turn.store(PlayerTurn::PLAYER2);
@@ -659,13 +750,6 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 		else if (player_turn == PlayerTurn::PLAYER2)
 		{
 			player_turn.store(PlayerTurn::PLAYER1);
-		}
-
-		deselectAllUnits();
-
-		for (auto& Unit : units_vec)
-		{
-			Unit->resetActionPoints();
 		}
 	}
 }

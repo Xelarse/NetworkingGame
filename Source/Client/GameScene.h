@@ -26,6 +26,7 @@ class GameScene : public Scene
 
 	enum class PlayerTurn
 	{
+		NONE,
 		PLAYER1,
 		PLAYER2
 	};
@@ -45,6 +46,9 @@ public:
 	void keyHandler(const ASGE::SharedEventData data);
 
 private:
+
+	PlayerTurn assigned_team = PlayerTurn::NONE;
+
 
 	std::atomic<bool> infantry_select = false;
 	std::atomic<bool> tank_select = false;
@@ -76,6 +80,7 @@ private:
 
 	void unitsUpdate(const ASGE::GameTime& ms);
 	void chatUpdate(const ASGE::GameTime& ms);
+	void unitNetworkUpdate(const ASGE::GameTime& ms);
 
 	int whichTurn();
 
