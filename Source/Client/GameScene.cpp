@@ -220,7 +220,15 @@ void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 
 		if (name == "endturn")
 		{
+			if (player_turn == PlayerTurn::PLAYER1)
+			{
+				player_turn = PlayerTurn::PLAYER2;
+			}
 
+			else
+			{
+				player_turn = PlayerTurn::PLAYER1;
+			}
 		}
 
 		else

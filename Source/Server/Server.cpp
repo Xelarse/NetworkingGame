@@ -45,13 +45,26 @@ void Server::onClientData(server_client& client, const enet_uint8* data, size_t 
 		network_server.trace(
 			"received packet from client " +
 			std::to_string(client.get_id()) +
-			"Via the username: " +
+			": via the username: " +
 			msg.getUsername() +
 			" => '" +
 			msg.getMsg() + 
 			"'\n");
 
-		network_server.trace("Forwarding to all clients");
+		network_server.trace("Forwarding to all other clients");
+		network_server.getServer()->send_packet_to_all_if(0, data, data_size, ENET_PACKET_FLAG_RELIABLE,
+			[&](const server_client& destination) {return destination.get_id() != client.get_id(); });
+	}
+
+	if (msg.getType() == "unit")
+	{
+		network_server.trace(
+			"received packet from client " +
+			std::to_string(client.get_id()) +
+			": which contains unit data\n"
+		);
+
+		network_server.trace("Forwarding to all other clients");
 		network_server.getServer()->send_packet_to_all_if(0, data, data_size, ENET_PACKET_FLAG_RELIABLE,
 			[&](const server_client& destination) {return destination.get_id() != client.get_id(); });
 	}
