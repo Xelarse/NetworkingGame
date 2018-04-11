@@ -74,7 +74,6 @@ private:
 	void deselectAllUnits();
 
 	bool isAUnitSelected();
-	Unit *getSelectedUnit();
 
 	
 
@@ -90,7 +89,7 @@ private:
 	void unitsRender(ASGE::Renderer* renderer);
 	void gameSceneReset();
 	void processString(std::string str);
-	void attackingOtherUnit(Unit * attacking_unit);
+	void attackingOtherUnit(Unit * attacking_unit, int xpos, int ypos);
 	void movingUnit(Unit * moving_unit, int xpos, int ypos);
 
 	float chat_timer = 0;
