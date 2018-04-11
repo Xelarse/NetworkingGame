@@ -21,6 +21,7 @@ public:
 	int getAttackRange() const;
 	int getActionPoints() const;
 	int getMaxActionPoints() const;
+	bool getHasChanged() const;
 
 	void setXpos(int xPos);
 	void setYpos(int xPos);
@@ -28,6 +29,7 @@ public:
 	void setActionPoints(int action_point);
 	void reduceActionPoints(int reduction);
 	void resetActionPoints();
+	void setHasChanged(bool changed);
 
 	std::string getUnitName() const;
 	std::string getRefName() const;
@@ -64,6 +66,8 @@ private:
 	int max_action_points = 0;
 
 	bool left = true;
+
+
 	std::atomic<bool> has_changed = false;
 
 	std::string sprite_name = "";
