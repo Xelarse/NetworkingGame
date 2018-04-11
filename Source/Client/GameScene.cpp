@@ -680,15 +680,6 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 {
 	if (Collision::mouseOnSprite(xpos, ypos, next_turn_button.get())) //if clicked on the exit button
 	{
-		if (player_turn == PlayerTurn::PLAYER1)
-		{
-			player_turn.store(PlayerTurn::PLAYER2);
-		}
-		else if (player_turn == PlayerTurn::PLAYER2)
-		{
-			player_turn.store(PlayerTurn::PLAYER1);
-		}
-
 		deselectAllUnits();
 
 		for (auto& Unit : units_vec)
@@ -704,7 +695,7 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 					std::to_string(unit->getObjectSprite()->xPos()) + "&" +
 					std::to_string(unit->getObjectSprite()->yPos()) + "&" +
 					std::to_string(unit->getSquadSize()) + "&" +
-					std::to_string(unit->getHealth());
+					std::to_string(unit->getHealth()) + "&";
 
 				CustomPacket unit_data("unit", "", data);
 
@@ -717,6 +708,15 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 		}
 
 		CustomPacket endturn("unit", "", "endturn&0&0&0&0");
+
+		if (player_turn == PlayerTurn::PLAYER1)
+		{
+			player_turn.store(PlayerTurn::PLAYER2);
+		}
+		else if (player_turn == PlayerTurn::PLAYER2)
+		{
+			player_turn.store(PlayerTurn::PLAYER1);
+		}
 	}
 }
 
