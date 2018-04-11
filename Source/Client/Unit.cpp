@@ -279,6 +279,11 @@ void Unit::resetActionPoints()
 	action_points = max_action_points;
 }
 
+void Unit::setHasChanged(bool changed)
+{
+	has_changed = changed;
+}
+
 int Unit::getAttackRange() const
 {
 	return attack_range;
@@ -292,6 +297,11 @@ int Unit::getActionPoints() const
 int Unit::getMaxActionPoints() const
 {
 	return max_action_points;
+}
+
+bool Unit::getHasChanged() const
+{
+	return has_changed;
 }
 
 void Unit::setXpos(int xPos)

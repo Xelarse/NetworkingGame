@@ -363,6 +363,7 @@ void GameScene::placeUnitAtClick(int xpos, int ypos) // also handles ap reductio
 			{
 				gridSnapping(xpos, ypos, infantry_enemy_ptr->getObjectSprite()); // place unit in clicked location
 				infantry_enemy_ptr->reduceActionPoints(1);
+				infantry_enemy_ptr->setHasChanged(true);
 			}
 		}
 		else if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy_ptr->getMoveSprite()) && artillery_select && artillery_enemy_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
@@ -371,6 +372,7 @@ void GameScene::placeUnitAtClick(int xpos, int ypos) // also handles ap reductio
 			{
 				gridSnapping(xpos, ypos, artillery_enemy_ptr->getObjectSprite()); // place unit in clicked location
 				artillery_enemy_ptr->reduceActionPoints(1);
+				artillery_enemy_ptr->setHasChanged(true);
 			}
 		}
 		else if (Collision::mouseOnSprite(xpos, ypos, tank_enemy_ptr->getMoveSprite()) && tank_select && tank_enemy_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
@@ -379,6 +381,7 @@ void GameScene::placeUnitAtClick(int xpos, int ypos) // also handles ap reductio
 			{
 				gridSnapping(xpos, ypos, tank_enemy_ptr->getObjectSprite()); // place unit in clicked location
 				tank_enemy_ptr->reduceActionPoints(1);
+				tank_enemy_ptr->setHasChanged(true);
 			}
 		}
 		else if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy_ptr->getMoveSprite()) && sniper_select && sniper_enemy_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
@@ -387,6 +390,7 @@ void GameScene::placeUnitAtClick(int xpos, int ypos) // also handles ap reductio
 			{
 				gridSnapping(xpos, ypos, sniper_enemy_ptr->getObjectSprite()); // place unit in clicked location
 				sniper_enemy_ptr->reduceActionPoints(1);
+				sniper_enemy_ptr->setHasChanged(true);
 			}
 		}
 
@@ -410,6 +414,7 @@ void GameScene::placeUnitAtClick(int xpos, int ypos) // also handles ap reductio
 			{
 				gridSnapping(xpos, ypos, infantry_ally_ptr->getObjectSprite()); // place unit in clicked location
 				infantry_ally_ptr->reduceActionPoints(1);
+				infantry_ally_ptr->setHasChanged(true);
 			}
 		}
 		else if (Collision::mouseOnSprite(xpos, ypos, artillery_ally_ptr->getMoveSprite()) && artillery2_select && artillery_ally_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
@@ -418,6 +423,7 @@ void GameScene::placeUnitAtClick(int xpos, int ypos) // also handles ap reductio
 			{
 				gridSnapping(xpos, ypos, artillery_ally_ptr->getObjectSprite()); // place unit in clicked location
 				artillery_ally_ptr->reduceActionPoints(1);
+				artillery_ally_ptr->setHasChanged(true);
 			}
 		}
 		else if (Collision::mouseOnSprite(xpos, ypos, tank_ally_ptr->getMoveSprite()) && tank2_select && tank_ally_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
@@ -426,6 +432,7 @@ void GameScene::placeUnitAtClick(int xpos, int ypos) // also handles ap reductio
 			{
 				gridSnapping(xpos, ypos, tank_ally_ptr->getObjectSprite()); // place unit in clicked location
 				tank_ally_ptr->reduceActionPoints(1);
+				tank_ally_ptr->setHasChanged(true);
 			}
 		}
 		else if (Collision::mouseOnSprite(xpos, ypos, sniper_ally_ptr->getMoveSprite()) && sniper2_select && sniper_ally_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
@@ -434,6 +441,7 @@ void GameScene::placeUnitAtClick(int xpos, int ypos) // also handles ap reductio
 			{
 				gridSnapping(xpos, ypos, sniper_ally_ptr->getObjectSprite()); // place unit in clicked location
 				sniper_ally_ptr->reduceActionPoints(1);
+				sniper_ally_ptr->setHasChanged(true);
 			}
 		}
 	}
@@ -640,15 +648,21 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 
 		deselectAllUnits();
 
-		infantry_ally_ptr->resetActionPoints();
-		sniper_ally_ptr->resetActionPoints();
-		tank_ally_ptr->resetActionPoints();
-		artillery_ally_ptr->resetActionPoints();
+		//infantry_ally_ptr->resetActionPoints();
+		//sniper_ally_ptr->resetActionPoints();
+		//tank_ally_ptr->resetActionPoints();
+		//artillery_ally_ptr->resetActionPoints();
 
-		infantry_enemy_ptr->resetActionPoints();
-		sniper_enemy_ptr->resetActionPoints();
-		tank_enemy_ptr->resetActionPoints();
-		artillery_enemy_ptr->resetActionPoints();
+		//infantry_enemy_ptr->resetActionPoints();
+		//sniper_enemy_ptr->resetActionPoints();
+		//tank_enemy_ptr->resetActionPoints();
+		//artillery_enemy_ptr->resetActionPoints();
+
+
+		for (auto& Unit : units_vec)
+		{
+			Unit->resetActionPoints();
+		}
 	}
 }
 
