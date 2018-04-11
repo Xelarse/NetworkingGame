@@ -63,12 +63,16 @@ private:
 	void initUnits();
 	
 	void placeUnitAtClick(int xpos, int ypos);
+	void attackClickedUnit(int xpos, int ypos);
 	void setSelected(int xpos, int ypos);
 	void gridSnapping(float xpos, float ypos, ASGE::Sprite* unit);
 	void nextTurnPressed(int xpos, int ypos);
 	void deselectAllUnits();
 
 	bool isAUnitSelected();
+	Unit *getSelectedUnit();
+
+	
 
 	void unitsUpdate(const ASGE::GameTime& ms);
 	void chatUpdate(const ASGE::GameTime& ms);
@@ -79,13 +83,15 @@ private:
 	void unitSelectionRender(ASGE::Renderer* renderer);
 	void chatRender(ASGE::Renderer* renderer);
 	void unitsRender(ASGE::Renderer* renderer);
-
+	void gameSceneReset();
+	void processString(std::string str);
+	void attackingOtherUnit(Unit * attacking_unit);
+	void movingUnit(Unit * moving_unit, int xpos, int ypos);
 
 	float chat_timer = 0;
 	float msg_duration = 5;
-	
-	void gameSceneReset();
-	void processString(std::string str);
+	int attack_AP_cost = 2;
+	int move_AP_cost = 1;
 
 	std::thread chat_thread;
 
@@ -98,7 +104,6 @@ private:
 	std::unique_ptr<ASGE::Sprite> game_background;
 	std::unique_ptr<ASGE::Sprite> next_turn_button;
 	std::unique_ptr<ASGE::Sprite> turn_box;
-
 
 	//team 1
 	Unit* infantry_enemy_ptr = nullptr;
@@ -113,7 +118,8 @@ private:
 	Unit* sniper_ally_ptr = nullptr;
 	Unit* tank_ally_ptr = nullptr;
 
-
+	//placeholders
+	Unit* selected_unit = nullptr;
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
 	std::atomic<PlayerTurn> player_turn = PlayerTurn::PLAYER1;
@@ -121,6 +127,4 @@ private:
 	std::string chat_str = "";
 	std::mutex chat_str_mutex;
 	std::vector<std::unique_ptr<Unit>> units_vec;
-	
-
 };

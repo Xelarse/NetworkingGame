@@ -39,7 +39,7 @@ void Unit::init(ASGE::Renderer * renderer)
 
 	max_action_points = action_points;
 
-	if (left)
+	if (is_enemy)
 	{
 		if (unit_name == "Infantry")
 		{
@@ -80,7 +80,7 @@ void Unit::init(ASGE::Renderer * renderer)
 		}
 	}
 
-	if (!left)
+	if (!is_enemy)
 	{
 		if (unit_name == "Infantry")
 		{
@@ -128,7 +128,7 @@ void Unit::update(const ASGE::GameTime & ms)
 	x_pos = object_sprite->xPos();
 	y_pos = object_sprite->yPos();
 
-	if (left)
+	if (is_enemy)
 	{
 		if (unit_name == "Infantry")
 		{
@@ -168,7 +168,7 @@ void Unit::update(const ASGE::GameTime & ms)
 		}
 	}
 
-	if (!left)
+	if (!is_enemy)
 	{
 		if (unit_name == "Infantry")
 		{
@@ -304,6 +304,11 @@ bool Unit::getHasChanged() const
 	return has_changed;
 }
 
+bool Unit::getIsEnemy() const
+{
+	return is_enemy;
+}
+
 void Unit::setXpos(int xPos)
 {
 	x_pos = xPos;
@@ -314,9 +319,9 @@ void Unit::setYpos(int yPos)
 	y_pos = yPos;
 }
 
-void Unit::setSide(bool left_side)
+void Unit::setIsEnemy(bool left_side)
 {
-	left = left_side;
+	is_enemy = left_side;
 }
 
 std::string Unit::getUnitName() const
