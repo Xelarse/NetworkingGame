@@ -14,6 +14,9 @@ public:
 
 	char* data(unsigned int& size) const;
 
+	//Used to find out unit data from a packet tagged as unit, put in variables as reference and they will be changed to the packets data
+	void unitDataDeciper(std::string& unit_name, int& x_pos, int& y_pos, int& squad_size, int& unit_hp);
+
 
 private:
 	CustomPacket() = default;

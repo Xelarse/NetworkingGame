@@ -1,4 +1,5 @@
 #include "CustomPacket.h"
+#include  <queue>
 
 CustomPacket::CustomPacket(std::string classifier, std::string usr, std::string msg) : type(classifier), username(usr), msg_text(msg)
 {
@@ -43,4 +44,33 @@ char * CustomPacket::data(unsigned int & size) const
 	memcpy((void*)&data[type_length + username_length], msg_text.data(), msg_length);
 
 	return data;
+}
+
+void CustomPacket::unitDataDeciper(std::string & unit_name, int & x_pos, int & y_pos, int & squad_size, int & unit_hp)
+{
+	std::string s = getMsg();
+	std::string delimiter = "&";
+
+	size_t pos = 0;
+	std::queue<std::string> results;
+
+	while ((pos = s.find(delimiter)) != std::string::npos) {
+		results.push(s.substr(0, pos));
+		s.erase(0, pos + delimiter.length());
+	}
+
+	unit_name = results.front();
+	results.pop();
+
+	x_pos = std::stoi(results.front());
+	results.pop();
+
+	y_pos = std::stoi(results.front());
+	results.pop();
+
+	squad_size = std::stoi(results.front());
+	results.pop();
+
+	unit_hp = std::stoi(results.front());
+	results.pop();
 }

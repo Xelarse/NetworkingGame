@@ -30,6 +30,8 @@ public:
 	void resetActionPoints();
 
 	std::string getUnitName() const;
+	std::string getRefName() const;
+	void setRefName(std::string name);
 
 	// Inherited via GameObject
 	virtual void init(ASGE::Renderer * renderer) override;
@@ -44,7 +46,6 @@ public:
 	ASGE::Sprite* getMoveSprite();
 	ASGE::Sprite* getObjectSprite();
 
-	//TODO add a take damage function that takes two units as parameters that works out the damage calc
 	void takeDamage(Unit* damage_dealer);
 
 private:
@@ -63,11 +64,13 @@ private:
 	int max_action_points = 0;
 
 	bool left = true;
+	std::atomic<bool> has_changed = false;
 
 	std::string sprite_name = "";
 	std::string attack_name = "";
 	std::string move_name = "";
 	std::string unit_name = "";
+	std::string ref_name = "";
 
 	std::unique_ptr<ASGE::Sprite> attack_sprite = nullptr;
 	std::unique_ptr<ASGE::Sprite> move_sprite = nullptr;
