@@ -84,28 +84,28 @@ void GameScene::initUnits()
 	infantry_enemy->setRefName("infantry_enemy");
 
 	sniper_ally.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
-	sniper_ally->setSide(false);
+	sniper_ally->setIsEnemy(false);
 	sniper_ally->getObjectSprite()->xPos(1120);
 	sniper_ally->getAttackSprite()->xPos(1120);
 	sniper_ally->getMoveSprite()->xPos(1120);
 	sniper_ally->setRefName("sniper_ally");
 
 	tank_ally.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
-	tank_ally->setSide(false);
+	tank_ally->setIsEnemy(false);
 	tank_ally->getObjectSprite()->xPos(1120);
 	tank_ally->getAttackSprite()->xPos(1120);
 	tank_ally->getMoveSprite()->xPos(1120);
 	tank_ally->setRefName("tank_ally");
 
 	artillery_ally.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
-	artillery_ally->setSide(false);
+	artillery_ally->setIsEnemy(false);
 	artillery_ally->getObjectSprite()->xPos(1120);
 	artillery_ally->getAttackSprite()->xPos(1120);
 	artillery_ally->getMoveSprite()->xPos(1120);
 	artillery_ally->setRefName("artillery_ally");
 
 	infantry_ally.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
-	infantry_ally->setSide(false);
+	infantry_ally->setIsEnemy(false);
 	infantry_ally->getObjectSprite()->xPos(1120);
 	infantry_ally->getAttackSprite()->xPos(1120);
 	infantry_ally->getMoveSprite()->xPos(1120);
@@ -250,16 +250,6 @@ void GameScene::chatRender(ASGE::Renderer * renderer)
 }
 void GameScene::unitsRender(ASGE::Renderer * renderer)
 {
-	//renderer->renderSprite(*infantry_enemy->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*tank_enemy->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*artillery_enemy->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*sniper_enemy->getObjectSprite(), FOREGROUND);
-
-	//renderer->renderSprite(*infantry_ally->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*tank_ally->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*artillery_ally->getObjectSprite(), FOREGROUND);
-	//renderer->renderSprite(*sniper_ally->getObjectSprite(), FOREGROUND);
-
 	for (auto& unit : units_vec)
 	{
 		renderer->renderSprite(*unit->getObjectSprite(), FOREGROUND);
@@ -345,103 +335,130 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 }
 void GameScene::placeUnitAtClick(int xpos, int ypos) // also handles ap reduction
 {
-	if (infantry_select || tank_select || sniper_select || artillery_select) //if unit is selected
+	bool sprite_on_target = false;
+
+	for (auto& Unit : units_vec)
 	{
-		bool sprite_on_target = false;
+		if (Collision::mouseOnSprite(xpos, ypos, Unit->getObjectSprite()))
+		{
 
-		for (auto& Unit : units_vec)
-		{
-			if (Collision::mouseOnSprite(xpos, ypos, Unit->getObjectSprite()))
-			{
-				sprite_on_target = true;
-				break;
-			}
+			sprite_on_target = true;
+			break;
 		}
-		if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy_ptr->getMoveSprite()) && infantry_select && infantry_enemy_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
-		{
-			if (!sprite_on_target)
-			{
-				gridSnapping(xpos, ypos, infantry_enemy_ptr->getObjectSprite()); // place unit in clicked location
-				infantry_enemy_ptr->reduceActionPoints(1);
-				infantry_enemy_ptr->setHasChanged(true);
-			}
-		}
-		else if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy_ptr->getMoveSprite()) && artillery_select && artillery_enemy_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
-		{
-			if (!sprite_on_target)
-			{
-				gridSnapping(xpos, ypos, artillery_enemy_ptr->getObjectSprite()); // place unit in clicked location
-				artillery_enemy_ptr->reduceActionPoints(1);
-				artillery_enemy_ptr->setHasChanged(true);
-			}
-		}
-		else if (Collision::mouseOnSprite(xpos, ypos, tank_enemy_ptr->getMoveSprite()) && tank_select && tank_enemy_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
-		{
-			if (!sprite_on_target)
-			{
-				gridSnapping(xpos, ypos, tank_enemy_ptr->getObjectSprite()); // place unit in clicked location
-				tank_enemy_ptr->reduceActionPoints(1);
-				tank_enemy_ptr->setHasChanged(true);
-			}
-		}
-		else if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy_ptr->getMoveSprite()) && sniper_select && sniper_enemy_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
-		{
-			if (!sprite_on_target)
-			{
-				gridSnapping(xpos, ypos, sniper_enemy_ptr->getObjectSprite()); // place unit in clicked location
-				sniper_enemy_ptr->reduceActionPoints(1);
-				sniper_enemy_ptr->setHasChanged(true);
-			}
-		}
-
 	}
-
-	if (infantry2_select || tank2_select || sniper2_select || artillery2_select) //if unit is selected
+	if (!sprite_on_target)
 	{
-		bool sprite_on_target = false;
+		if (infantry_select || tank_select || sniper_select || artillery_select) //if team 1 (enemy) unit is selected
+		{
+			if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy_ptr->getMoveSprite()) && infantry_select && infantry_enemy_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
+			{
+				movingUnit(infantry_enemy_ptr, xpos, ypos);
+			}
+			else if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy_ptr->getMoveSprite()) && artillery_select && artillery_enemy_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
+			{
+				movingUnit(artillery_enemy_ptr, xpos, ypos);
+			}
+			else if (Collision::mouseOnSprite(xpos, ypos, tank_enemy_ptr->getMoveSprite()) && tank_select && tank_enemy_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
+			{
+				movingUnit(tank_enemy_ptr, xpos, ypos);
+			}
+			else if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy_ptr->getMoveSprite()) && sniper_select && sniper_enemy_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
+			{
+				movingUnit(sniper_enemy_ptr, xpos, ypos);
+			}
+		}
 
-		for (auto& Unit : units_vec)
+		if (infantry2_select || tank2_select || sniper2_select || artillery2_select) //if team 2 (ally) unit is selected
 		{
-			if (Collision::mouseOnSprite(xpos, ypos, Unit->getObjectSprite()))
+			if (Collision::mouseOnSprite(xpos, ypos, infantry_ally_ptr->getMoveSprite()) && infantry2_select && infantry_ally_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
 			{
-				sprite_on_target = true;
-				break;
+				movingUnit(infantry_ally_ptr, xpos, ypos);
+			}
+			else if (Collision::mouseOnSprite(xpos, ypos, artillery_ally_ptr->getMoveSprite()) && artillery2_select && artillery_ally_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
+			{
+				movingUnit(artillery_ally_ptr, xpos, ypos);
+			}
+			else if (Collision::mouseOnSprite(xpos, ypos, tank_ally_ptr->getMoveSprite()) && tank2_select && tank_ally_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
+			{
+				movingUnit(tank_ally_ptr, xpos, ypos);
+			}
+			else if (Collision::mouseOnSprite(xpos, ypos, sniper_ally_ptr->getMoveSprite()) && sniper2_select && sniper_ally_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
+			{
+				movingUnit(sniper_ally_ptr, xpos, ypos);
 			}
 		}
-		if (Collision::mouseOnSprite(xpos, ypos, infantry_ally_ptr->getMoveSprite()) && infantry2_select && infantry_ally_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
+	}
+}
+void GameScene::attackingOtherUnit(Unit * attacking_unit)
+{
+	for (auto& Unit : units_vec)
+	{
+		if (!Unit->getIsEnemy())
 		{
-			if (!sprite_on_target)
+			Unit->takeDamage(getSelectedUnit());
+		}
+	}
+	attacking_unit->reduceActionPoints(attack_AP_cost);
+}
+void GameScene::movingUnit(Unit * moving_unit, int xpos, int ypos)
+{
+	gridSnapping(xpos, ypos, moving_unit->getObjectSprite()); // place unit in clicked location
+	moving_unit->reduceActionPoints(1);
+	moving_unit->setHasChanged(true);
+}
+
+void GameScene::attackClickedUnit(int xpos, int ypos)
+{
+	bool sprite_on_target = false;
+
+	for (auto& Unit : units_vec)
+	{
+		if (Collision::mouseOnSprite(xpos, ypos, Unit->getObjectSprite()))
+		{
+
+			sprite_on_target = true;
+			break;
+		}
+	}
+	if (sprite_on_target)
+	{
+		if (infantry_select || tank_select || sniper_select || artillery_select) //if unit is selected
+		{
+			if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy_ptr->getAttackSprite()) && infantry_select && infantry_enemy_ptr->getActionPoints() >= 2 && xpos > 40 && xpos < 1200)
 			{
-				gridSnapping(xpos, ypos, infantry_ally_ptr->getObjectSprite()); // place unit in clicked location
-				infantry_ally_ptr->reduceActionPoints(1);
-				infantry_ally_ptr->setHasChanged(true);
+				attackingOtherUnit(infantry_enemy_ptr);
+			}
+			else if (Collision::mouseOnSprite(xpos, ypos, artillery_enemy_ptr->getAttackSprite()) && artillery_select && artillery_enemy_ptr->getActionPoints() >= 2 && xpos > 40 && xpos < 1200)
+			{
+				attackingOtherUnit(artillery_enemy_ptr);
+			}
+			else if (Collision::mouseOnSprite(xpos, ypos, tank_enemy_ptr->getAttackSprite()) && tank_select && tank_enemy_ptr->getActionPoints() >= 2 && xpos > 40 && xpos < 1200)
+			{
+				attackingOtherUnit(tank_enemy_ptr);
+			}
+			else if (Collision::mouseOnSprite(xpos, ypos, sniper_enemy_ptr->getAttackSprite()) && sniper_select && sniper_enemy_ptr->getActionPoints() >= 2 && xpos > 40 && xpos < 1200)
+			{
+				attackingOtherUnit(sniper_enemy_ptr);
 			}
 		}
-		else if (Collision::mouseOnSprite(xpos, ypos, artillery_ally_ptr->getMoveSprite()) && artillery2_select && artillery_ally_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
+
+		if (infantry2_select || tank2_select || sniper2_select || artillery2_select) //if unit is selected
 		{
-			if (!sprite_on_target)
+			if (Collision::mouseOnSprite(xpos, ypos, infantry_ally_ptr->getAttackSprite()) && infantry2_select && infantry_ally_ptr->getActionPoints() >= 2 && xpos > 40 && xpos < 1200)
 			{
-				gridSnapping(xpos, ypos, artillery_ally_ptr->getObjectSprite()); // place unit in clicked location
-				artillery_ally_ptr->reduceActionPoints(1);
-				artillery_ally_ptr->setHasChanged(true);
+				attackingOtherUnit(infantry_ally_ptr);
 			}
-		}
-		else if (Collision::mouseOnSprite(xpos, ypos, tank_ally_ptr->getMoveSprite()) && tank2_select && tank_ally_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
-		{
-			if (!sprite_on_target)
+			else if (Collision::mouseOnSprite(xpos, ypos, artillery_ally_ptr->getAttackSprite()) && artillery2_select && artillery_ally_ptr->getActionPoints() >= 2 && xpos > 40 && xpos < 1200)
 			{
-				gridSnapping(xpos, ypos, tank_ally_ptr->getObjectSprite()); // place unit in clicked location
-				tank_ally_ptr->reduceActionPoints(1);
-				tank_ally_ptr->setHasChanged(true);
+				attackingOtherUnit(artillery_ally_ptr);
 			}
-		}
-		else if (Collision::mouseOnSprite(xpos, ypos, sniper_ally_ptr->getMoveSprite()) && sniper2_select && sniper_ally_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
-		{
-			if (!sprite_on_target)
+			else if (Collision::mouseOnSprite(xpos, ypos, tank_ally_ptr->getAttackSprite()) && tank2_select && tank_ally_ptr->getActionPoints() >= 2 && xpos > 40 && xpos < 1200)
 			{
-				gridSnapping(xpos, ypos, sniper_ally_ptr->getObjectSprite()); // place unit in clicked location
-				sniper_ally_ptr->reduceActionPoints(1);
-				sniper_ally_ptr->setHasChanged(true);
+				attackingOtherUnit(tank_ally_ptr);
+			}
+			else if (Collision::mouseOnSprite(xpos, ypos, sniper_ally_ptr->getAttackSprite()) && sniper2_select && sniper_ally_ptr->getActionPoints() >= 2 && xpos > 40 && xpos < 1200)
+			{
+				attackingOtherUnit(sniper_ally_ptr);
 			}
 		}
 	}
@@ -635,8 +652,6 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 {
 	if (Collision::mouseOnSprite(xpos, ypos, next_turn_button.get())) //if clicked on the exit button
 	{
-		//next_scene.store(SceneTransitions::TO_MENU);
-
 		if (player_turn == PlayerTurn::PLAYER1)
 		{
 			player_turn.store(PlayerTurn::PLAYER2);
@@ -647,17 +662,6 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 		}
 
 		deselectAllUnits();
-
-		//infantry_ally_ptr->resetActionPoints();
-		//sniper_ally_ptr->resetActionPoints();
-		//tank_ally_ptr->resetActionPoints();
-		//artillery_ally_ptr->resetActionPoints();
-
-		//infantry_enemy_ptr->resetActionPoints();
-		//sniper_enemy_ptr->resetActionPoints();
-		//tank_enemy_ptr->resetActionPoints();
-		//artillery_enemy_ptr->resetActionPoints();
-
 
 		for (auto& Unit : units_vec)
 		{
@@ -689,6 +693,41 @@ bool GameScene::isAUnitSelected()
 		return true;
 	}
 
+}
+Unit * GameScene::getSelectedUnit()
+{
+	if (infantry2_select)
+	{
+		return infantry_ally_ptr;
+	}
+	if(tank2_select)
+	{
+		return tank_ally_ptr;
+	}
+	if(artillery2_select)
+	{
+		return artillery_ally_ptr;
+	}
+	if(sniper2_select)
+	{
+		return sniper_ally_ptr;
+	}
+	if (infantry_select)
+	{
+		return infantry_enemy_ptr;
+	}
+	if (tank_select)
+	{
+		return tank_enemy_ptr;
+	}
+	if (artillery_select)
+	{
+		return artillery_enemy_ptr;
+	}
+	if (sniper_select)
+	{
+		return sniper_enemy_ptr;
+	}
 }
 int GameScene::whichTurn()
 {
@@ -781,3 +820,5 @@ void GameScene::processString(std::string str)
 		chat_component.recieved_mtx.unlock();
 	}
 }
+
+

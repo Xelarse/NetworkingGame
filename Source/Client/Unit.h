@@ -22,10 +22,11 @@ public:
 	int getActionPoints() const;
 	int getMaxActionPoints() const;
 	bool getHasChanged() const;
+	bool getIsEnemy() const;
 
 	void setXpos(int xPos);
 	void setYpos(int xPos);
-	void setSide(bool left);
+	void setIsEnemy(bool enemy);
 	void setActionPoints(int action_point);
 	void reduceActionPoints(int reduction);
 	void resetActionPoints();
@@ -65,7 +66,7 @@ private:
 
 	int max_action_points = 0;
 
-	bool left = true;
+	bool is_enemy = true;
 
 
 	std::atomic<bool> has_changed = false;
