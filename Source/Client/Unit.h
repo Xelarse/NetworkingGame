@@ -23,6 +23,7 @@ public:
 	int getMaxActionPoints() const;
 	bool getHasChanged() const;
 	bool getIsEnemy() const;
+	bool getIsDead() const;
 
 	void setXpos(int xPos);
 	void setYpos(int xPos);
@@ -70,6 +71,7 @@ private:
 	int max_action_points = 0;
 
 	bool is_enemy = true;
+	bool is_dead = false;
 
 
 	std::atomic<bool> has_changed = false;

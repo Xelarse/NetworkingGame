@@ -128,85 +128,97 @@ void Unit::update(const ASGE::GameTime & ms)
 	x_pos = object_sprite->xPos();
 	y_pos = object_sprite->yPos();
 
-	if (is_enemy)
+	if (squad_size <= 0 && !is_dead)
 	{
-		if (unit_name == "Infantry")
-		{
-			object_sprite->xPos(x_pos);
-			object_sprite->yPos(y_pos);
-			move_sprite->xPos(x_pos - 240);
-			move_sprite->yPos(y_pos - 240);
-			attack_sprite->xPos(x_pos - 120);
-			attack_sprite->yPos(y_pos - 120);
-		}
-		if (unit_name == "Sniper")
-		{
-			object_sprite->xPos(x_pos);
-			object_sprite->yPos(y_pos);
-			move_sprite->xPos(x_pos - 120);
-			move_sprite->yPos(y_pos - 120);
-			attack_sprite->xPos(x_pos);
-			attack_sprite->yPos(y_pos);
-		}
-		if (unit_name == "Artillery")
-		{
-			object_sprite->xPos(x_pos);
-			object_sprite->yPos(y_pos);
-			move_sprite->xPos(x_pos);
-			move_sprite->yPos(y_pos - 120);
-			attack_sprite->xPos(x_pos + 600);
-			attack_sprite->yPos(y_pos - 120);
-		}
-		if (unit_name == "Tank")
-		{
-			object_sprite->xPos(x_pos);
-			object_sprite->yPos(y_pos);
-			move_sprite->xPos(x_pos - 240);
-			move_sprite->yPos(y_pos - 120);
-			attack_sprite->xPos(x_pos);
-			attack_sprite->yPos(y_pos - 120);
-		}
+		object_sprite->xPos(-200);
+		object_sprite->yPos(-200);
+		is_dead = true;
 	}
 
-	if (!is_enemy)
+
+	if (!is_dead)
 	{
-		if (unit_name == "Infantry")
+		if (is_enemy)
 		{
-			object_sprite->xPos(x_pos);
-			object_sprite->yPos(y_pos);
-			move_sprite->xPos(x_pos - 240);
-			move_sprite->yPos(y_pos - 240);
-			attack_sprite->xPos(x_pos - 120);
-			attack_sprite->yPos(y_pos - 120);
+			if (unit_name == "Infantry")
+			{
+				object_sprite->xPos(x_pos);
+				object_sprite->yPos(y_pos);
+				move_sprite->xPos(x_pos - 240);
+				move_sprite->yPos(y_pos - 240);
+				attack_sprite->xPos(x_pos - 120);
+				attack_sprite->yPos(y_pos - 120);
+			}
+			if (unit_name == "Sniper")
+			{
+				object_sprite->xPos(x_pos);
+				object_sprite->yPos(y_pos);
+				move_sprite->xPos(x_pos - 120);
+				move_sprite->yPos(y_pos - 120);
+				attack_sprite->xPos(x_pos);
+				attack_sprite->yPos(y_pos);
+			}
+			if (unit_name == "Artillery")
+			{
+				object_sprite->xPos(x_pos);
+				object_sprite->yPos(y_pos);
+				move_sprite->xPos(x_pos);
+				move_sprite->yPos(y_pos - 120);
+				attack_sprite->xPos(x_pos + 600);
+				attack_sprite->yPos(y_pos - 120);
+			}
+			if (unit_name == "Tank")
+			{
+				object_sprite->xPos(x_pos);
+				object_sprite->yPos(y_pos);
+				move_sprite->xPos(x_pos - 240);
+				move_sprite->yPos(y_pos - 120);
+				attack_sprite->xPos(x_pos);
+				attack_sprite->yPos(y_pos - 120);
+			}
 		}
-		if (unit_name == "Sniper")
+
+		if (!is_enemy)
 		{
-			object_sprite->xPos(x_pos);
-			object_sprite->yPos(y_pos);
-			move_sprite->xPos(x_pos - 120);
-			move_sprite->yPos(y_pos - 120);
-			attack_sprite->xPos(x_pos - 720);
-			attack_sprite->yPos(y_pos);
-		}
-		if (unit_name == "Artillery")
-		{
-			object_sprite->xPos(x_pos);
-			object_sprite->yPos(y_pos);
-			move_sprite->xPos(x_pos);
-			move_sprite->yPos(y_pos - 120);
-			attack_sprite->xPos(x_pos -840);
-			attack_sprite->yPos(y_pos - 120);
-		}
-		if (unit_name == "Tank")
-		{
-			object_sprite->xPos(x_pos);
-			object_sprite->yPos(y_pos);
-			move_sprite->xPos(x_pos - 240);
-			move_sprite->yPos(y_pos - 120);
-			attack_sprite->xPos(x_pos - 120);
-			attack_sprite->yPos(y_pos - 120);
+			if (unit_name == "Infantry")
+			{
+				object_sprite->xPos(x_pos);
+				object_sprite->yPos(y_pos);
+				move_sprite->xPos(x_pos - 240);
+				move_sprite->yPos(y_pos - 240);
+				attack_sprite->xPos(x_pos - 120);
+				attack_sprite->yPos(y_pos - 120);
+			}
+			if (unit_name == "Sniper")
+			{
+				object_sprite->xPos(x_pos);
+				object_sprite->yPos(y_pos);
+				move_sprite->xPos(x_pos - 120);
+				move_sprite->yPos(y_pos - 120);
+				attack_sprite->xPos(x_pos - 720);
+				attack_sprite->yPos(y_pos);
+			}
+			if (unit_name == "Artillery")
+			{
+				object_sprite->xPos(x_pos);
+				object_sprite->yPos(y_pos);
+				move_sprite->xPos(x_pos);
+				move_sprite->yPos(y_pos - 120);
+				attack_sprite->xPos(x_pos - 840);
+				attack_sprite->yPos(y_pos - 120);
+			}
+			if (unit_name == "Tank")
+			{
+				object_sprite->xPos(x_pos);
+				object_sprite->yPos(y_pos);
+				move_sprite->xPos(x_pos - 240);
+				move_sprite->yPos(y_pos - 120);
+				attack_sprite->xPos(x_pos - 120);
+				attack_sprite->yPos(y_pos - 120);
+			}
 		}
 	}
+	
 }
 
 int Unit::getSquadSize() const
@@ -309,6 +321,11 @@ bool Unit::getHasChanged() const
 bool Unit::getIsEnemy() const
 {
 	return is_enemy;
+}
+
+bool Unit::getIsDead() const
+{
+	return is_dead;
 }
 
 void Unit::setXpos(int xPos)

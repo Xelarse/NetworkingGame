@@ -1,8 +1,8 @@
 {
     "Infantry": {
 	  "name": "Infantry",
-	  "squad_size": 10,
-      "health": 100,
+	  "squad_size": 1,
+      "health": 1,
       "damage": 2,
       "armour": 2,
 	  "move_range": 1,

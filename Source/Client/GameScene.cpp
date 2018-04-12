@@ -319,7 +319,10 @@ void GameScene::unitsRender(ASGE::Renderer * renderer)
 {
 	for (auto& unit : units_vec)
 	{
-		renderer->renderSprite(*unit->getObjectSprite(), FOREGROUND);
+		if (!unit->getIsDead())
+		{
+			renderer->renderSprite(*unit->getObjectSprite(), FOREGROUND);
+		}
 	}
 }
 void GameScene::unitSelectionRender(ASGE::Renderer * renderer)
@@ -723,48 +726,51 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logi
 
 void GameScene::nextTurnPressed(int xpos, int ypos)
 {
-	if (Collision::mouseOnSprite(xpos, ypos, next_turn_button.get())) //if clicked on the exit button
+	if (player_turn == assigned_team)
 	{
-		deselectAllUnits();
-
-		for (auto& Unit : units_vec)
+		if (Collision::mouseOnSprite(xpos, ypos, next_turn_button.get())) //if clicked on the exit button
 		{
-			Unit->resetActionPoints();
-		}
+			deselectAllUnits();
 
-		for (auto& unit : units_vec)
-		{
-			if (unit->getHasChanged())
+			for (auto& Unit : units_vec)
 			{
-				std::string data = unit->getRefName() + "&" +
-					std::to_string(unit->getObjectSprite()->xPos()) + "&" +
-					std::to_string(unit->getObjectSprite()->yPos()) + "&" +
-					std::to_string(unit->getSquadSize()) + "&" +
-					std::to_string(unit->getHealth()) + "&";
-
-				CustomPacket unit_data("unit", "", data);
-
-				chat_component.sending_mtx.lock();
-				chat_component.sending_queue.push(std::move(unit_data));
-				chat_component.sending_mtx.unlock();
-
-				unit->setHasChanged(false);
+				Unit->resetActionPoints();
 			}
-		}
 
-		CustomPacket endturn("unit", "", "endturn&0&0&0&0&");
+			for (auto& unit : units_vec)
+			{
+				if (unit->getHasChanged())
+				{
+					std::string data = unit->getRefName() + "&" +
+						std::to_string(unit->getObjectSprite()->xPos()) + "&" +
+						std::to_string(unit->getObjectSprite()->yPos()) + "&" +
+						std::to_string(unit->getSquadSize()) + "&" +
+						std::to_string(unit->getHealth()) + "&";
 
-		chat_component.sending_mtx.lock();
-		chat_component.sending_queue.push(std::move(endturn));
-		chat_component.sending_mtx.unlock();
+					CustomPacket unit_data("unit", "", data);
 
-		if (player_turn == PlayerTurn::PLAYER1)
-		{
-			player_turn.store(PlayerTurn::PLAYER2);
-		}
-		else if (player_turn == PlayerTurn::PLAYER2)
-		{
-			player_turn.store(PlayerTurn::PLAYER1);
+					chat_component.sending_mtx.lock();
+					chat_component.sending_queue.push(std::move(unit_data));
+					chat_component.sending_mtx.unlock();
+
+					unit->setHasChanged(false);
+				}
+			}
+
+			CustomPacket endturn("unit", "", "endturn&0&0&0&0&");
+
+			chat_component.sending_mtx.lock();
+			chat_component.sending_queue.push(std::move(endturn));
+			chat_component.sending_mtx.unlock();
+
+			if (player_turn == PlayerTurn::PLAYER1)
+			{
+				player_turn.store(PlayerTurn::PLAYER2);
+			}
+			else if (player_turn == PlayerTurn::PLAYER2)
+			{
+				player_turn.store(PlayerTurn::PLAYER1);
+			}
 		}
 	}
 }
