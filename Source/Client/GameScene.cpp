@@ -240,6 +240,21 @@ void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 			}
 		}
 
+		if (name == "endgame")
+		{
+			if (x_pos == 1)
+			{
+				winning_player = PlayerTurn::PLAYER1;
+			}
+
+			else
+			{
+				winning_player = PlayerTurn::PLAYER2;
+			}
+
+			game_finished = true;
+		}
+
 		else
 		{
 			for (auto& unit : units_vec)
@@ -271,6 +286,22 @@ void GameScene::render(ASGE::Renderer * renderer)
 
 	std::string turn_txt = "Turn";
 	renderer->renderText(turn_txt, 616, 45, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+
+	if (game_finished)
+	{
+		std::string vicstring;
+		if (winning_player == PlayerTurn::PLAYER1)
+		{
+			vicstring = "PLAYER 1 WINS, SUCK IT PLAYER 2!";
+		}
+
+		else
+		{
+			vicstring = "PLAYER 2 WINS, SUCK IT PLAYER 1!";
+		}
+
+		renderer->renderText(vicstring, 300, 300, 2.0, ASGE::COLOURS::CORAL, FOREGROUND);
+	}
 
 	unitsRender(renderer);
 	chatRender(renderer);
@@ -755,6 +786,28 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 
 					unit->setHasChanged(false);
 				}
+			}
+
+			if (endgame_check())
+			{
+				int victor = 0;
+
+				if (winning_player == PlayerTurn::PLAYER1)
+				{
+					victor = 1;
+				}
+
+				else
+				{
+					victor = 2;
+				}
+
+				std::string data = "endgame&" + std::to_string(victor) + "&0&0&0&";
+				CustomPacket endgame("unit", "", data);
+
+				chat_component.sending_mtx.lock();
+				chat_component.sending_queue.push(std::move(endgame));
+				chat_component.sending_mtx.unlock();
 			}
 
 			CustomPacket endturn("unit", "", "endturn&0&0&0&0&");
