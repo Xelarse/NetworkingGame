@@ -56,6 +56,9 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	turn_box->height(50);
 	turn_box->width(150);
 
+	victory_background = renderer->createUniqueSprite();
+	victory_background->loadTexture("..\\..\\Resources\\Backgrounds\\GameScene.png");
+
 	units_vec.reserve(8);
 	initUnits();
 }
@@ -174,17 +177,20 @@ void GameScene::update(const ASGE::GameTime & ms)
 		}
 	}
 
-	chatUpdate(ms);
-	unitsUpdate(ms);
-
-	if (player_turn == PlayerTurn::PLAYER1 && assigned_team == PlayerTurn::PLAYER2)
+	if (!game_finished)
 	{
-		unitNetworkUpdate(ms);
-	}
+		chatUpdate(ms);
+		unitsUpdate(ms);
 
-	if (player_turn == PlayerTurn::PLAYER2 && assigned_team == PlayerTurn::PLAYER1)
-	{
-		unitNetworkUpdate(ms);
+		if (player_turn == PlayerTurn::PLAYER1 && assigned_team == PlayerTurn::PLAYER2)
+		{
+			unitNetworkUpdate(ms);
+		}
+
+		if (player_turn == PlayerTurn::PLAYER2 && assigned_team == PlayerTurn::PLAYER1)
+		{
+			unitNetworkUpdate(ms);
+		}
 	}
 }
 void GameScene::unitsUpdate(const ASGE::GameTime & ms)
@@ -240,6 +246,21 @@ void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 			}
 		}
 
+		if (name == "endgame")
+		{
+			if (x_pos == 1)
+			{
+				winning_player = PlayerTurn::PLAYER1;
+			}
+
+			else
+			{
+				winning_player = PlayerTurn::PLAYER2;
+			}
+
+			game_finished = true;
+		}
+
 		else
 		{
 			for (auto& unit : units_vec)
@@ -262,19 +283,41 @@ void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 
 void GameScene::render(ASGE::Renderer * renderer)
 {
-	renderer->renderSprite(*game_background.get(), BACKGROUND); //background is game board 
-	renderer->renderSprite(*next_turn_button.get(), MIDDLE_GROUND_FRONT); // next turn button
-	renderer->renderSprite(*turn_box.get(), MIDDLE_GROUND_FRONT); // trapezoid for the turn display
+	if (game_finished)
+	{
+		std::string vicstring;
+		if (winning_player == PlayerTurn::PLAYER1)
+		{
+			vicstring = "PLAYER 1 WINS";
+		}
 
-	std::string player_txt = "Player: " + std::to_string(whichTurn()) + "'s";
-	renderer->renderText(player_txt, 590, 25, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+		else
+		{
+			vicstring = "PLAYER 2 WINS";
+		}
 
-	std::string turn_txt = "Turn";
-	renderer->renderText(turn_txt, 616, 45, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+		renderer->renderSprite(*victory_background.get(), MIDDLE_GROUND_FRONT);
+		renderer->renderText(vicstring, 400, 300, 1.25, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
+		renderer->renderText("Press Esc to return to menu", 150, 350, 1.1, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
+	}
 
-	unitsRender(renderer);
-	chatRender(renderer);
-	unitSelectionRender(renderer);
+	else
+	{
+		renderer->renderSprite(*game_background.get(), BACKGROUND); //background is game board 
+		renderer->renderSprite(*next_turn_button.get(), MIDDLE_GROUND_FRONT); // next turn button
+
+		unitSelectionRender(renderer);
+		unitsRender(renderer);
+		chatRender(renderer);
+		
+		renderer->renderSprite(*turn_box.get(), MIDDLE_GROUND_FRONT); // trapezoid for the turn display
+
+		std::string player_txt = "Player: " + std::to_string(whichTurn()) + "'s";
+		renderer->renderText(player_txt, 590, 25, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+
+		std::string turn_txt = "Turn";
+		renderer->renderText(turn_txt, 616, 45, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+	}
 }
 void GameScene::chatRender(ASGE::Renderer * renderer)
 {
@@ -319,7 +362,10 @@ void GameScene::unitsRender(ASGE::Renderer * renderer)
 {
 	for (auto& unit : units_vec)
 	{
-		renderer->renderSprite(*unit->getObjectSprite(), FOREGROUND);
+		if (!unit->getIsDead())
+		{
+			renderer->renderSprite(*unit->getObjectSprite(), MIDDLE_GROUND_FRONT);
+		}
 	}
 }
 void GameScene::unitSelectionRender(ASGE::Renderer * renderer)
@@ -723,48 +769,73 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logi
 
 void GameScene::nextTurnPressed(int xpos, int ypos)
 {
-	if (Collision::mouseOnSprite(xpos, ypos, next_turn_button.get())) //if clicked on the exit button
+	if (player_turn == assigned_team)
 	{
-		deselectAllUnits();
-
-		for (auto& Unit : units_vec)
+		if (Collision::mouseOnSprite(xpos, ypos, next_turn_button.get())) //if clicked on the exit button
 		{
-			Unit->resetActionPoints();
-		}
+			deselectAllUnits();
 
-		for (auto& unit : units_vec)
-		{
-			if (unit->getHasChanged())
+			for (auto& Unit : units_vec)
 			{
-				std::string data = unit->getRefName() + "&" +
-					std::to_string(unit->getObjectSprite()->xPos()) + "&" +
-					std::to_string(unit->getObjectSprite()->yPos()) + "&" +
-					std::to_string(unit->getSquadSize()) + "&" +
-					std::to_string(unit->getHealth()) + "&";
+				Unit->resetActionPoints();
+			}
 
-				CustomPacket unit_data("unit", "", data);
+			for (auto& unit : units_vec)
+			{
+				if (unit->getHasChanged())
+				{
+					std::string data = unit->getRefName() + "&" +
+						std::to_string(unit->getObjectSprite()->xPos()) + "&" +
+						std::to_string(unit->getObjectSprite()->yPos()) + "&" +
+						std::to_string(unit->getSquadSize()) + "&" +
+						std::to_string(unit->getHealth()) + "&";
+
+					CustomPacket unit_data("unit", "", data);
+
+					chat_component.sending_mtx.lock();
+					chat_component.sending_queue.push(std::move(unit_data));
+					chat_component.sending_mtx.unlock();
+
+					unit->setHasChanged(false);
+				}
+			}
+
+			if (endgame_check())
+			{
+				int victor = 0;
+
+				if (winning_player == PlayerTurn::PLAYER1)
+				{
+					victor = 1;
+				}
+
+				else
+				{
+					victor = 2;
+				}
+
+				std::string data = "endgame&" + std::to_string(victor) + "&0&0&0&";
+				CustomPacket endgame("unit", "", data);
 
 				chat_component.sending_mtx.lock();
-				chat_component.sending_queue.push(std::move(unit_data));
+				chat_component.sending_queue.push(std::move(endgame));
 				chat_component.sending_mtx.unlock();
-
-				unit->setHasChanged(false);
 			}
-		}
 
-		CustomPacket endturn("unit", "", "endturn&0&0&0&0&");
+			CustomPacket endturn("unit", "", "endturn&0&0&0&0&");
 
-		chat_component.sending_mtx.lock();
-		chat_component.sending_queue.push(std::move(endturn));
-		chat_component.sending_mtx.unlock();
+			chat_component.sending_mtx.lock();
+			chat_component.sending_queue.push(std::move(endturn));
+			chat_component.sending_mtx.unlock();
 
-		if (player_turn == PlayerTurn::PLAYER1)
-		{
-			player_turn.store(PlayerTurn::PLAYER2);
-		}
-		else if (player_turn == PlayerTurn::PLAYER2)
-		{
-			player_turn.store(PlayerTurn::PLAYER1);
+			if (player_turn == PlayerTurn::PLAYER1)
+			{
+				player_turn.store(PlayerTurn::PLAYER2);
+			}
+			else if (player_turn == PlayerTurn::PLAYER2)
+			{
+				player_turn.store(PlayerTurn::PLAYER1);
+			}
 		}
 	}
 }
@@ -857,6 +928,41 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 	}
 }
 
+bool GameScene::endgame_check()
+{
+	if (assigned_team == PlayerTurn::PLAYER1)
+	{
+		if (infantry_ally_ptr->getIsDead() &&
+			artillery_ally_ptr->getIsDead() &&
+			sniper_ally_ptr->getIsDead() &&
+			tank_ally_ptr->getIsDead())
+		{
+			game_finished = true;
+			winning_player = PlayerTurn::PLAYER1;
+			return true;
+		}
+	}
+
+	else if (assigned_team == PlayerTurn::PLAYER2)
+	{
+		if (infantry_enemy_ptr->getIsDead() &&
+			artillery_enemy_ptr->getIsDead() &&
+			sniper_enemy_ptr->getIsDead() &&
+			tank_enemy_ptr->getIsDead())
+		{
+			game_finished = true;
+			winning_player = PlayerTurn::PLAYER2;
+			return true;
+		}
+	}
+
+	else
+	{
+		return false;
+	}
+
+}
+
 void GameScene::gameSceneReset()
 {
 	chat_component.killThread();
@@ -885,5 +991,3 @@ void GameScene::processString(std::string str)
 		chat_component.recieved_mtx.unlock();
 	}
 }
-
-

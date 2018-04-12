@@ -1,8 +1,8 @@
 {
     "Infantry": {
 	  "name": "Infantry",
-	  "squad_size": 10,
-      "health": 100,
+	  "squad_size": 1,
+      "health": 1,
       "damage": 2,
       "armour": 2,
 	  "move_range": 1,
@@ -15,8 +15,8 @@
 	
 	"Sniper": {
 	  "name": "Sniper",
-	  "squad_size": 2,
-      "health": 300,
+	  "squad_size": 1,
+      "health": 1,
       "damage": 8,
       "armour": 0,
 	  "move_range": 3,
@@ -30,7 +30,7 @@
 	"Artillery": {
 	  "name": "Artillery",
 	  "squad_size": 1,
-      "health": 100,
+      "health": 1,
       "damage": 3,
       "armour": 0,
 	  "move_range": 0,
@@ -44,7 +44,7 @@
 	"Tank": {
 	  "name": "Tank",
 	  "squad_size": 1,
-      "health": 100,
+      "health": 1,
       "damage": 5,
       "armour": 5,
 	  "move_range": 1,

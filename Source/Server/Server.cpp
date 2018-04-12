@@ -25,8 +25,8 @@ void Server::initialise()
 
 int Server::run()
 {
-	// while escape key has not been pressed
-	while (!GetAsyncKeyState(VK_ESCAPE))
+	// while Delete key has not been pressed
+	while (!GetAsyncKeyState(VK_DELETE))
 	{
 		network_server.consumeEvents();
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
