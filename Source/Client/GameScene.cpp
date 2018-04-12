@@ -863,6 +863,41 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 	}
 }
 
+bool GameScene::endgame_check()
+{
+	if (assigned_team == PlayerTurn::PLAYER1)
+	{
+		if (infantry_ally_ptr->getIsDead() &&
+			artillery_ally_ptr->getIsDead() &&
+			sniper_ally_ptr->getIsDead() &&
+			tank_ally_ptr->getIsDead())
+		{
+			game_finished = true;
+			winning_player = PlayerTurn::PLAYER1;
+			return true;
+		}
+	}
+
+	else if (assigned_team == PlayerTurn::PLAYER2)
+	{
+		if (infantry_enemy_ptr->getIsDead() &&
+			artillery_enemy_ptr->getIsDead() &&
+			sniper_enemy_ptr->getIsDead() &&
+			tank_enemy_ptr->getIsDead())
+		{
+			game_finished = true;
+			winning_player = PlayerTurn::PLAYER2;
+			return true;
+		}
+	}
+
+	else
+	{
+		return false;
+	}
+
+}
+
 void GameScene::gameSceneReset()
 {
 	chat_component.killThread();
@@ -891,5 +926,3 @@ void GameScene::processString(std::string str)
 		chat_component.recieved_mtx.unlock();
 	}
 }
-
-

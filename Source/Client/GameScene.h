@@ -48,6 +48,9 @@ public:
 private:
 
 	PlayerTurn assigned_team = PlayerTurn::NONE;
+	PlayerTurn winning_player = PlayerTurn::NONE;
+	bool game_finished = false;
+	bool endgame_check();
 
 
 	std::atomic<bool> infantry_select = false;
@@ -94,6 +97,7 @@ private:
 
 	float chat_timer = 0;
 	float msg_duration = 5;
+
 	int attack_AP_cost = 2;
 	int move_AP_cost = 1;
 
