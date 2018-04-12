@@ -73,15 +73,20 @@ void GameScene::initUnits()
 	UnitType::load();
 	sniper_enemy.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
 	sniper_enemy->setRefName("sniper_enemy");
+	sniper_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
+
 
 	tank_enemy.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
 	tank_enemy->setRefName("tank_enemy");
+	tank_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
 
 	artillery_enemy.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
 	artillery_enemy->setRefName("artillery_enemy");
+	artillery_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
 
 	infantry_enemy.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
 	infantry_enemy->setRefName("infantry_enemy");
+	infantry_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
 
 	sniper_ally.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
 	sniper_ally->setIsEnemy(false);
@@ -89,6 +94,7 @@ void GameScene::initUnits()
 	sniper_ally->getAttackSprite()->xPos(1120);
 	sniper_ally->getMoveSprite()->xPos(1120);
 	sniper_ally->setRefName("sniper_ally");
+	sniper_ally->getObjectSprite()->colour(ASGE::COLOURS::MEDIUMPURPLE);
 
 	tank_ally.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
 	tank_ally->setIsEnemy(false);
@@ -96,6 +102,7 @@ void GameScene::initUnits()
 	tank_ally->getAttackSprite()->xPos(1120);
 	tank_ally->getMoveSprite()->xPos(1120);
 	tank_ally->setRefName("tank_ally");
+	tank_ally->getObjectSprite()->colour(ASGE::COLOURS::MEDIUMPURPLE);
 
 	artillery_ally.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
 	artillery_ally->setIsEnemy(false);
@@ -103,6 +110,7 @@ void GameScene::initUnits()
 	artillery_ally->getAttackSprite()->xPos(1120);
 	artillery_ally->getMoveSprite()->xPos(1120);
 	artillery_ally->setRefName("artillery_ally");
+	artillery_ally->getObjectSprite()->colour(ASGE::COLOURS::MEDIUMPURPLE);
 
 	infantry_ally.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
 	infantry_ally->setIsEnemy(false);
@@ -110,6 +118,7 @@ void GameScene::initUnits()
 	infantry_ally->getAttackSprite()->xPos(1120);
 	infantry_ally->getMoveSprite()->xPos(1120);
 	infantry_ally->setRefName("infantry_ally");
+	infantry_ally->getObjectSprite()->colour(ASGE::COLOURS::MEDIUMPURPLE);
 	
 
 	units_vec.push_back(std::move(infantry_enemy));
