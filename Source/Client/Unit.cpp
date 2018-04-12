@@ -242,6 +242,8 @@ void Unit::takeDamage(Unit * damage_dealer)
 
 	health -= health_damage;
 	squad_size -= squad_damage;
+
+	setHasChanged(true);
 }
 
 int Unit::getHealth() const
