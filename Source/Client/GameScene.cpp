@@ -56,6 +56,9 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	turn_box->height(50);
 	turn_box->width(150);
 
+	victory_background = renderer->createUniqueSprite();
+	victory_background->loadTexture("..\\..\\Resources\\Backgrounds\\GameScene.png");
+
 	units_vec.reserve(8);
 	initUnits();
 }
@@ -174,17 +177,20 @@ void GameScene::update(const ASGE::GameTime & ms)
 		}
 	}
 
-	chatUpdate(ms);
-	unitsUpdate(ms);
-
-	if (player_turn == PlayerTurn::PLAYER1 && assigned_team == PlayerTurn::PLAYER2)
+	if (!game_finished)
 	{
-		unitNetworkUpdate(ms);
-	}
+		chatUpdate(ms);
+		unitsUpdate(ms);
 
-	if (player_turn == PlayerTurn::PLAYER2 && assigned_team == PlayerTurn::PLAYER1)
-	{
-		unitNetworkUpdate(ms);
+		if (player_turn == PlayerTurn::PLAYER1 && assigned_team == PlayerTurn::PLAYER2)
+		{
+			unitNetworkUpdate(ms);
+		}
+
+		if (player_turn == PlayerTurn::PLAYER2 && assigned_team == PlayerTurn::PLAYER1)
+		{
+			unitNetworkUpdate(ms);
+		}
 	}
 }
 void GameScene::unitsUpdate(const ASGE::GameTime & ms)
@@ -277,35 +283,41 @@ void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 
 void GameScene::render(ASGE::Renderer * renderer)
 {
-	renderer->renderSprite(*game_background.get(), BACKGROUND); //background is game board 
-	renderer->renderSprite(*next_turn_button.get(), MIDDLE_GROUND_FRONT); // next turn button
-	renderer->renderSprite(*turn_box.get(), MIDDLE_GROUND_FRONT); // trapezoid for the turn display
-
-	std::string player_txt = "Player: " + std::to_string(whichTurn()) + "'s";
-	renderer->renderText(player_txt, 590, 25, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-
-	std::string turn_txt = "Turn";
-	renderer->renderText(turn_txt, 616, 45, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-
 	if (game_finished)
 	{
 		std::string vicstring;
 		if (winning_player == PlayerTurn::PLAYER1)
 		{
-			vicstring = "PLAYER 1 WINS, SUCK IT PLAYER 2!";
+			vicstring = "PLAYER 1 WINS";
 		}
 
 		else
 		{
-			vicstring = "PLAYER 2 WINS, SUCK IT PLAYER 1!";
+			vicstring = "PLAYER 2 WINS";
 		}
 
-		renderer->renderText(vicstring, 300, 300, 2.0, ASGE::COLOURS::CORAL, FOREGROUND);
+		renderer->renderSprite(*victory_background.get(), MIDDLE_GROUND_FRONT);
+		renderer->renderText(vicstring, 400, 300, 1.25, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
+		renderer->renderText("Press Esc to return to menu", 150, 350, 1.1, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
 	}
 
-	unitsRender(renderer);
-	chatRender(renderer);
-	unitSelectionRender(renderer);
+	else
+	{
+		renderer->renderSprite(*game_background.get(), BACKGROUND); //background is game board 
+		renderer->renderSprite(*next_turn_button.get(), MIDDLE_GROUND_FRONT); // next turn button
+
+		unitSelectionRender(renderer);
+		unitsRender(renderer);
+		chatRender(renderer);
+		
+		renderer->renderSprite(*turn_box.get(), MIDDLE_GROUND_FRONT); // trapezoid for the turn display
+
+		std::string player_txt = "Player: " + std::to_string(whichTurn()) + "'s";
+		renderer->renderText(player_txt, 590, 25, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+
+		std::string turn_txt = "Turn";
+		renderer->renderText(turn_txt, 616, 45, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+	}
 }
 void GameScene::chatRender(ASGE::Renderer * renderer)
 {
@@ -352,7 +364,7 @@ void GameScene::unitsRender(ASGE::Renderer * renderer)
 	{
 		if (!unit->getIsDead())
 		{
-			renderer->renderSprite(*unit->getObjectSprite(), FOREGROUND);
+			renderer->renderSprite(*unit->getObjectSprite(), MIDDLE_GROUND_FRONT);
 		}
 	}
 }

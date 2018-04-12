@@ -110,6 +110,7 @@ private:
 	GameScene();
 
 	std::unique_ptr<ASGE::Sprite> game_background;
+	std::unique_ptr<ASGE::Sprite> victory_background;
 	std::unique_ptr<ASGE::Sprite> next_turn_button;
 	std::unique_ptr<ASGE::Sprite> turn_box;
 
