@@ -18,6 +18,7 @@ public:
 
 	void clickHandlerReset() { main_inputs->unregisterCallback(click_handler_id); };
 	void keyHandlerReset() { main_inputs->unregisterCallback(key_handler_id); };
+	void mouseHandlerReset() { main_inputs->unregisterCallback(mouse_handler_id); };
 
 protected:
 
@@ -29,4 +30,5 @@ protected:
 
 	int click_handler_id = -1;
 	int key_handler_id = -1;
+	int mouse_handler_id = -1;
 };

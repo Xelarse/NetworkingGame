@@ -285,20 +285,7 @@ void GameScene::render(ASGE::Renderer * renderer)
 {
 	if (game_finished)
 	{
-		std::string vicstring;
-		if (winning_player == PlayerTurn::PLAYER1)
-		{
-			vicstring = "PLAYER 1 WINS";
-		}
-
-		else
-		{
-			vicstring = "PLAYER 2 WINS";
-		}
-
-		renderer->renderSprite(*victory_background.get(), MIDDLE_GROUND_FRONT);
-		renderer->renderText(vicstring, 400, 300, 1.25, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
-		renderer->renderText("Press Esc to return to menu", 150, 350, 1.1, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
+		winScreenRender(renderer);
 	}
 
 	else
@@ -309,6 +296,7 @@ void GameScene::render(ASGE::Renderer * renderer)
 		unitSelectionRender(renderer);
 		unitsRender(renderer);
 		chatRender(renderer);
+		unitHoverInfo(renderer);
 		
 		renderer->renderSprite(*turn_box.get(), MIDDLE_GROUND_FRONT); // trapezoid for the turn display
 
@@ -317,6 +305,9 @@ void GameScene::render(ASGE::Renderer * renderer)
 
 		std::string turn_txt = "Turn";
 		renderer->renderText(turn_txt, 616, 45, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+
+		std::string player_id = "You are:\nPlayer " + std::to_string(whichPlayer());
+		renderer->renderText(player_id, 650, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
 }
 void GameScene::chatRender(ASGE::Renderer * renderer)
@@ -368,59 +359,83 @@ void GameScene::unitsRender(ASGE::Renderer * renderer)
 		}
 	}
 }
+void GameScene::winScreenRender(ASGE::Renderer * renderer)
+{
+	std::string vicstring;
+	if (winning_player == PlayerTurn::PLAYER1)
+	{
+		vicstring = "PLAYER 1 WINS";
+	}
+
+	else
+	{
+		vicstring = "PLAYER 2 WINS";
+	}
+
+	renderer->renderSprite(*victory_background.get(), MIDDLE_GROUND_FRONT);
+	renderer->renderText(vicstring, 400, 300, 1.25, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
+	renderer->renderText("Press Esc to return to menu", 150, 350, 1.1, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
+}
 void GameScene::unitSelectionRender(ASGE::Renderer * renderer)
 {
 	if (infantry_select)
 	{
 		renderer->renderSprite(*infantry_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
 		renderer->renderSprite(*infantry_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, infantry_enemy_ptr);
 	}
 	if (tank_select)
 	{
 		renderer->renderSprite(*tank_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
 		renderer->renderSprite(*tank_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, tank_enemy_ptr);
 	}
 
 	if (artillery_select)
 	{
 		renderer->renderSprite(*artillery_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
 		renderer->renderSprite(*artillery_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, artillery_enemy_ptr);
-
 	}
 
 	if (sniper_select)
 	{
 		renderer->renderSprite(*sniper_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
 		renderer->renderSprite(*sniper_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, sniper_enemy_ptr);
 	}
 
 	if (infantry2_select)
 	{
 		renderer->renderSprite(*infantry_ally_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
 		renderer->renderSprite(*infantry_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, infantry_ally_ptr);
 	}
 	if (tank2_select)
 	{
 		renderer->renderSprite(*tank_ally_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
 		renderer->renderSprite(*tank_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, tank_ally_ptr);
 	}
 	if (artillery2_select)
 	{
 		renderer->renderSprite(*artillery_ally_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
 		renderer->renderSprite(*artillery_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, artillery_ally_ptr);
 	}
 	if (sniper2_select)
 	{
 		renderer->renderSprite(*sniper_ally_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
 		renderer->renderSprite(*sniper_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
-		unitInfoBox(renderer, sniper_ally_ptr);
+	}
+}
+
+void GameScene::unitHoverInfo(ASGE::Renderer * renderer)
+{
+	double hover_x = 0;
+	double hover_y = 0;
+
+	main_inputs->getCursorPos(hover_x, hover_y);
+
+	for (auto& unit : units_vec)
+	{
+		if (Collision::mouseOnSprite(hover_x, hover_y, unit->getObjectSprite()))
+		{
+			unitInfoBox(renderer, unit.get());
+		}
 	}
 }
 
@@ -428,6 +443,8 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 {
 	const ASGE::ClickEvent* click_event =
 		static_cast<const ASGE::ClickEvent*>(data.get());
+
+
 
 	auto button = click_event->button;
 	auto action = click_event->action;
@@ -580,8 +597,6 @@ void GameScene::movingUnit(Unit * moving_unit, int xpos, int ypos)
 	moving_unit->reduceActionPoints(1);
 	moving_unit->setHasChanged(true);
 }
-
-
 void GameScene::setSelected(int xpos, int ypos)
 {
 	if (chat_component.getUserID() /*user_ID*/ % 2 == 0 && player_turn == PlayerTurn::PLAYER1)
@@ -877,9 +892,27 @@ int GameScene::whichTurn()
 	}
 }
 
+int GameScene::whichPlayer()
+{
+	if (assigned_team == PlayerTurn::PLAYER1)
+	{
+		return 1;
+	}
+
+	else if (assigned_team == PlayerTurn::PLAYER2)
+	{
+		return 2;
+	}
+
+	else
+	{
+		return -1;
+	}
+}
+
 void GameScene::unitInfoBox(ASGE::Renderer* renderer, Unit * unit_info)
 {
-	renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND_FRONT);
+	//renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND_FRONT);
 	std::string health = "HP: " + std::to_string(unit_info->getHealth());
 	renderer->renderText(health, 900, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
 	std::string squadsize = "Squad: " + std::to_string(unit_info->getSquadSize());
@@ -923,6 +956,11 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 			else
 			{
 				chat_str += key;
+
+				if (chat_str.size() % 10 == 0)
+				{
+					chat_str.append("\n");
+				}
 			}
 		}
 	}

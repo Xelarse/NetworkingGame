@@ -85,11 +85,14 @@ private:
 	void unitNetworkUpdate(const ASGE::GameTime& ms);
 
 	int whichTurn();
+	int whichPlayer();
 
 	void unitInfoBox(ASGE::Renderer* renderer, Unit* unit_info);
 	void unitSelectionRender(ASGE::Renderer* renderer);
+	void unitHoverInfo(ASGE::Renderer* renderer);
 	void chatRender(ASGE::Renderer* renderer);
 	void unitsRender(ASGE::Renderer* renderer);
+	void winScreenRender(ASGE::Renderer* renderer);
 	void gameSceneReset();
 	void processString(std::string str);
 	void attackingOtherUnit(Unit * attacking_unit, int xpos, int ypos);
