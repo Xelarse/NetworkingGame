@@ -2,9 +2,9 @@
 #include "Unit.h"
 #include <jsoncons/json.hpp>
 
-UnitType::UnitType(std::string name, int squad, int hp, int atk, int armour, int mov_rng, int atk_rng, int action_pts, std::string sprite_name, std::string attack_sprite_name, std::string move_sprite_name) :
+UnitType::UnitType(std::string name, int squad, int hp, int atk, int armour, int mov_rng, int atk_rng, int action_pts, std::string sprite_name, std::string attack_sprite_name, std::string move_sprite_name, std::string attack_sound) :
 	unit_name(name), squad_size(squad), health(hp), attack_rating(atk), armour_rating(armour), move_range(mov_rng), attack_range(atk_rng), action_points(action_pts), sprite_name(sprite_name),
-	attack_name(attack_sprite_name), move_name(move_sprite_name)
+	attack_name(attack_sprite_name), move_name(move_sprite_name), attack_sound_name(attack_sound)
 {
 }
 
@@ -63,6 +63,11 @@ std::string UnitType::getSpriteMoveName() const
 	return move_name;
 }
 
+std::string UnitType::getAttackSoundName() const
+{
+	return attack_sound_name;
+}
+
 Unit* UnitType::createUnit(ASGE::Renderer* renderer)
 {
 	return new Unit(*this, renderer);
@@ -93,8 +98,9 @@ void UnitType::load()
 		std::string sprite = data["sprite"].as_string();
 		std::string attack_sprite = data["attack_sprite"].as_string();
 		std::string move_sprite = data["move_sprite"].as_string();
+		std::string attack_snd = data["attack_sound"].as_string();
 
-		unit_types.push_back(UnitType(name, squad, health, damage, armour, move, attack, action, sprite, attack_sprite, move_sprite));
+		unit_types.push_back(UnitType(name, squad, health, damage, armour, move, attack, action, sprite, attack_sprite, move_sprite, attack_snd));
 	}
 }
 

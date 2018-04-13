@@ -588,6 +588,8 @@ void GameScene::attackingOtherUnit(Unit * attacking_unit, int xpos, int ypos)
 			if (attacking_unit->getIsEnemy() != Unit->getIsEnemy())
 			{
 				Unit->takeDamage(attacking_unit);
+				std::string attack_location = "..\\..\\Resources\\SoundGS\\UnitSounds\\" + attacking_unit->getAttackSound();
+				audio_engine->play2D(attack_location.c_str(), false);
 				attacking_unit->reduceActionPoints(attack_AP_cost);
 			}
 		}
