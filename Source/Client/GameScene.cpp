@@ -15,6 +15,7 @@ GameScene::~GameScene()
 	chat_component.deinitialize();
 	clickHandlerReset();
 	keyHandlerReset();
+	audio_engine->stopAllSounds();
 }
 
 void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManager * host)
@@ -29,6 +30,8 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 
 	key_handler_id = main_inputs->addCallbackFnc(ASGE::EventType::E_KEY,
 		&GameScene::keyHandler, this);
+
+	initAudioEngine();
 
 	game_background = renderer->createUniqueSprite();
 	game_background->loadTexture("..\\..\\Resources\\Backgrounds\\Gameboard.png");
@@ -966,6 +969,18 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 	}
 }
 
+bool GameScene::initAudioEngine()
+{
+	using namespace irrklang;
+	audio_engine.reset(createIrrKlangDevice());
+	if (!audio_engine)
+	{
+		// error starting audio engine
+		return false;
+	}
+	return true;
+}
+
 bool GameScene::endgame_check()
 {
 	if (assigned_team == PlayerTurn::PLAYER1)
@@ -1006,6 +1021,7 @@ void GameScene::gameSceneReset()
 	chat_component.killThread();
 	clickHandlerReset();
 	keyHandlerReset();
+	audio_engine->stopAllSounds();
 	chat_component.deinitialize();
 }
 

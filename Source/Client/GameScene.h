@@ -5,8 +5,7 @@
 #include <Common\CustomPacket.h>
 #include <string>
 #include <iostream>
-#include "Unit.h"
-#include "UnitType.h"
+#include <irrKlang.h>
 
 #include "Unit.h"
 #include "UnitType.h"
@@ -14,7 +13,9 @@
 #include "Scene.h"
 #include "Collision.h"
 
-
+namespace irrklang {
+	class ISoundEngine;
+}
 
 class GameScene : public Scene
 {
@@ -46,6 +47,10 @@ public:
 	void keyHandler(const ASGE::SharedEventData data);
 
 private:
+
+	bool initAudioEngine();
+
+	std::unique_ptr<irrklang::ISoundEngine> audio_engine = nullptr;
 
 	PlayerTurn assigned_team = PlayerTurn::NONE;
 	PlayerTurn winning_player = PlayerTurn::NONE;

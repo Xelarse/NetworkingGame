@@ -11,7 +11,6 @@ namespace {
 MyNetGame::~MyNetGame()
 {
 	LoadedGameFont::loaded_fonts.clear();
-	audio_engine->stopAllSounds();
 }
 
 bool MyNetGame::init()
@@ -44,13 +43,6 @@ bool MyNetGame::init()
 	menu_scene = std::make_unique<MenuScene>(renderer.get(), inputs.get(), scene_manager.get());
 	scene_manager->addScene(std::move(menu_scene));
 
-	//initilising audio engine
-	initAudioEngine();
-
-	////Loading in units and initialising one, Change the number index in unit types to determine which unit is loaded from the json file
-	//UnitType::load();
-	//gunner_enemy.reset(UnitType::unit_types[0].createUnit(renderer.get()));
-
 	return true;
 }
 
@@ -69,33 +61,4 @@ void MyNetGame::render(const ASGE::GameTime& ms)
 	renderer->setFont(LoadedGameFont::loaded_fonts[0].id);
 
 	scene_manager->render(renderer.get());
-
-	//if (network.isConnected())
-	//{
-	//	renderer->renderText("CONNECTED", 250, 100, ASGE::COLOURS::WHITE);
-	//}
-
-	//else if (network.isConnecting())
-	//{
-	//	renderer->renderText("CONNECTING", 250, 100, ASGE::COLOURS::WHITE);
-	//}
-
-	//else
-	//{
-	//	renderer->renderText("DISCONNECTED", 250, 100, ASGE::COLOURS::WHITE);
-	//}
-
-	//renderer->renderSprite(*gunner_enemy->getObjectSprite());
-}
-
-bool MyNetGame::initAudioEngine()
-{
-	using namespace irrklang;
-	audio_engine.reset(createIrrKlangDevice());
-	if (!audio_engine)
-	{
-		// error starting audio engine
-		return false;
-	}
-	return true;
 }
