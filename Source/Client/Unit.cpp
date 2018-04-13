@@ -16,6 +16,7 @@ Unit::Unit(UnitType& T, ASGE::Renderer* renderer) : type(T)
 	attack_name = T.getSpriteAttackName();
 	unit_name = T.getUnitName();
 	move_name = T.getSpriteMoveName();
+	attack_sound = T.getAttackSoundName();
 
 	init(renderer);
 }
@@ -361,6 +362,11 @@ std::string Unit::getUnitName() const
 std::string Unit::getRefName() const
 {
 	return ref_name;
+}
+
+std::string Unit::getAttackSound() const
+{
+	return attack_sound;
 }
 
 void Unit::setRefName(std::string name)

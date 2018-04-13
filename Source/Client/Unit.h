@@ -38,6 +38,7 @@ public:
 
 	std::string getUnitName() const;
 	std::string getRefName() const;
+	std::string getAttackSound() const;
 	void setRefName(std::string name);
 
 	// Inherited via GameObject
@@ -81,6 +82,7 @@ private:
 	std::string move_name = "";
 	std::string unit_name = "";
 	std::string ref_name = "";
+	std::string attack_sound = "";
 
 	std::unique_ptr<ASGE::Sprite> attack_sprite = nullptr;
 	std::unique_ptr<ASGE::Sprite> move_sprite = nullptr;
