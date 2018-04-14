@@ -27,6 +27,11 @@ public:
 	void setUsername(std::string str);
 	void killThread() { kill_thread = true; };
 
+	bool getIsLobby() { return is_lobby; };
+	bool getIsReconnecting() { return is_reconnecting; };
+	bool getIsDataSender() { return data_sender; };
+	bool getIsReadyToSend() { return ready_to_send; };
+
 
 	std::queue<CustomPacket> recieved_queue;
 	std::mutex recieved_mtx;
@@ -40,6 +45,13 @@ public:
 
 private:
 	std::atomic<bool> kill_thread = false;
+
+	std::atomic<bool> is_lobby = true; //Used to signify if players are in lobby waiting for someone to play against
+	std::atomic<bool> is_reconnecting = false; //To signify if a player has disconnected
+	std::atomic<bool> data_sender = false; //To signify if this client will be the player to give the unit data to the reconnecting player
+	std::atomic<bool> ready_to_send = false; //To signify that the reconnecting player is ready to recieve.
+
+
 
 	std::string username = "";
 	std::mutex username_mtx;
