@@ -76,6 +76,21 @@ void ClientComponent::on_data(const enet_uint8* data, size_t data_size)
 		std::lock_guard<std::mutex> lock(unit_update_mtx);
 		unit_update_queue.push(std::move(msg));
 	}
+
+	else if (msg.getType() == "turn")
+	{
+		player_turn = std::stoi(msg.getMsg());
+	}
+
+	else if (msg.getType() == "player")
+	{
+		assigned_player = std::stoi(msg.getMsg());
+	}
+
+	else if (msg.getType() == "reconnect")
+	{
+		is_reconnecting = true;
+	}
 }
 
 bool ClientComponent::isConnected() const

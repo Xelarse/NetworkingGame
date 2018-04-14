@@ -68,5 +68,31 @@ void Server::onClientData(server_client& client, const enet_uint8* data, size_t 
 		network_server.getServer()->send_packet_to_all_if(0, data, data_size, ENET_PACKET_FLAG_RELIABLE,
 			[&](const server_client& destination) {return destination.get_id() != client.get_id(); });
 	}
+
+	if (msg.getType() == "turn")
+	{
+		network_server.trace(
+			"received packet from client " +
+			std::to_string(client.get_id()) +
+			": which contains the turn of current game\n"
+		);
+
+		network_server.trace("forwarding onto other client");
+		network_server.getServer()->send_packet_to_all_if(0, data, data_size, ENET_PACKET_FLAG_RELIABLE,
+			[&](const server_client& destination) {return destination.get_id() != client.get_id(); });
+	}
+
+	if (msg.getType() == "player")
+	{
+		network_server.trace(
+			"received packet from client " +
+			std::to_string(client.get_id()) +
+			": which contains the other players team info\n"
+		);
+
+		network_server.trace("forwarding onto other client");
+		network_server.getServer()->send_packet_to_all_if(0, data, data_size, ENET_PACKET_FLAG_RELIABLE,
+			[&](const server_client& destination) {return destination.get_id() != client.get_id(); });
+	}
 	
 }

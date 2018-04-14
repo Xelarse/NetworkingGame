@@ -31,6 +31,8 @@ public:
 	bool getIsReconnecting() { return is_reconnecting; };
 	bool getIsDataSender() { return data_sender; };
 	bool getIsReadyToSend() { return ready_to_send; };
+	int getPlayerTurn() { return player_turn; };
+	int getAssignedPlayer() { return assigned_player; };
 
 
 	std::queue<CustomPacket> recieved_queue;
@@ -50,6 +52,8 @@ private:
 	std::atomic<bool> is_reconnecting = false; //To signify if a player has disconnected
 	std::atomic<bool> data_sender = false; //To signify if this client will be the player to give the unit data to the reconnecting player
 	std::atomic<bool> ready_to_send = false; //To signify that the reconnecting player is ready to recieve.
+	std::atomic<int> player_turn = -1; //To signify the players turn when reconnecting 
+	std::atomic<int> assigned_player = -1; //To signify the clients side when reconnecting
 
 
 

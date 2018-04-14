@@ -187,11 +187,23 @@ void GameScene::update(const ASGE::GameTime & ms)
 			client_component.getIsDataSender() &&
 			client_component.getIsReadyToSend())
 		{
-
+			//Send out all unit data to update the other player then reset isreadytosend to false
 		}
 
 		else if (client_component.getIsReconnecting())
 		{
+			if (client_component.getPlayerTurn() != -1)
+			{
+				if (client_component.getPlayerTurn() == 1) { player_turn = PlayerTurn::PLAYER1; }
+				else if (client_component.getPlayerTurn() == 2) { player_turn = PlayerTurn::PLAYER2; }
+			}
+
+			if (client_component.getAssignedPlayer() != -1)
+			{
+				if (client_component.getAssignedPlayer() == 1) { assigned_team = PlayerTurn::PLAYER1; }
+				else if (client_component.getAssignedPlayer() == 2) { assigned_team = PlayerTurn::PLAYER2; }
+			}
+
 			unitNetworkUpdate(ms);
 		}
 	}
