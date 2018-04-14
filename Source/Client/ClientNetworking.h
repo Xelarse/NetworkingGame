@@ -23,16 +23,17 @@ public:
 	bool isConnecting() const;
 
 	std::string getUsername();
-	int getUserID() { return user_ID; };
+	int getUserID()				{ return user_ID; };
 	void setUsername(std::string str);
-	void killThread() { kill_thread = true; };
+	void killThread()			{ kill_thread = true; };
 
-	bool getIsLobby() { return is_lobby; };
-	bool getIsReconnecting() { return is_reconnecting; };
-	bool getIsDataSender() { return data_sender; };
-	bool getIsReadyToSend() { return ready_to_send; };
-	int getPlayerTurn() { return player_turn; };
-	int getAssignedPlayer() { return assigned_player; };
+	bool getIsLobby()			{ return is_lobby; };
+	bool getIsReconnecting()	{ return is_reconnecting; };
+	bool getIsDataSender()		{ return data_sender; };
+	bool getIsReadyToSend()		{ return ready_to_send; };
+	int getPlayerTurn()			{ return player_turn; };
+	int getAssignedPlayer()		{ return assigned_player; };
+	void resetReadyToSend()		{ ready_to_send = false; };
 
 
 	std::queue<CustomPacket> recieved_queue;

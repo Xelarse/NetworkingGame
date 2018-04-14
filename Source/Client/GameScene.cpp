@@ -187,7 +187,8 @@ void GameScene::update(const ASGE::GameTime & ms)
 			client_component.getIsDataSender() &&
 			client_component.getIsReadyToSend())
 		{
-			//Send out all unit data to update the other player then reset isreadytosend to false
+			updateReconnectee(ms);
+			client_component.resetReadyToSend();
 		}
 
 		else if (client_component.getIsReconnecting())
@@ -312,6 +313,40 @@ void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 		}
 
 		client_component.unit_update_queue.pop();
+	}
+}
+
+void GameScene::updateReconnectee(const ASGE::GameTime & ms)
+{
+	////Send current turn data and what player the opponent is
+	int opponent_team = -1;
+	int game_turn = whichTurn();
+
+	if (assigned_team == PlayerTurn::PLAYER1) { opponent_team = 2; }
+	else { opponent_team = 1; }
+
+	CustomPacket team("player", "", std::to_string(opponent_team));
+	CustomPacket turn("turn", "", std::to_string(game_turn));
+
+	client_component.sending_mtx.lock();
+	client_component.sending_queue.push(std::move(team));
+	client_component.sending_queue.push(std::move(turn));
+	client_component.sending_mtx.unlock();
+
+	////Update their current units state in the game
+	for (auto& unit : units_vec)
+	{
+		std::string data = unit->getRefName() + "&" +
+			std::to_string(unit->getObjectSprite()->xPos()) + "&" +
+			std::to_string(unit->getObjectSprite()->yPos()) + "&" +
+			std::to_string(unit->getSquadSize()) + "&" +
+			std::to_string(unit->getHealth()) + "&";
+
+		CustomPacket unit_data("unit", "", data);
+
+		client_component.sending_mtx.lock();
+		client_component.sending_queue.push(std::move(unit_data));
+		client_component.sending_mtx.unlock();
 	}
 }
 
