@@ -102,12 +102,20 @@ private:
 	void processString(std::string str);
 	void attackingOtherUnit(Unit * attacking_unit, int xpos, int ypos);
 	void movingUnit(Unit * moving_unit, int xpos, int ypos);
+	void bulletMovement(Unit * attacking_unit, int xpos, int ypos);
 
 	float chat_timer = 0;
 	float msg_duration = 5;
 
 	int attack_AP_cost = 2;
 	int move_AP_cost = 1;
+	bool bullet_active = false;
+
+
+
+	int clicked_xPos;
+	int clicked_yPos;
+	Unit * attacking_unit_bullet = nullptr;
 
 	std::thread chat_thread;
 
@@ -121,13 +129,14 @@ private:
 	std::unique_ptr<ASGE::Sprite> victory_background;
 	std::unique_ptr<ASGE::Sprite> next_turn_button;
 	std::unique_ptr<ASGE::Sprite> turn_box;
+	std::unique_ptr<ASGE::Sprite> bullet_sprite;
 
 	//team 1
 	Unit* infantry_enemy_ptr = nullptr;
 	Unit* artillery_enemy_ptr = nullptr;
 	Unit* sniper_enemy_ptr = nullptr;
 	Unit* tank_enemy_ptr = nullptr;
-	std::unique_ptr<ASGE::Sprite> UIbox;
+
 
 	//team 2
 	Unit* infantry_ally_ptr = nullptr;
@@ -137,6 +146,7 @@ private:
 
 	//placeholders
 	Unit* selected_unit = nullptr;
+	std::unique_ptr<ASGE::Sprite> UIbox;
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
 	std::atomic<PlayerTurn> player_turn = PlayerTurn::PLAYER1;

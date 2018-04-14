@@ -1,4 +1,5 @@
 #include <sstream>
+#include <array>
 #include "GameScene.h"
 #include <math.h>
 
@@ -59,6 +60,13 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	turn_box->height(50);
 	turn_box->width(150);
 
+	bullet_sprite = renderer->createUniqueSprite();
+	bullet_sprite->loadTexture("..\\..\\Resources\\Sprites\\Bullet.png");
+	bullet_sprite->xPos(565);
+	bullet_sprite->yPos(1);
+	bullet_sprite->height(30);
+	bullet_sprite->width(90);
+
 	victory_background = renderer->createUniqueSprite();
 	victory_background->loadTexture("..\\..\\Resources\\Backgrounds\\GameScene.png");
 
@@ -80,19 +88,26 @@ void GameScene::initUnits()
 	sniper_enemy.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
 	sniper_enemy->setRefName("sniper_enemy");
 	sniper_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
+	sniper_enemy->getObjectSprite()->FLIP_Y;
 
 
 	tank_enemy.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
 	tank_enemy->setRefName("tank_enemy");
 	tank_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
+	tank_enemy->getObjectSprite()->FLIP_Y;
+
 
 	artillery_enemy.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
 	artillery_enemy->setRefName("artillery_enemy");
 	artillery_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
+	artillery_enemy->getObjectSprite()->FLIP_Y;
+
 
 	infantry_enemy.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
 	infantry_enemy->setRefName("infantry_enemy");
 	infantry_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
+	infantry_enemy->getObjectSprite()->FLIP_Y;
+
 
 	sniper_ally.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
 	sniper_ally->setIsEnemy(false);
@@ -202,6 +217,9 @@ void GameScene::unitsUpdate(const ASGE::GameTime & ms)
 	{
 		unit->update(ms);
 	}
+
+	bulletMovement(attacking_unit_bullet, clicked_xPos, clicked_yPos);
+
 }
 void GameScene::chatUpdate(const ASGE::GameTime & ms)
 {
@@ -360,6 +378,11 @@ void GameScene::unitsRender(ASGE::Renderer * renderer)
 		{
 			renderer->renderSprite(*unit->getObjectSprite(), MIDDLE_GROUND_FRONT);
 		}
+	}
+
+	if (bullet_active)
+	{
+		renderer->renderSprite(*bullet_sprite, FOREGROUND);
 	}
 }
 void GameScene::winScreenRender(ASGE::Renderer * renderer)
@@ -591,7 +614,36 @@ void GameScene::attackingOtherUnit(Unit * attacking_unit, int xpos, int ypos)
 				std::string attack_location = "..\\..\\Resources\\SoundGS\\UnitSounds\\" + attacking_unit->getAttackSound();
 				audio_engine->play2D(attack_location.c_str(), false);
 				attacking_unit->reduceActionPoints(attack_AP_cost);
+
+				bullet_sprite->xPos(attacking_unit->xPos());
+				bullet_sprite->yPos(attacking_unit->yPos());
+
+				clicked_xPos = xpos;
+				clicked_yPos = ypos;
+
+				attacking_unit_bullet = attacking_unit;
+
+				bullet_active = true;
 			}
+		}
+	}
+}
+void GameScene::bulletMovement(Unit * attacking_unit, int xpos, int ypos)
+{
+	if (bullet_active)
+	{
+		std::array<float, 2> bullet_vector = { xpos - bullet_sprite->xPos(), ypos - bullet_sprite->yPos()};
+		float magnitude = sqrt(bullet_vector[0] * bullet_vector[0] + bullet_vector[1] * bullet_vector[1]);
+		std::array<float, 2> bullet_unit_vector = { bullet_vector[0] / magnitude, bullet_vector[1] / magnitude };
+
+		if (magnitude < 1)
+		{
+			bullet_active = false;
+		}
+		else
+		{
+			bullet_sprite->xPos(bullet_sprite->xPos() + bullet_unit_vector[0]);
+			bullet_sprite->yPos(bullet_sprite->yPos() + bullet_unit_vector[1]);
 		}
 	}
 }
@@ -602,6 +654,7 @@ void GameScene::movingUnit(Unit * moving_unit, int xpos, int ypos)
 	moving_unit->reduceActionPoints(1);
 	moving_unit->setHasChanged(true);
 }
+
 void GameScene::setSelected(int xpos, int ypos)
 {
 	if (chat_component.getUserID() /*user_ID*/ % 2 == 0 && player_turn == PlayerTurn::PLAYER1)
