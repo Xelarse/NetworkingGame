@@ -88,6 +88,7 @@ private:
 	void unitsUpdate(const ASGE::GameTime& ms);
 	void chatUpdate(const ASGE::GameTime& ms);
 	void unitNetworkUpdate(const ASGE::GameTime& ms);
+	void updateReconnectee(const ASGE::GameTime& ms);
 
 	int whichTurn();
 	int whichPlayer();
