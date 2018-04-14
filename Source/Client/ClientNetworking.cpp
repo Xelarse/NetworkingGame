@@ -58,6 +58,8 @@ void ClientComponent::on_disconnect()
 
 void ClientComponent::on_data(const enet_uint8* data, size_t data_size)
 {
+	//TODO make a queue when you get flooded with packets you fucking retard
+
 	CustomPacket msg((char*)data);
 
 	if (msg.getType() == "chat")
@@ -92,6 +94,7 @@ void ClientComponent::on_data(const enet_uint8* data, size_t data_size)
 		if (msg.getMsg() == "true")
 		{
 			is_reconnecting = true;
+			is_lobby = false;
 		}
 
 		else if (msg.getMsg() == "false")
