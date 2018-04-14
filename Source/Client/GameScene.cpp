@@ -348,6 +348,12 @@ void GameScene::updateReconnectee(const ASGE::GameTime & ms)
 		client_component.sending_queue.push(std::move(unit_data));
 		client_component.sending_mtx.unlock();
 	}
+
+	CustomPacket finished_update("update_complete", "", "");
+	
+	client_component.sending_mtx.lock();
+	client_component.sending_queue.push(std::move(finished_update));
+	client_component.sending_mtx.unlock();
 }
 
 void GameScene::render(ASGE::Renderer * renderer)
@@ -537,7 +543,7 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 	auto xpos = click_event->xpos;
 	auto ypos = click_event->ypos;
 
-	if (last_scene)
+	if (last_scene && !client_component.getIsLobby() && !client_component.getIsReconnecting())
 	{
 		if (action == ASGE::MOUSE::BUTTON_PRESSED)
 		{
@@ -1021,7 +1027,7 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 	auto action = key_event->action;
 	auto key = key_event->key;
 
-	if (last_scene)
+	if (last_scene && !client_component.getIsLobby() && !client_component.getIsReconnecting())
 	{
 		if (action == ASGE::KEYS::KEY_PRESSED)
 		{

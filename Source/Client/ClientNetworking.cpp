@@ -89,7 +89,32 @@ void ClientComponent::on_data(const enet_uint8* data, size_t data_size)
 
 	else if (msg.getType() == "reconnect")
 	{
+		if (msg.getMsg() == "true")
+		{
+			is_reconnecting = true;
+		}
+
+		else if (msg.getMsg() == "false")
+		{
+			is_reconnecting = false;
+			data_sender = false;
+		}
+	}
+
+	else if (msg.getType() == "start")
+	{
+		is_lobby = false;
+	}
+
+	else if (msg.getType() == "data_sender")
+	{
+		data_sender = true;
 		is_reconnecting = true;
+	}
+
+	else if (msg.getType() == "ready")
+	{
+		ready_to_send = true;
 	}
 }
 

@@ -14,6 +14,8 @@ public:
 private:
 	ServerComponent network_server;
 	void onClientData(server_client& client, const enet_uint8* data, size_t data_size);
+	void onClientConnect(server_client& client);
+	void onClientDisconnect(unsigned int client_uid);
 
 	bool game_active = false;
 
