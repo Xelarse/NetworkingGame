@@ -59,8 +59,8 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	bullet_sprite->loadTexture("..\\..\\Resources\\Sprites\\Bullet.png");
 	bullet_sprite->xPos(565);
 	bullet_sprite->yPos(1);
-	bullet_sprite->height(30);
-	bullet_sprite->width(90);
+	bullet_sprite->height(50);
+	bullet_sprite->width(50);
 
 	victory_background = renderer->createUniqueSprite();
 	victory_background->loadTexture("..\\..\\Resources\\Backgrounds\\GameScene.png");
