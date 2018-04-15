@@ -17,6 +17,8 @@ private:
 	void onClientConnect(server_client& client);
 	void onClientDisconnect(unsigned int client_uid);
 
+	void assignClientLocalID(server_client& client);
+
 	bool game_active = false;
 
 public:

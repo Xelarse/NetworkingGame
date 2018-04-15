@@ -191,7 +191,7 @@ void GameScene::update(const ASGE::GameTime & ms)
 			client_component.resetReadyToSend();
 		}
 
-		else if (client_component.getIsReconnecting())
+		else if (client_component.getIsReconnecting() && client_component.getIsUpdateCompleted())
 		{
 			if (client_component.getPlayerTurn() != -1)
 			{
@@ -201,11 +201,20 @@ void GameScene::update(const ASGE::GameTime & ms)
 
 			if (client_component.getAssignedPlayer() != -1)
 			{
-				if (client_component.getAssignedPlayer() == 1) { assigned_team = PlayerTurn::PLAYER1; }
-				else if (client_component.getAssignedPlayer() == 2) { assigned_team = PlayerTurn::PLAYER2; }
+				if (client_component.getAssignedPlayer() == 1) { assigned_team = PlayerTurn::PLAYER1; client_component.setUserID(0); }
+				else if (client_component.getAssignedPlayer() == 2) { assigned_team = PlayerTurn::PLAYER2; client_component.setUserID(1); }
 			}
 
 			unitNetworkUpdate(ms);
+			unitsUpdate(ms);
+
+			CustomPacket resumepkt("resume", "", "");
+			
+			client_component.sending_mtx.lock();
+			client_component.sending_queue.push(std::move(resumepkt));
+			client_component.sending_mtx.unlock();
+
+			client_component.resetUpdateComplete();
 		}
 	}
 
@@ -237,12 +246,12 @@ void GameScene::unitsUpdate(const ASGE::GameTime & ms)
 }
 void GameScene::chatUpdate(const ASGE::GameTime & ms)
 {
-	if (client_component.recieved_queue.size())
+	if (client_component.chat_recieved_queue.size())
 	{
 		if (chat_timer > msg_duration)
 		{
-			std::lock_guard<std::mutex> lock(client_component.recieved_mtx);
-			client_component.recieved_queue.pop();
+			std::lock_guard<std::mutex> lock(client_component.chat_recieved_mtx);
+			client_component.chat_recieved_queue.pop();
 			chat_timer = 0;
 		}
 
@@ -404,11 +413,11 @@ void GameScene::chatRender(ASGE::Renderer * renderer)
 	renderer->renderText("Latest Message:", 350, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 
 
-	if (client_component.recieved_queue.size())
+	if (client_component.chat_recieved_queue.size())
 	{
-		std::lock_guard<std::mutex> lock(client_component.recieved_mtx);
+		std::lock_guard<std::mutex> lock(client_component.chat_recieved_mtx);
 
-		std::string msg1 = client_component.recieved_queue.front().getUsername() + ": " + client_component.recieved_queue.front().getMsg();
+		std::string msg1 = client_component.chat_recieved_queue.front().getUsername() + ": " + client_component.chat_recieved_queue.front().getMsg();
 		renderer->renderText(msg1, 350, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 
 	}
@@ -693,7 +702,7 @@ void GameScene::movingUnit(Unit * moving_unit, int xpos, int ypos)
 }
 void GameScene::setSelected(int xpos, int ypos)
 {
-	if (client_component.getUserID() /*user_ID*/ % 2 == 0 && player_turn == PlayerTurn::PLAYER1)
+	if (assigned_team == PlayerTurn::PLAYER1 && player_turn == PlayerTurn::PLAYER1)
 	{
 		if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy_ptr->getObjectSprite())) //set selected
 		{
@@ -753,7 +762,7 @@ void GameScene::setSelected(int xpos, int ypos)
 		}
 	}
 
-	if (client_component.getUserID() /*user_ID */ %2 != 0 && player_turn == PlayerTurn::PLAYER2)
+	if (assigned_team == PlayerTurn::PLAYER2 && player_turn == PlayerTurn::PLAYER2)
 	{
 		if (Collision::mouseOnSprite(xpos, ypos, infantry_ally_ptr->getObjectSprite())) //set selected boi
 		{
@@ -1131,8 +1140,8 @@ void GameScene::processString(std::string str)
 		client_component.sending_queue.push(std::move(msg));
 		client_component.sending_mtx.unlock();
 
-		client_component.recieved_mtx.lock();
-		client_component.recieved_queue.push(std::move(msg));
-		client_component.recieved_mtx.unlock();
+		client_component.chat_recieved_mtx.lock();
+		client_component.chat_recieved_queue.push(std::move(msg));
+		client_component.chat_recieved_mtx.unlock();
 	}
 }

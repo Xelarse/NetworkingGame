@@ -27,22 +27,22 @@ void ClientComponent::consumeEvents()
 			std::bind(&ClientComponent::on_disconnect, this),
 			std::bind(&ClientComponent::on_data, this, _1, _2));
 
-		while (sending_queue.size())
+		while (recieved_queue.size())
 		{
-			std::lock_guard<std::mutex> lock(sending_mtx);
+			std::lock_guard<std::mutex> lock(recieved_mtx);
+			
+			auto front = recieved_queue.front();
+			processRecievedPackets(std::move(front));
 
-			const auto& msg = sending_queue.front();
-			unsigned int msg_length = 0;
-			auto msg_data = msg.data(msg_length);
-
-			sending_queue.pop();
-
-			assert(sizeof(char) == sizeof(enet_uint8));
-			client.send_packet(0, reinterpret_cast<enet_uint8*>(msg_data), msg_length, ENET_PACKET_FLAG_RELIABLE);
+			recieved_queue.pop();
 		}
 
+		while (sending_queue.size())
+		{
+			sendFrontOfQueue();
+		}
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
 }
 
@@ -62,10 +62,54 @@ void ClientComponent::on_data(const enet_uint8* data, size_t data_size)
 
 	CustomPacket msg((char*)data);
 
+	std::lock_guard<std::mutex> lock(recieved_mtx);
+	recieved_queue.push(std::move(msg));
+}
+
+bool ClientComponent::isConnected() const
+{
+	return 
+		client.get_connection_status() == enetpp::client::CONNECTED;
+}
+
+bool ClientComponent::isConnecting() const
+{
+	return
+		client.get_connection_status() == enetpp::client::CONNECTING;
+}
+
+std::string ClientComponent::getUsername()
+{
+	std::lock_guard<std::mutex> lock(username_mtx);
+	return username;
+}
+
+void ClientComponent::setUsername(std::string str)
+{
+	std::lock_guard<std::mutex> lock(username_mtx);
+	username = str;
+}
+
+void ClientComponent::sendFrontOfQueue()
+{
+	std::lock_guard<std::mutex> lock(sending_mtx);
+
+	const auto& msg = sending_queue.front();
+	unsigned int msg_length = 0;
+	auto msg_data = msg.data(msg_length);
+
+	sending_queue.pop();
+
+	assert(sizeof(char) == sizeof(enet_uint8));
+	client.send_packet(0, reinterpret_cast<enet_uint8*>(msg_data), msg_length, ENET_PACKET_FLAG_RELIABLE);
+}
+
+void ClientComponent::processRecievedPackets(CustomPacket msg)
+{
 	if (msg.getType() == "chat")
 	{
-		std::lock_guard<std::mutex> lock(recieved_mtx);
-		recieved_queue.push(std::move(msg));
+		std::lock_guard<std::mutex> lock(chat_recieved_mtx);
+		chat_recieved_queue.push(std::move(msg));
 	}
 
 	else if (msg.getType() == "init")
@@ -119,28 +163,9 @@ void ClientComponent::on_data(const enet_uint8* data, size_t data_size)
 	{
 		ready_to_send = true;
 	}
-}
 
-bool ClientComponent::isConnected() const
-{
-	return 
-		client.get_connection_status() == enetpp::client::CONNECTED;
-}
-
-bool ClientComponent::isConnecting() const
-{
-	return
-		client.get_connection_status() == enetpp::client::CONNECTING;
-}
-
-std::string ClientComponent::getUsername()
-{
-	std::lock_guard<std::mutex> lock(username_mtx);
-	return username;
-}
-
-void ClientComponent::setUsername(std::string str)
-{
-	std::lock_guard<std::mutex> lock(username_mtx);
-	username = str;
+	else if (msg.getType() == "update_complete")
+	{
+		update_complete = true;
+	}
 }
