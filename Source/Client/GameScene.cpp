@@ -1,4 +1,5 @@
 #include <sstream>
+#include <array>
 #include "GameScene.h"
 #include <math.h>
 
@@ -7,7 +8,6 @@ GameScene::GameScene(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	main_inputs = input;
 	host_manager = host;
 	main_renderer = renderer;
-
 	init(main_renderer, main_inputs, host_manager);
 }
 GameScene::~GameScene()
@@ -23,14 +23,10 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	client_component.initialize();
 	chat_thread = std::thread(&ClientComponent::consumeEvents, &client_component);
 	chat_thread.detach();
-
-
 	click_handler_id = main_inputs->addCallbackFnc(ASGE::EventType::E_MOUSE_CLICK,
 		&GameScene::clickHandler, this);
-
 	key_handler_id = main_inputs->addCallbackFnc(ASGE::EventType::E_KEY,
 		&GameScene::keyHandler, this);
-
 	initAudioEngine();
 
 	game_background = renderer->createUniqueSprite();
@@ -59,6 +55,13 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	turn_box->height(50);
 	turn_box->width(150);
 
+	bullet_sprite = renderer->createUniqueSprite();
+	bullet_sprite->loadTexture("..\\..\\Resources\\Sprites\\Bullet.png");
+	bullet_sprite->xPos(565);
+	bullet_sprite->yPos(1);
+	bullet_sprite->height(30);
+	bullet_sprite->width(90);
+
 	victory_background = renderer->createUniqueSprite();
 	victory_background->loadTexture("..\\..\\Resources\\Backgrounds\\GameScene.png");
 
@@ -80,19 +83,22 @@ void GameScene::initUnits()
 	sniper_enemy.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
 	sniper_enemy->setRefName("sniper_enemy");
 	sniper_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
-
+	sniper_enemy->getObjectSprite()->FLIP_Y;
 
 	tank_enemy.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
 	tank_enemy->setRefName("tank_enemy");
 	tank_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
+	tank_enemy->getObjectSprite()->FLIP_Y;
 
 	artillery_enemy.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
 	artillery_enemy->setRefName("artillery_enemy");
 	artillery_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
+	artillery_enemy->getObjectSprite()->FLIP_Y;
 
 	infantry_enemy.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
 	infantry_enemy->setRefName("infantry_enemy");
 	infantry_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
+	infantry_enemy->getObjectSprite()->FLIP_Y;
 
 	sniper_ally.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
 	sniper_ally->setIsEnemy(false);
@@ -126,31 +132,33 @@ void GameScene::initUnits()
 	infantry_ally->setRefName("infantry_ally");
 	infantry_ally->getObjectSprite()->colour(ASGE::COLOURS::MEDIUMPURPLE);
 	
-
 	units_vec.push_back(std::move(infantry_enemy));
 	infantry_enemy_ptr = units_vec.back().get();
-
 	units_vec.push_back(std::move(sniper_enemy));
 	sniper_enemy_ptr = units_vec.back().get();
-
 	units_vec.push_back(std::move(artillery_enemy));
 	artillery_enemy_ptr = units_vec.back().get();
-
 	units_vec.push_back(std::move(tank_enemy));
 	tank_enemy_ptr = units_vec.back().get();
-
 	units_vec.push_back(std::move(infantry_ally));
 	infantry_ally_ptr = units_vec.back().get();
-
 	units_vec.push_back(std::move(sniper_ally));
 	sniper_ally_ptr = units_vec.back().get();
-
 	units_vec.push_back(std::move(artillery_ally));
 	artillery_ally_ptr = units_vec.back().get();
-
 	units_vec.push_back(std::move(tank_ally));
 	tank_ally_ptr = units_vec.back().get();
-
+}
+bool GameScene::initAudioEngine()
+{
+	using namespace irrklang;
+	audio_engine.reset(createIrrKlangDevice());
+	if (!audio_engine)
+	{
+		// error starting audio engine
+		return false;
+	}
+	return true;
 }
 
 void GameScene::update(const ASGE::GameTime & ms)
@@ -159,7 +167,6 @@ void GameScene::update(const ASGE::GameTime & ms)
 	{
 		assigned_team = PlayerTurn::PLAYER1;
 	}
-
 	else if (client_component.getUserID() % 2 != 0 && assigned_team == PlayerTurn::NONE && client_component.getUserID() != -1)
 	{
 		assigned_team = PlayerTurn::PLAYER2;
@@ -167,16 +174,12 @@ void GameScene::update(const ASGE::GameTime & ms)
 
 	if (next_scene != SceneTransitions::NONE)
 	{
-		switch (next_scene)
+		if (next_scene == SceneTransitions::TO_MENU)
 		{
-			case SceneTransitions::TO_MENU:
-			{
-				last_scene = false;
-				gameSceneReset();
-				host_manager->removeScene();
-				next_scene = SceneTransitions::NONE;
-				break;
-			}
+			last_scene = false;
+			gameSceneReset();
+			host_manager->removeScene();
+			next_scene = SceneTransitions::NONE;
 		}
 	}
 
@@ -243,6 +246,8 @@ void GameScene::unitsUpdate(const ASGE::GameTime & ms)
 	{
 		unit->update(ms);
 	}
+
+	bulletMovement(attacking_unit_bullet, clicked_xPos, clicked_yPos);
 }
 void GameScene::chatUpdate(const ASGE::GameTime & ms)
 {
@@ -254,7 +259,6 @@ void GameScene::chatUpdate(const ASGE::GameTime & ms)
 			client_component.chat_recieved_queue.pop();
 			chat_timer = 0;
 		}
-
 		else
 		{
 			chat_timer += ms.delta_time.count() / 1000;
@@ -266,15 +270,12 @@ void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 	while (client_component.unit_update_queue.size())
 	{
 		std::lock_guard<std::mutex> lock(client_component.unit_update_mtx);
-
 		auto front_unit = client_component.unit_update_queue.front();
-
 		std::string name = "";
 		int x_pos = 0;
 		int y_pos = 0;
 		int squad_size = 0;
 		int unit_hp = 0;
-
 		front_unit.unitDataDeciper(name, x_pos, y_pos, squad_size, unit_hp);
 
 		if (name == "endturn")
@@ -283,7 +284,6 @@ void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 			{
 				player_turn = PlayerTurn::PLAYER2;
 			}
-
 			else if (player_turn == PlayerTurn::PLAYER2)
 			{
 				player_turn = PlayerTurn::PLAYER1;
@@ -304,7 +304,6 @@ void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 
 			game_finished = true;
 		}
-
 		else
 		{
 			for (auto& unit : units_vec)
@@ -313,15 +312,32 @@ void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 				{
 					unit->getObjectSprite()->xPos(x_pos);
 					unit->getObjectSprite()->yPos(y_pos);
-
 					unit->setSquadSize(squad_size);
 					unit->setHP(unit_hp);
 					break;
 				}
 			}
 		}
-
 		client_component.unit_update_queue.pop();
+	}
+}
+void GameScene::bulletMovement(Unit * attacking_unit, int xpos, int ypos)
+{
+	if (bullet_active)
+	{
+		std::array<float, 2> bullet_vector = { xpos - bullet_sprite->xPos(), ypos - bullet_sprite->yPos() };
+		float magnitude = sqrt(bullet_vector[0] * bullet_vector[0] + bullet_vector[1] * bullet_vector[1]);
+		std::array<float, 2> bullet_unit_vector = { bullet_vector[0] / magnitude, bullet_vector[1] / magnitude };
+
+		if (magnitude < 1)
+		{
+			bullet_active = false;
+		}
+		else
+		{
+			bullet_sprite->xPos(bullet_sprite->xPos() + bullet_unit_vector[0]);
+			bullet_sprite->yPos(bullet_sprite->yPos() + bullet_unit_vector[1]);
+		}
 	}
 }
 
@@ -371,7 +387,6 @@ void GameScene::render(ASGE::Renderer * renderer)
 	{
 		lobbyScreenRender(renderer);
 	}
-
 	else
 	{
 		if (game_finished)
@@ -394,7 +409,6 @@ void GameScene::chatRender(ASGE::Renderer * renderer)
 	{
 		renderer->renderText("Please enter username:", 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
-
 	else
 	{
 		if (client_component.isConnected())
@@ -402,26 +416,20 @@ void GameScene::chatRender(ASGE::Renderer * renderer)
 			std::string str = "Connected as : " + client_component.getUsername();
 			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 		}
-
 		else
 		{
 			std::string str = "Once you connect your username will be: " + client_component.getUsername();
 			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 		}
 	}
-
 	renderer->renderText("Latest Message:", 350, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 
-
-	if (client_component.chat_recieved_queue.size())
+	if (client_component.recieved_queue.size())
 	{
-		std::lock_guard<std::mutex> lock(client_component.chat_recieved_mtx);
-
-		std::string msg1 = client_component.chat_recieved_queue.front().getUsername() + ": " + client_component.chat_recieved_queue.front().getMsg();
+		std::lock_guard<std::mutex> lock(client_component.recieved_mtx);
+		std::string msg1 = client_component.recieved_queue.front().getUsername() + ": " + client_component.recieved_queue.front().getMsg();
 		renderer->renderText(msg1, 350, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
-
 	}
-
 	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 }
 void GameScene::unitsRender(ASGE::Renderer * renderer)
@@ -433,6 +441,11 @@ void GameScene::unitsRender(ASGE::Renderer * renderer)
 			renderer->renderSprite(*unit->getObjectSprite(), MIDDLE_GROUND_FRONT);
 		}
 	}
+
+	if (bullet_active)
+	{
+		renderer->renderSprite(*bullet_sprite, FOREGROUND);
+	}
 }
 void GameScene::winScreenRender(ASGE::Renderer * renderer)
 {
@@ -441,12 +454,10 @@ void GameScene::winScreenRender(ASGE::Renderer * renderer)
 	{
 		vicstring = "PLAYER 1 WINS";
 	}
-
 	else
 	{
 		vicstring = "PLAYER 2 WINS";
 	}
-
 	renderer->renderSprite(*victory_background.get(), MIDDLE_GROUND_FRONT);
 	renderer->renderText(vicstring, 400, 300, 1.25, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
 	renderer->renderText("Press Esc to return to menu", 150, 350, 1.1, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
@@ -459,7 +470,7 @@ void GameScene::gameScreenRender(ASGE::Renderer * renderer)
 	unitSelectionRender(renderer);
 	unitsRender(renderer);
 	chatRender(renderer);
-	unitHoverInfo(renderer);
+	unitHoverInfoRender(renderer);
 
 	renderer->renderSprite(*turn_box.get(), MIDDLE_GROUND_FRONT); // trapezoid for the turn display
 
@@ -481,50 +492,46 @@ void GameScene::unitSelectionRender(ASGE::Renderer * renderer)
 {
 	if (infantry_select)
 	{
-		renderer->renderSprite(*infantry_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*infantry_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*infantry_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
 	}
 	if (tank_select)
 	{
-		renderer->renderSprite(*tank_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*tank_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*tank_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
 	}
-
 	if (artillery_select)
 	{
-		renderer->renderSprite(*artillery_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*artillery_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*artillery_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
 	}
-
 	if (sniper_select)
 	{
-		renderer->renderSprite(*sniper_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*sniper_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*sniper_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
 	}
-
 	if (infantry2_select)
 	{
-		renderer->renderSprite(*infantry_ally_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*infantry_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*infantry_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
 	}
 	if (tank2_select)
 	{
-		renderer->renderSprite(*tank_ally_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*tank_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*tank_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
 	}
 	if (artillery2_select)
 	{
-		renderer->renderSprite(*artillery_ally_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*artillery_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*artillery_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
 	}
 	if (sniper2_select)
 	{
-		renderer->renderSprite(*sniper_ally_ptr->getAttackSprite(), MIDDLE_GROUND_FRONT);
+		renderer->renderSprite(*sniper_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*sniper_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
 	}
 }
-
-void GameScene::unitHoverInfo(ASGE::Renderer * renderer)
+void GameScene::unitHoverInfoRender(ASGE::Renderer * renderer)
 {
 	double hover_x = 0;
 	double hover_y = 0;
@@ -544,9 +551,6 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 {
 	const ASGE::ClickEvent* click_event =
 		static_cast<const ASGE::ClickEvent*>(data.get());
-
-
-
 	auto button = click_event->button;
 	auto action = click_event->action;
 	auto xpos = click_event->xpos;
@@ -557,10 +561,8 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 		if (action == ASGE::MOUSE::BUTTON_PRESSED)
 		{
 			nextTurnPressed(xpos, ypos);
-
 			placeUnitAtClick(xpos, ypos);
 			attackClickedUnit(xpos, ypos);
-
 			setSelected(xpos, ypos);
 		}
 	}
@@ -568,19 +570,18 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 void GameScene::placeUnitAtClick(int xpos, int ypos) // also handles ap reduction
 {
 	bool sprite_on_target = false;
-
 	for (auto& Unit : units_vec)
 	{
 		if (Collision::mouseOnSprite(xpos, ypos, Unit->getObjectSprite()))
 		{
-
 			sprite_on_target = true;
 			break;
 		}
 	}
 	if (!sprite_on_target)
 	{
-		if (infantry_select || tank_select || sniper_select || artillery_select) //if team 1 (enemy) unit is selected
+		if (infantry_select || tank_select || sniper_select || artillery_select ||
+			infantry2_select || tank2_select || sniper2_select || artillery2_select) //if team 1 (enemy) unit is selected
 		{
 			if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy_ptr->getMoveSprite()) && infantry_select && infantry_enemy_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
 			{
@@ -598,10 +599,6 @@ void GameScene::placeUnitAtClick(int xpos, int ypos) // also handles ap reductio
 			{
 				movingUnit(sniper_enemy_ptr, xpos, ypos);
 			}
-		}
-
-		if (infantry2_select || tank2_select || sniper2_select || artillery2_select) //if team 2 (ally) unit is selected
-		{
 			if (Collision::mouseOnSprite(xpos, ypos, infantry_ally_ptr->getMoveSprite()) && infantry2_select && infantry_ally_ptr->getActionPoints() > 0 && xpos > 40 && xpos < 1200)
 			{
 				movingUnit(infantry_ally_ptr, xpos, ypos);
@@ -629,7 +626,6 @@ void GameScene::attackClickedUnit(int xpos, int ypos)
 	{
 		if (Collision::mouseOnSprite(xpos, ypos, Unit->getObjectSprite()))
 		{
-
 			sprite_on_target = true;
 			break;
 		}
@@ -655,7 +651,6 @@ void GameScene::attackClickedUnit(int xpos, int ypos)
 				attackingOtherUnit(sniper_enemy_ptr, xpos, ypos);
 			}
 		}
-
 		if (infantry2_select || tank2_select || sniper2_select || artillery2_select) //if unit is selected
 		{
 			if (Collision::mouseOnSprite(xpos, ypos, infantry_ally_ptr->getAttackSprite()) && infantry2_select && infantry_ally_ptr->getActionPoints() >= 2 && xpos > 40 && xpos < 1200)
@@ -689,16 +684,72 @@ void GameScene::attackingOtherUnit(Unit * attacking_unit, int xpos, int ypos)
 				std::string attack_location = "..\\..\\Resources\\SoundGS\\UnitSounds\\" + attacking_unit->getAttackSound();
 				audio_engine->play2D(attack_location.c_str(), false);
 				attacking_unit->reduceActionPoints(attack_AP_cost);
+				bullet_sprite->xPos(attacking_unit->xPos());
+				bullet_sprite->yPos(attacking_unit->yPos());
+				clicked_xPos = xpos;
+				clicked_yPos = ypos;
+				attacking_unit_bullet = attacking_unit;
+				bullet_active = true;
 			}
 		}
 	}
 }
-
 void GameScene::movingUnit(Unit * moving_unit, int xpos, int ypos)
 {
 	gridSnapping(xpos, ypos, moving_unit->getObjectSprite()); // place unit in clicked location
 	moving_unit->reduceActionPoints(1);
 	moving_unit->setHasChanged(true);
+}
+void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit) //logic for snapping to grid
+{
+	// floor() and ceiling() so x snaps every 120, Y snaps every 120 so divide current number by 120 round it up or down depending on
+	//What its closest to and then multiply by 120 to get it co ords for the screen.
+	int new_xpos = 0;
+	int new_ypos = 0;
+	float current_xpos = xpos;
+	float current_ypos = ypos;
+	bool over_x_max = false;
+	bool over_y_max = false;
+	// For X calculation
+	current_xpos /= 120; // Getting individual grid pos
+	if (current_xpos > 10) { over_x_max = true; };
+	current_xpos = floor(current_xpos); //rounding down to get an exact grid value
+	current_xpos *= 120; //remultiplying back to an actual screen value
+
+	if (current_xpos < 0 && isAUnitSelected()) //If it rounded down to 0
+	{
+		new_xpos = 40; // Just the standard grid offset
+	}
+	else if (over_x_max && isAUnitSelected())
+	{
+		new_xpos = 1120;
+	}
+	else
+	{
+		new_xpos = current_xpos + 40; // Else takes the actual screen value and adds the x offset.
+	}
+
+	//// For Y calculation, done in the same way as X
+	current_ypos /= 120;
+	if (current_ypos > 5) { over_y_max = true; };
+	current_ypos = floor(current_ypos);
+	current_ypos *= 120;
+
+	if (current_ypos < 0 && isAUnitSelected())
+	{
+		new_ypos = 3;
+	}
+	else if (over_y_max && isAUnitSelected())
+	{
+		new_ypos = 483;
+	}
+	else
+	{
+		new_ypos = current_ypos + 3;
+	}
+	//Finally reapplying the new co ords to the passed in object
+	unit->xPos(new_xpos);
+	unit->yPos(new_ypos);
 }
 void GameScene::setSelected(int xpos, int ypos)
 {
@@ -822,69 +873,18 @@ void GameScene::setSelected(int xpos, int ypos)
 		}
 	}
 }
-void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit ) //logic for snapping to grid
+void GameScene::setSelectedSubSystem(bool selection)
 {
-	// floor() and ceiling() so x snaps every 120, Y snaps every 120 so divide current number by 120 round it up or down depending on
-	//What its closest to and then multiply by 120 to get it co ords for the screen.
-
-	int new_xpos = 0;
-	int new_ypos = 0;
-
-	float current_xpos = xpos;
-	float current_ypos = ypos;
-
-	bool over_x_max = false;
-	bool over_y_max = false;
-
-	//// For X calculation
-	current_xpos /= 120; // Getting individual grid pos
-	if (current_xpos > 10) { over_x_max = true; };
-	current_xpos = floor(current_xpos); //rounding down to get an exact grid value
-	current_xpos *= 120; //remultiplying back to an actual screen value
-	
-	if (current_xpos < 0 && isAUnitSelected()) //If it rounded down to 0
-	{
-		new_xpos = 40; // Just the standard grid offset
-	}
-
-	else if (over_x_max && isAUnitSelected())
-	{
-		new_xpos = 1120;
-	}
-
-	else
-	{
-		new_xpos = current_xpos + 40; // Else takes the actual screen value and adds the x offset.
-	}
-
-
-	//// For Y calculation, done in the same way as X
-	current_ypos /= 120;
-	if (current_ypos > 5) { over_y_max = true; };
-	current_ypos = floor(current_ypos);
-	current_ypos *= 120;
-
-	if (current_ypos < 0 && isAUnitSelected())
-	{
-		new_ypos = 3;
-	}
-
-	else if (over_y_max && isAUnitSelected())
-	{
-		new_ypos = 483;
-	}
-
-	else
-	{
-		new_ypos = current_ypos + 3;
-	}
-
-	//Finally reapplying the new co ords to the passed in object
-	unit->xPos(new_xpos);
-	unit->yPos(new_ypos);
-
+	infantry_select = false;
+	tank_select = false;
+	artillery_select = false;
+	sniper_select = false;
+	infantry2_select = false;
+	tank2_select = false;
+	artillery2_select = false;
+	sniper2_select = false;
+	selection = true;
 }
-
 void GameScene::nextTurnPressed(int xpos, int ypos)
 {
 	if (player_turn == assigned_team)
@@ -892,12 +892,10 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 		if (Collision::mouseOnSprite(xpos, ypos, next_turn_button.get())) //if clicked on the exit button
 		{
 			deselectAllUnits();
-
 			for (auto& Unit : units_vec)
 			{
 				Unit->resetActionPoints();
 			}
-
 			for (auto& unit : units_vec)
 			{
 				if (unit->getHasChanged())
@@ -926,7 +924,6 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 				{
 					victor = 1;
 				}
-
 				else
 				{
 					victor = 2;
@@ -934,12 +931,10 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 
 				std::string data = "endgame&" + std::to_string(victor) + "&0&0&0&";
 				CustomPacket endgame("unit", "", data);
-
 				client_component.sending_mtx.lock();
 				client_component.sending_queue.push(std::move(endgame));
 				client_component.sending_mtx.unlock();
 			}
-
 			CustomPacket endturn("unit", "", "endturn&0&0&0&0&");
 
 			client_component.sending_mtx.lock();
@@ -957,7 +952,6 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 		}
 	}
 }
-
 void GameScene::deselectAllUnits()
 {
 	infantry2_select = false;
@@ -980,7 +974,6 @@ bool GameScene::isAUnitSelected()
 	{
 		return true;
 	}
-
 }
 
 int GameScene::whichTurn()
@@ -994,19 +987,16 @@ int GameScene::whichTurn()
 		return 2;
 	}
 }
-
 int GameScene::whichPlayer()
 {
 	if (assigned_team == PlayerTurn::PLAYER1)
 	{
 		return 1;
 	}
-
 	else if (assigned_team == PlayerTurn::PLAYER2)
 	{
 		return 2;
 	}
-
 	else
 	{
 		return -1;
@@ -1015,7 +1005,6 @@ int GameScene::whichPlayer()
 
 void GameScene::unitInfoBox(ASGE::Renderer* renderer, Unit * unit_info)
 {
-	//renderer->renderSprite(*UIbox.get(), MIDDLE_GROUND_FRONT);
 	std::string health = "HP: " + std::to_string(unit_info->getHealth());
 	renderer->renderText(health, 900, 630, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
 	std::string squadsize = "Squad: " + std::to_string(unit_info->getSquadSize());
@@ -1027,7 +1016,6 @@ void GameScene::unitInfoBox(ASGE::Renderer* renderer, Unit * unit_info)
 	std::string action = "AP: " + std::to_string(unit_info->getActionPoints());
 	renderer->renderText(action, 975, 670, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
 }
-
 void GameScene::keyHandler(const ASGE::SharedEventData data)
 {
 	const ASGE::KeyEvent* key_event =
@@ -1044,22 +1032,18 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 			{
 				chat_str.pop_back();
 			}
-
 			else if (key == ASGE::KEYS::KEY_ENTER)
 			{
 				processString(chat_str);
 				chat_str.clear();
 			}
-
 			else if (key == ASGE::KEYS::KEY_ESCAPE)
 			{
 				next_scene.store(SceneTransitions::TO_MENU);
 			}
-
 			else
 			{
 				chat_str += key;
-
 				if (chat_str.size() % 10 == 0)
 				{
 					chat_str.append("\n");
@@ -1067,18 +1051,6 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 			}
 		}
 	}
-}
-
-bool GameScene::initAudioEngine()
-{
-	using namespace irrklang;
-	audio_engine.reset(createIrrKlangDevice());
-	if (!audio_engine)
-	{
-		// error starting audio engine
-		return false;
-	}
-	return true;
 }
 
 bool GameScene::endgame_check()
@@ -1115,7 +1087,6 @@ bool GameScene::endgame_check()
 	}
 
 }
-
 void GameScene::gameSceneReset()
 {
 	client_component.killThread();
@@ -1124,7 +1095,6 @@ void GameScene::gameSceneReset()
 	audio_engine->stopAllSounds();
 	client_component.deinitialize();
 }
-
 void GameScene::processString(std::string str)
 {
 	if (client_component.getUsername() == "")
@@ -1140,8 +1110,8 @@ void GameScene::processString(std::string str)
 		client_component.sending_queue.push(std::move(msg));
 		client_component.sending_mtx.unlock();
 
-		client_component.chat_recieved_mtx.lock();
-		client_component.chat_recieved_queue.push(std::move(msg));
-		client_component.chat_recieved_mtx.unlock();
+		client_component.recieved_mtx.lock();
+		client_component.recieved_queue.push(std::move(msg));
+		client_component.recieved_mtx.unlock();
 	}
 }
