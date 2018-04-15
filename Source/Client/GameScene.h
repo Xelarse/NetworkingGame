@@ -77,6 +77,7 @@ private:
 	void placeUnitAtClick(int xpos, int ypos);
 	void attackClickedUnit(int xpos, int ypos);
 	void setSelected(int xpos, int ypos);
+	void setSelectedSubSystem(bool selection);
 	void gridSnapping(float xpos, float ypos, ASGE::Sprite* unit);
 	void nextTurnPressed(int xpos, int ypos);
 	void deselectAllUnits();
@@ -94,7 +95,7 @@ private:
 
 	void unitInfoBox(ASGE::Renderer* renderer, Unit* unit_info);
 	void unitSelectionRender(ASGE::Renderer* renderer);
-	void unitHoverInfo(ASGE::Renderer* renderer);
+	void unitHoverInfoRender(ASGE::Renderer* renderer);
 	void chatRender(ASGE::Renderer* renderer);
 	void unitsRender(ASGE::Renderer* renderer);
 	void winScreenRender(ASGE::Renderer* renderer);
