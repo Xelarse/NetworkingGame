@@ -88,6 +88,7 @@ private:
 	void unitsUpdate(const ASGE::GameTime& ms);
 	void chatUpdate(const ASGE::GameTime& ms);
 	void unitNetworkUpdate(const ASGE::GameTime& ms);
+	void updateReconnectee(const ASGE::GameTime& ms);
 
 	int whichTurn();
 	int whichPlayer();
@@ -97,7 +98,11 @@ private:
 	void unitHoverInfo(ASGE::Renderer* renderer);
 	void chatRender(ASGE::Renderer* renderer);
 	void unitsRender(ASGE::Renderer* renderer);
+
 	void winScreenRender(ASGE::Renderer* renderer);
+	void gameScreenRender(ASGE::Renderer* renderer);
+	void lobbyScreenRender(ASGE::Renderer* renderer);
+
 	void gameSceneReset();
 	void processString(std::string str);
 	void attackingOtherUnit(Unit * attacking_unit, int xpos, int ypos);
@@ -111,7 +116,7 @@ private:
 
 	std::thread chat_thread;
 
-	ClientComponent chat_component;
+	ClientComponent client_component;
 
 	std::unique_ptr<SceneManager> scene_manager;
 

@@ -18,44 +18,12 @@ bool ServerComponent::initialize()
 
 	on_connected = [&](server_client& client)
 	{
-		bool even_check = false;
-		int id = -1;
-
-		trace("on_client_connected id :" + std::to_string(client._uid));
-
-		auto clients = server.get_connected_clients();
-
-		if (clients.size())
-		{
-			for (auto& conclients : clients)
-			{
-				if (conclients->_uid % 2 == 0 && conclients->get_id() != client.get_id()) { even_check = true; };
-			}
-		}
-
-		if (even_check)
-		{
-			id = 1;
-		}
-
-		if (!even_check)
-		{
-			id = 0;
-		}
-
-		CustomPacket initpacket("init", "", std::to_string(id));
-
-		unsigned int packet_length = 0;
-		auto packet_data = initpacket.data(packet_length);
-		
-
-		assert(sizeof(char) == sizeof(enet_uint8));
-		server.send_packet_to(client._uid, 0, reinterpret_cast<enet_uint8*>(packet_data), packet_length, ENET_PACKET_FLAG_RELIABLE);
+		trace("Wrong connected func called");
 	};
 
 	 on_disconnected = [&](unsigned int client_uid)
 	{
-		trace("on_client_disconnected id :" + std::to_string(client_uid));
+		trace("Wrong disconnected func called" + std::to_string(client_uid));
 	};
 
 	auto on_client_data_received = 
