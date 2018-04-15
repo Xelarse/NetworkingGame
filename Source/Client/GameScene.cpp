@@ -424,10 +424,10 @@ void GameScene::chatRender(ASGE::Renderer * renderer)
 	}
 	renderer->renderText("Latest Message:", 350, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 
-	if (client_component.recieved_queue.size())
+	if (client_component.chat_recieved_queue.size())
 	{
 		std::lock_guard<std::mutex> lock(client_component.recieved_mtx);
-		std::string msg1 = client_component.recieved_queue.front().getUsername() + ": " + client_component.recieved_queue.front().getMsg();
+		std::string msg1 = client_component.chat_recieved_queue.front().getUsername() + ": " + client_component.chat_recieved_queue.front().getMsg();
 		renderer->renderText(msg1, 350, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
 	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
@@ -1110,8 +1110,8 @@ void GameScene::processString(std::string str)
 		client_component.sending_queue.push(std::move(msg));
 		client_component.sending_mtx.unlock();
 
-		client_component.recieved_mtx.lock();
-		client_component.recieved_queue.push(std::move(msg));
-		client_component.recieved_mtx.unlock();
+		client_component.chat_recieved_mtx.lock();
+		client_component.chat_recieved_queue.push(std::move(msg));
+		client_component.chat_recieved_mtx.unlock();
 	}
 }
