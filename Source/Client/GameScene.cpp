@@ -12,7 +12,7 @@ GameScene::GameScene(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 }
 GameScene::~GameScene()
 {
-	chat_component.deinitialize();
+	client_component.deinitialize();
 	clickHandlerReset();
 	keyHandlerReset();
 	audio_engine->stopAllSounds();
@@ -20,8 +20,8 @@ GameScene::~GameScene()
 
 void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManager * host)
 {
-	chat_component.initialize();
-	chat_thread = std::thread(&ClientComponent::consumeEvents, &chat_component);
+	client_component.initialize();
+	chat_thread = std::thread(&ClientComponent::consumeEvents, &client_component);
 	chat_thread.detach();
 	click_handler_id = main_inputs->addCallbackFnc(ASGE::EventType::E_MOUSE_CLICK,
 		&GameScene::clickHandler, this);
@@ -163,11 +163,11 @@ bool GameScene::initAudioEngine()
 
 void GameScene::update(const ASGE::GameTime & ms)
 {
-	if (chat_component.getUserID() % 2 == 0 && assigned_team == PlayerTurn::NONE && chat_component.getUserID() != -1)
+	if (client_component.getUserID() % 2 == 0 && assigned_team == PlayerTurn::NONE && client_component.getUserID() != -1)
 	{
 		assigned_team = PlayerTurn::PLAYER1;
 	}
-	else if (chat_component.getUserID() % 2 != 0 && assigned_team == PlayerTurn::NONE && chat_component.getUserID() != -1)
+	else if (client_component.getUserID() % 2 != 0 && assigned_team == PlayerTurn::NONE && client_component.getUserID() != -1)
 	{
 		assigned_team = PlayerTurn::PLAYER2;
 	}
@@ -182,17 +182,61 @@ void GameScene::update(const ASGE::GameTime & ms)
 			next_scene = SceneTransitions::NONE;
 		}
 	}
-	if (!game_finished)
+
+
+	if (client_component.getIsLobby() || client_component.getIsReconnecting())
 	{
-		chatUpdate(ms);
-		unitsUpdate(ms);
-		if (player_turn == PlayerTurn::PLAYER1 && assigned_team == PlayerTurn::PLAYER2)
+		if (client_component.getIsReconnecting() && 
+			client_component.getIsDataSender() &&
+			client_component.getIsReadyToSend())
 		{
-			unitNetworkUpdate(ms);
+			updateReconnectee(ms);
+			client_component.resetReadyToSend();
 		}
-		if (player_turn == PlayerTurn::PLAYER2 && assigned_team == PlayerTurn::PLAYER1)
+
+		else if (client_component.getIsReconnecting() && client_component.getIsUpdateCompleted())
 		{
+			if (client_component.getPlayerTurn() != -1)
+			{
+				if (client_component.getPlayerTurn() == 1) { player_turn = PlayerTurn::PLAYER1; }
+				else if (client_component.getPlayerTurn() == 2) { player_turn = PlayerTurn::PLAYER2; }
+			}
+
+			if (client_component.getAssignedPlayer() != -1)
+			{
+				if (client_component.getAssignedPlayer() == 1) { assigned_team = PlayerTurn::PLAYER1; client_component.setUserID(0); }
+				else if (client_component.getAssignedPlayer() == 2) { assigned_team = PlayerTurn::PLAYER2; client_component.setUserID(1); }
+			}
+
 			unitNetworkUpdate(ms);
+			unitsUpdate(ms);
+
+			CustomPacket resumepkt("resume", "", "");
+			
+			client_component.sending_mtx.lock();
+			client_component.sending_queue.push(std::move(resumepkt));
+			client_component.sending_mtx.unlock();
+
+			client_component.resetUpdateComplete();
+		}
+	}
+
+	else
+	{
+		if (!game_finished)
+		{
+			chatUpdate(ms);
+			unitsUpdate(ms);
+
+			if (player_turn == PlayerTurn::PLAYER1 && assigned_team == PlayerTurn::PLAYER2)
+			{
+				unitNetworkUpdate(ms);
+			}
+
+			if (player_turn == PlayerTurn::PLAYER2 && assigned_team == PlayerTurn::PLAYER1)
+			{
+				unitNetworkUpdate(ms);
+			}
 		}
 	}
 }
@@ -207,12 +251,12 @@ void GameScene::unitsUpdate(const ASGE::GameTime & ms)
 }
 void GameScene::chatUpdate(const ASGE::GameTime & ms)
 {
-	if (chat_component.recieved_queue.size())
+	if (client_component.chat_recieved_queue.size())
 	{
 		if (chat_timer > msg_duration)
 		{
-			std::lock_guard<std::mutex> lock(chat_component.recieved_mtx);
-			chat_component.recieved_queue.pop();
+			std::lock_guard<std::mutex> lock(client_component.chat_recieved_mtx);
+			client_component.chat_recieved_queue.pop();
 			chat_timer = 0;
 		}
 		else
@@ -223,10 +267,10 @@ void GameScene::chatUpdate(const ASGE::GameTime & ms)
 }
 void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 {
-	while (chat_component.unit_update_queue.size())
+	while (client_component.unit_update_queue.size())
 	{
-		std::lock_guard<std::mutex> lock(chat_component.unit_update_mtx);
-		auto front_unit = chat_component.unit_update_queue.front();
+		std::lock_guard<std::mutex> lock(client_component.unit_update_mtx);
+		auto front_unit = client_component.unit_update_queue.front();
 		std::string name = "";
 		int x_pos = 0;
 		int y_pos = 0;
@@ -274,7 +318,7 @@ void GameScene::unitNetworkUpdate(const ASGE::GameTime & ms)
 				}
 			}
 		}
-		chat_component.unit_update_queue.pop();
+		client_component.unit_update_queue.pop();
 	}
 }
 void GameScene::bulletMovement(Unit * attacking_unit, int xpos, int ypos)
@@ -297,30 +341,63 @@ void GameScene::bulletMovement(Unit * attacking_unit, int xpos, int ypos)
 	}
 }
 
+void GameScene::updateReconnectee(const ASGE::GameTime & ms)
+{
+	////Send current turn data and what player the opponent is
+	int opponent_team = -1;
+	int game_turn = whichTurn();
+
+	if (assigned_team == PlayerTurn::PLAYER1) { opponent_team = 2; }
+	else { opponent_team = 1; }
+
+	CustomPacket team("player", "", std::to_string(opponent_team));
+	CustomPacket turn("turn", "", std::to_string(game_turn));
+
+	client_component.sending_mtx.lock();
+	client_component.sending_queue.push(std::move(team));
+	client_component.sending_queue.push(std::move(turn));
+	client_component.sending_mtx.unlock();
+
+	////Update their current units state in the game
+	for (auto& unit : units_vec)
+	{
+		std::string data = unit->getRefName() + "&" +
+			std::to_string(unit->getObjectSprite()->xPos()) + "&" +
+			std::to_string(unit->getObjectSprite()->yPos()) + "&" +
+			std::to_string(unit->getSquadSize()) + "&" +
+			std::to_string(unit->getHealth()) + "&";
+
+		CustomPacket unit_data("unit", "", data);
+
+		client_component.sending_mtx.lock();
+		client_component.sending_queue.push(std::move(unit_data));
+		client_component.sending_mtx.unlock();
+	}
+
+	CustomPacket finished_update("update_complete", "", "");
+	
+	client_component.sending_mtx.lock();
+	client_component.sending_queue.push(std::move(finished_update));
+	client_component.sending_mtx.unlock();
+}
+
 void GameScene::render(ASGE::Renderer * renderer)
 {
-	if (game_finished)
+	if (client_component.getIsLobby() || client_component.getIsReconnecting())
 	{
-		winScreenRender(renderer);
+		lobbyScreenRender(renderer);
 	}
 	else
 	{
-		renderer->renderSprite(*turn_box.get(), MIDDLE_GROUND_FRONT); // trapezoid for the turn display
-		renderer->renderSprite(*game_background.get(), BACKGROUND); //background is game board 
-		renderer->renderSprite(*next_turn_button.get(), MIDDLE_GROUND_FRONT); // next turn button
+		if (game_finished)
+		{
+			winScreenRender(renderer);
+		}
 
-		unitSelectionRender(renderer);
-		unitsRender(renderer);
-		chatRender(renderer);
-		unitHoverInfoRender(renderer);
-		
-		std::string player_txt = "Player: " + std::to_string(whichTurn()) + "'s";
-		renderer->renderText(player_txt, 590, 25, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-		std::string turn_txt = "Turn";
-		renderer->renderText(turn_txt, 616, 45, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
-
-		std::string player_id = "You are:\nPlayer " + std::to_string(whichPlayer());
-		renderer->renderText(player_id, 650, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+		else
+		{
+			gameScreenRender(renderer);
+		}
 	}
 }
 void GameScene::chatRender(ASGE::Renderer * renderer)
@@ -328,29 +405,29 @@ void GameScene::chatRender(ASGE::Renderer * renderer)
 	std::stringstream ss;
 	ss << "> " << chat_str;
 
-	if (chat_component.getUsername() == "")
+	if (client_component.getUsername() == "")
 	{
 		renderer->renderText("Please enter username:", 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
 	else
 	{
-		if (chat_component.isConnected())
+		if (client_component.isConnected())
 		{
-			std::string str = "Connected as : " + chat_component.getUsername();
+			std::string str = "Connected as : " + client_component.getUsername();
 			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 		}
 		else
 		{
-			std::string str = "Once you connect your username will be: " + chat_component.getUsername();
+			std::string str = "Once you connect your username will be: " + client_component.getUsername();
 			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 		}
 	}
 	renderer->renderText("Latest Message:", 350, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 
-	if (chat_component.recieved_queue.size())
+	if (client_component.recieved_queue.size())
 	{
-		std::lock_guard<std::mutex> lock(chat_component.recieved_mtx);
-		std::string msg1 = chat_component.recieved_queue.front().getUsername() + ": " + chat_component.recieved_queue.front().getMsg();
+		std::lock_guard<std::mutex> lock(client_component.recieved_mtx);
+		std::string msg1 = client_component.recieved_queue.front().getUsername() + ": " + client_component.recieved_queue.front().getMsg();
 		renderer->renderText(msg1, 350, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
 	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
@@ -384,6 +461,32 @@ void GameScene::winScreenRender(ASGE::Renderer * renderer)
 	renderer->renderSprite(*victory_background.get(), MIDDLE_GROUND_FRONT);
 	renderer->renderText(vicstring, 400, 300, 1.25, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
 	renderer->renderText("Press Esc to return to menu", 150, 350, 1.1, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
+}
+void GameScene::gameScreenRender(ASGE::Renderer * renderer)
+{
+	renderer->renderSprite(*game_background.get(), BACKGROUND); //background is game board 
+	renderer->renderSprite(*next_turn_button.get(), MIDDLE_GROUND_FRONT); // next turn button
+
+	unitSelectionRender(renderer);
+	unitsRender(renderer);
+	chatRender(renderer);
+	unitHoverInfoRender(renderer);
+
+	renderer->renderSprite(*turn_box.get(), MIDDLE_GROUND_FRONT); // trapezoid for the turn display
+
+	std::string player_txt = "Player: " + std::to_string(whichTurn()) + "'s";
+	renderer->renderText(player_txt, 590, 25, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+
+	std::string turn_txt = "Turn";
+	renderer->renderText(turn_txt, 616, 45, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+
+	std::string player_id = "You are:\nPlayer " + std::to_string(whichPlayer());
+	renderer->renderText(player_id, 650, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+}
+void GameScene::lobbyScreenRender(ASGE::Renderer * renderer)
+{
+	renderer->renderSprite(*victory_background, BACKGROUND);
+	renderer->renderText("Waiting for other player", 150, 350, 1.1, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
 }
 void GameScene::unitSelectionRender(ASGE::Renderer * renderer)
 {
@@ -452,7 +555,8 @@ void GameScene::clickHandler(const ASGE::SharedEventData data)
 	auto action = click_event->action;
 	auto xpos = click_event->xpos;
 	auto ypos = click_event->ypos;
-	if (last_scene)
+
+	if (last_scene && !client_component.getIsLobby() && !client_component.getIsReconnecting())
 	{
 		if (action == ASGE::MOUSE::BUTTON_PRESSED)
 		{
@@ -649,7 +753,7 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit) //logic
 }
 void GameScene::setSelected(int xpos, int ypos)
 {
-	if (chat_component.getUserID() /*user_ID*/ % 2 == 0 && player_turn == PlayerTurn::PLAYER1)
+	if (assigned_team == PlayerTurn::PLAYER1 && player_turn == PlayerTurn::PLAYER1)
 	{
 		if (Collision::mouseOnSprite(xpos, ypos, infantry_enemy_ptr->getObjectSprite())) //set selected
 		{
@@ -709,7 +813,7 @@ void GameScene::setSelected(int xpos, int ypos)
 		}
 	}
 
-	if (chat_component.getUserID() /*user_ID */ %2 != 0 && player_turn == PlayerTurn::PLAYER2)
+	if (assigned_team == PlayerTurn::PLAYER2 && player_turn == PlayerTurn::PLAYER2)
 	{
 		if (Collision::mouseOnSprite(xpos, ypos, infantry_ally_ptr->getObjectSprite())) //set selected boi
 		{
@@ -804,9 +908,9 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 
 					CustomPacket unit_data("unit", "", data);
 
-					chat_component.sending_mtx.lock();
-					chat_component.sending_queue.push(std::move(unit_data));
-					chat_component.sending_mtx.unlock();
+					client_component.sending_mtx.lock();
+					client_component.sending_queue.push(std::move(unit_data));
+					client_component.sending_mtx.unlock();
 
 					unit->setHasChanged(false);
 				}
@@ -827,15 +931,15 @@ void GameScene::nextTurnPressed(int xpos, int ypos)
 
 				std::string data = "endgame&" + std::to_string(victor) + "&0&0&0&";
 				CustomPacket endgame("unit", "", data);
-				chat_component.sending_mtx.lock();
-				chat_component.sending_queue.push(std::move(endgame));
-				chat_component.sending_mtx.unlock();
+				client_component.sending_mtx.lock();
+				client_component.sending_queue.push(std::move(endgame));
+				client_component.sending_mtx.unlock();
 			}
 			CustomPacket endturn("unit", "", "endturn&0&0&0&0&");
 
-			chat_component.sending_mtx.lock();
-			chat_component.sending_queue.push(std::move(endturn));
-			chat_component.sending_mtx.unlock();
+			client_component.sending_mtx.lock();
+			client_component.sending_queue.push(std::move(endturn));
+			client_component.sending_mtx.unlock();
 
 			if (player_turn == PlayerTurn::PLAYER1)
 			{
@@ -898,26 +1002,7 @@ int GameScene::whichPlayer()
 		return -1;
 	}
 }
-void GameScene::processString(std::string str)
-{
-	if (chat_component.getUsername() == "")
-	{
-		chat_component.setUsername(str);
-	}
 
-	else
-	{
-		CustomPacket msg("chat", chat_component.getUsername(), str);
-
-		chat_component.sending_mtx.lock();
-		chat_component.sending_queue.push(std::move(msg));
-		chat_component.sending_mtx.unlock();
-
-		chat_component.recieved_mtx.lock();
-		chat_component.recieved_queue.push(std::move(msg));
-		chat_component.recieved_mtx.unlock();
-	}
-}
 void GameScene::unitInfoBox(ASGE::Renderer* renderer, Unit * unit_info)
 {
 	std::string health = "HP: " + std::to_string(unit_info->getHealth());
@@ -939,7 +1024,7 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 	auto action = key_event->action;
 	auto key = key_event->key;
 
-	if (last_scene)
+	if (last_scene && !client_component.getIsLobby() && !client_component.getIsReconnecting())
 	{
 		if (action == ASGE::KEYS::KEY_PRESSED)
 		{
@@ -1004,9 +1089,29 @@ bool GameScene::endgame_check()
 }
 void GameScene::gameSceneReset()
 {
-	chat_component.killThread();
+	client_component.killThread();
 	clickHandlerReset();
 	keyHandlerReset();
 	audio_engine->stopAllSounds();
-	chat_component.deinitialize();
+	client_component.deinitialize();
+}
+void GameScene::processString(std::string str)
+{
+	if (client_component.getUsername() == "")
+	{
+		client_component.setUsername(str);
+	}
+
+	else
+	{
+		CustomPacket msg("chat", client_component.getUsername(), str);
+
+		client_component.sending_mtx.lock();
+		client_component.sending_queue.push(std::move(msg));
+		client_component.sending_mtx.unlock();
+
+		client_component.recieved_mtx.lock();
+		client_component.recieved_queue.push(std::move(msg));
+		client_component.recieved_mtx.unlock();
+	}
 }

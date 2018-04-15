@@ -1,0 +1,11 @@
+Player starts game
+Puts into a lobby screen until 2nd player connects
+Once second player connects, server sends out a packet to let both players know that the game is ready
+once the clients recieve this packet their render changes from the lobby to the game screen.
+Game plays as normal
+
+
+If a player disconnects the remaining player is noted by changing a a different bool to the lobby one BY THE SERVER
+once the other player reconnects the player that is still connected send out the unit information to update dc player
+the player that dc'd will have a bool set s othat if it is it can recieve unit updates and turn update.
+once all that is processed the dc'd player sends a ready packet to the server and both players can resume
