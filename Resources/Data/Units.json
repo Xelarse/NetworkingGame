@@ -11,7 +11,8 @@
       "sprite": "InfantryBW.png",
 	  "attack_sprite": "Attack_Default.png",
 	  "move_sprite": "Move_Default.png",
-	  "attack_sound": "InfantryShots.mp3"
+	  "attack_sound": "InfantryShots.mp3",
+	  "move_sound": "UnitMove.wav"
     },
 	
 	"Sniper": {
@@ -26,7 +27,8 @@
       "sprite": "SniperBW.png",
 	  "attack_sprite": "Attack_Default.png",
 	  "move_sprite": "Move_Default.png",
-	  "attack_sound": "SniperShot.mp3"
+	  "attack_sound": "SniperShot.mp3",
+	  "move_sound": "UnitMove.wav"
     },
 	
 	"Artillery": {
@@ -41,7 +43,8 @@
       "sprite": "ArtilleryBW.png",
 	  "attack_sprite": "Attack_Default.png",
 	  "move_sprite": "Move_Default.png",
-	  "attack_sound": "ArtilShot.mp3"
+	  "attack_sound": "ArtilShot.mp3",
+	  "move_sound": "TankMove.wav"
     },
 	
 	"Tank": {
@@ -56,6 +59,7 @@
       "sprite": "TankBW.png",
 	  "attack_sprite": "Attack_Default.png",
 	  "move_sprite": "Move_Default.png",
-	  "attack_sound": "TankShot.mp3"
+	  "attack_sound": "TankShot.mp3",
+	  "move_sound": "TankMove.wav"
     }
   }

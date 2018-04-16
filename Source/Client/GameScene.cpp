@@ -697,6 +697,10 @@ void GameScene::attackingOtherUnit(Unit * attacking_unit, int xpos, int ypos)
 void GameScene::movingUnit(Unit * moving_unit, int xpos, int ypos)
 {
 	gridSnapping(xpos, ypos, moving_unit->getObjectSprite()); // place unit in clicked location
+
+	std::string move_location = "..\\..\\Resources\\SoundGS\\UnitSounds\\" + moving_unit->getMoveSound();
+	audio_engine->play2D(move_location.c_str(), false);
+
 	moving_unit->reduceActionPoints(1);
 	moving_unit->setHasChanged(true);
 }
