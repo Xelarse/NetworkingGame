@@ -66,7 +66,7 @@ void ServerConnectScene::render(ASGE::Renderer * renderer)
 	std::stringstream ss;
 	ss << "> " << type_str;
 
-	renderer->renderText(ss.str().c_str(), 500, 450, 1.0, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
+	renderer->renderText(ss.str().c_str(), 500, 450, 0.4, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
 }
 
 void ServerConnectScene::keyHandler(const ASGE::SharedEventData data)

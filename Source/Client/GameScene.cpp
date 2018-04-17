@@ -1033,6 +1033,12 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 	auto action = key_event->action;
 	auto key = key_event->key;
 
+
+	if (key == ASGE::KEYS::KEY_ESCAPE)
+	{
+		next_scene.store(SceneTransitions::TO_MENU);
+	}
+
 	if (last_scene && !client_component.getIsLobby() && !client_component.getIsReconnecting())
 	{
 		if (action == ASGE::KEYS::KEY_PRESSED)
@@ -1045,10 +1051,6 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 			{
 				processString(chat_str);
 				chat_str.clear();
-			}
-			else if (key == ASGE::KEYS::KEY_ESCAPE)
-			{
-				next_scene.store(SceneTransitions::TO_MENU);
 			}
 			else
 			{
