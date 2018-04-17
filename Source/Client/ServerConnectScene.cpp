@@ -22,7 +22,7 @@ void ServerConnectScene::init(ASGE::Renderer * renderer, ASGE::Input * input, Sc
 		&ServerConnectScene::keyHandler, this);
 
 	lobby_background = renderer->createUniqueSprite();
-	lobby_background->loadTexture("..\\..\\Resources\\Backgrounds\\GameScene.png");
+	lobby_background->loadTexture(".\\Resources\\Backgrounds\\GameScene.png");
 	lobby_background->xPos(0);
 	lobby_background->yPos(0);
 }

@@ -28,9 +28,9 @@ void Unit::init(ASGE::Renderer * renderer)
 	attack_sprite = renderer->createUniqueSprite();
 	move_sprite = renderer->createUniqueSprite();
 
-	std::string sprite_string = "..\\..\\Resources\\Sprites\\" + sprite_name;
-	std::string attack_string = "..\\..\\Resources\\Sprites\\" + attack_name;
-	std::string move_string = "..\\..\\Resources\\Sprites\\" + move_name;
+	std::string sprite_string = ".\\Resources\\Sprites\\" + sprite_name;
+	std::string attack_string = ".\\Resources\\Sprites\\" + attack_name;
+	std::string move_string = ".\\Resources\\Sprites\\" + move_name;
 
 	object_sprite->loadTexture(sprite_string);
 	attack_sprite->loadTexture(attack_string);

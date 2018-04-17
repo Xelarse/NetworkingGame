@@ -22,17 +22,17 @@ void MenuScene::init(ASGE::Renderer* renderer, ASGE::Input* inputs, SceneManager
 		&MenuScene::clickHandler, this);
 
 	menu_background = renderer->createUniqueSprite();
-	menu_background->loadTexture("..\\..\\Resources\\Backgrounds\\MainMenu.png");
+	menu_background->loadTexture(".\\Resources\\Backgrounds\\MainMenu.png");
 	menu_background->xPos(0);
 	menu_background->yPos(0);
 
 	start_button = renderer->createUniqueSprite();
-	start_button->loadTexture("..\\..\\Resources\\Buttons\\Start.png");
+	start_button->loadTexture(".\\Resources\\Buttons\\Start.png");
 	start_button->xPos(390);
 	start_button->yPos(300);
 
 	exit_button = renderer->createUniqueSprite();
-	exit_button->loadTexture("..\\..\\Resources\\Buttons\\Exit.png");
+	exit_button->loadTexture(".\\Resources\\Buttons\\Exit.png");
 	exit_button->xPos(390);
 	exit_button->yPos(450);
 }

@@ -35,40 +35,40 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	initAudioEngine();
 
 	game_background = renderer->createUniqueSprite();
-	game_background->loadTexture("..\\..\\Resources\\Backgrounds\\Gameboard.png");
+	game_background->loadTexture(".\\Resources\\Backgrounds\\Gameboard.png");
 	game_background->xPos(0);
 	game_background->yPos(0);
 
 	next_turn_button = renderer->createUniqueSprite();
-	next_turn_button->loadTexture("..\\..\\Resources\\Buttons\\XButton.png");
+	next_turn_button->loadTexture(".\\Resources\\Buttons\\XButton.png");
 	next_turn_button->xPos(1170);
 	next_turn_button->yPos(610);
 	next_turn_button->height(100);
 	next_turn_button->width(100);
 
 	UIbox = renderer->createUniqueSprite();
-	UIbox->loadTexture("..\\..\\Resources\\Buttons\\UIbox.png");
+	UIbox->loadTexture(".\\Resources\\Buttons\\UIbox.png");
 	UIbox->xPos(900);
 	UIbox->yPos(600);
 	UIbox->height(300);
 	UIbox->width(300);
 
 	turn_box = renderer->createUniqueSprite();
-	turn_box->loadTexture("..\\..\\Resources\\Sprites\\TurnTrapezoid.png");
+	turn_box->loadTexture(".\\Resources\\Sprites\\TurnTrapezoid.png");
 	turn_box->xPos(565);
 	turn_box->yPos(1);
 	turn_box->height(50);
 	turn_box->width(150);
 
 	bullet_sprite = renderer->createUniqueSprite();
-	bullet_sprite->loadTexture("..\\..\\Resources\\Sprites\\Bullet.png");
+	bullet_sprite->loadTexture(".\\Resources\\Sprites\\Bullet.png");
 	bullet_sprite->xPos(565);
 	bullet_sprite->yPos(1);
 	bullet_sprite->height(50);
 	bullet_sprite->width(50);
 
 	victory_background = renderer->createUniqueSprite();
-	victory_background->loadTexture("..\\..\\Resources\\Backgrounds\\GameScene.png");
+	victory_background->loadTexture(".\\Resources\\Backgrounds\\GameScene.png");
 
 	units_vec.reserve(8);
 	initUnits();
