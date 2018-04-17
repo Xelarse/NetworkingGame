@@ -5,7 +5,7 @@ bool ClientComponent::initialize()
 {
 	client.connect(enetpp::client_connect_params()
 		.set_channel_count(channel_count)
-		.set_server_host_name_and_port("localhost", 8888));
+		.set_server_host_name_and_port(connecting_ip.c_str(), 8888));
 
 	return true;
 }

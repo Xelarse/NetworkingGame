@@ -9,7 +9,7 @@ class MenuScene : public Scene
 	enum class SceneTransitions
 	{
 		NONE,
-		TO_GAME,
+		TO_CONNECT,
 		TO_EXIT
 	};
 
@@ -34,6 +34,4 @@ private:
 	std::unique_ptr<ASGE::Sprite> exit_button;
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
-
-	std::atomic<int> tester = 0;
 };

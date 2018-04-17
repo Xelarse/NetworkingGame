@@ -1,5 +1,5 @@
 #include "MenuScene.h"
-#include "GameScene.h"
+#include "ServerConnectScene.h"
 
 MenuScene::MenuScene(ASGE::Renderer* renderer, ASGE::Input* input, SceneManager* host)
 {
@@ -22,17 +22,17 @@ void MenuScene::init(ASGE::Renderer* renderer, ASGE::Input* inputs, SceneManager
 		&MenuScene::clickHandler, this);
 
 	menu_background = renderer->createUniqueSprite();
-	menu_background->loadTexture("..\\..\\Resources\\Backgrounds\\MainMenu.png");
+	menu_background->loadTexture(".\\Resources\\Backgrounds\\MainMenu.png");
 	menu_background->xPos(0);
 	menu_background->yPos(0);
 
 	start_button = renderer->createUniqueSprite();
-	start_button->loadTexture("..\\..\\Resources\\Buttons\\Start.png");
+	start_button->loadTexture(".\\Resources\\Buttons\\Start.png");
 	start_button->xPos(390);
 	start_button->yPos(300);
 
 	exit_button = renderer->createUniqueSprite();
-	exit_button->loadTexture("..\\..\\Resources\\Buttons\\Exit.png");
+	exit_button->loadTexture(".\\Resources\\Buttons\\Exit.png");
 	exit_button->xPos(390);
 	exit_button->yPos(450);
 }
@@ -43,14 +43,14 @@ void MenuScene::update(const ASGE::GameTime& ms)
 	{
 		switch (next_scene)
 		{
-			case SceneTransitions::TO_GAME:
+			case SceneTransitions::TO_CONNECT:
 			{
 				last_scene.store(false);
 
-				std::unique_ptr<GameScene> game_scene;
-				game_scene = std::make_unique<GameScene>(main_renderer, main_inputs, host_manager);
+				std::unique_ptr<ServerConnectScene> connect_scene;
+				connect_scene = std::make_unique<ServerConnectScene>(main_renderer, main_inputs, host_manager);
 
-				host_manager->addScene(std::move(game_scene));
+				host_manager->addScene(std::move(connect_scene));
 
 				next_scene = SceneTransitions::NONE;
 				break;
@@ -89,7 +89,7 @@ void MenuScene::clickHandler(const ASGE::SharedEventData data)
 		{
 			if (Collision::mouseOnSprite(xpos, ypos, start_button.get()))
 			{
-				next_scene.store(SceneTransitions::TO_GAME);
+				next_scene.store(SceneTransitions::TO_CONNECT);
 			}
 
 			else if (Collision::mouseOnSprite(xpos, ypos, exit_button.get()))

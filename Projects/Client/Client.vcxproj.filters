@@ -37,6 +37,9 @@
     <ClCompile Include="..\..\Source\Client\GameScene.cpp">
       <Filter>Source\ScenesAndManager</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Client\ServerConnectScene.cpp">
+      <Filter>Source\ScenesAndManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Client\GameFont.h">
@@ -80,6 +83,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Client\Constants.h">
       <Filter>Headers\Multi-Purpose</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Client\ServerConnectScene.h">
+      <Filter>Headers\ScenesAndManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

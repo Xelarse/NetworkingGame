@@ -10,7 +10,8 @@ class SceneManager
 	enum class SceneSwiching
 	{
 		IDLE,
-		REMOVE_SCENE
+		REMOVE_SCENE,
+		REMOVE_2_SCENES
 	};
 
 public:
@@ -25,7 +26,7 @@ public:
 
 	void addScene(std::unique_ptr<Scene>&& scene);
 	void removeScene();
-	void resetToMenu(ASGE::Renderer* renderer, ASGE::Input* inputs, SceneManager* host);
+	void removeTwoScenes();
 	Scene* getLastScenePtr();
 
 	bool gameExit() { return exit_game; };

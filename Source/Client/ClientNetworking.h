@@ -22,6 +22,9 @@ public:
 	bool isConnected() const;
 	bool isConnecting() const;
 
+	std::string getIp() { return connecting_ip; };
+	void setIp(std::string ip) { connecting_ip = ip; };
+
 	std::string getUsername();
 	int getUserID()				{ return user_ID; };
 	void setUserID(int id)		{ user_ID = id; };
@@ -66,7 +69,7 @@ private:
 	std::atomic<int> assigned_player = -1; //To signify the clients side when reconnecting
 	std::atomic<bool> update_complete = false;
 
-
+	std::string connecting_ip = "";
 
 	std::string username = "";
 	std::mutex username_mtx;
