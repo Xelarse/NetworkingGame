@@ -3,11 +3,15 @@
 #include "GameScene.h"
 #include <math.h>
 
-GameScene::GameScene(ASGE::Renderer * renderer, ASGE::Input * input, SceneManager * host)
+GameScene::GameScene(ASGE::Renderer * renderer, ASGE::Input * input, SceneManager * host, std::string ip_address)
 {
 	main_inputs = input;
 	host_manager = host;
 	main_renderer = renderer;
+
+	client_component.setIp(ip_address);
+
+
 	init(main_renderer, main_inputs, host_manager);
 }
 GameScene::~GameScene()
@@ -23,6 +27,7 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	client_component.initialize();
 	chat_thread = std::thread(&ClientComponent::consumeEvents, &client_component);
 	chat_thread.detach();
+
 	click_handler_id = main_inputs->addCallbackFnc(ASGE::EventType::E_MOUSE_CLICK,
 		&GameScene::clickHandler, this);
 	key_handler_id = main_inputs->addCallbackFnc(ASGE::EventType::E_KEY,
@@ -178,7 +183,7 @@ void GameScene::update(const ASGE::GameTime & ms)
 		{
 			last_scene = false;
 			gameSceneReset();
-			host_manager->removeScene();
+			host_manager->resetToMenu(main_renderer, main_inputs, host_manager);
 			next_scene = SceneTransitions::NONE;
 		}
 	}

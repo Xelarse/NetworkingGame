@@ -35,7 +35,7 @@ class GameScene : public Scene
 
 public:
 
-	GameScene(ASGE::Renderer* renderer, ASGE::Input* input, SceneManager* host);
+	GameScene(ASGE::Renderer* renderer, ASGE::Input* input, SceneManager* host, std::string ip_address);
 	~GameScene();
 
 	// Inherited via Scene
