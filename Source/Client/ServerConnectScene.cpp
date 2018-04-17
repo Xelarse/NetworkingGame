@@ -61,12 +61,12 @@ void ServerConnectScene::render(ASGE::Renderer * renderer)
 {
 	renderer->renderSprite(*lobby_background, BACKGROUND);
 
-	renderer->renderText("Please enter the desired IP to connect to:", 500, 450, 1.0, ASGE::COLOURS::BLACK, FOREGROUND);
+	renderer->renderText("Please enter the desired IP to connect to:", 500, 350, 0.4, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
 
 	std::stringstream ss;
 	ss << "> " << type_str;
 
-	renderer->renderText(ss.str().c_str(), 500, 350, 1.0, ASGE::COLOURS::BLACK, FOREGROUND);
+	renderer->renderText(ss.str().c_str(), 500, 450, 1.0, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
 }
 
 void ServerConnectScene::keyHandler(const ASGE::SharedEventData data)

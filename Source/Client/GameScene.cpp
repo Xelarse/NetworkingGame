@@ -183,7 +183,7 @@ void GameScene::update(const ASGE::GameTime & ms)
 		{
 			last_scene = false;
 			gameSceneReset();
-			host_manager->resetToMenu(main_renderer, main_inputs, host_manager);
+			host_manager->removeTwoScenes();
 			next_scene = SceneTransitions::NONE;
 		}
 	}
