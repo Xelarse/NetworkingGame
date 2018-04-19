@@ -60,6 +60,7 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	turn_box->height(50);
 	turn_box->width(150);
 
+
 	bullet_sprite = renderer->createUniqueSprite();
 	bullet_sprite->loadTexture(".\\Resources\\Sprites\\Bullet.png");
 	bullet_sprite->xPos(565);
@@ -444,6 +445,13 @@ void GameScene::unitsRender(ASGE::Renderer * renderer)
 		if (!unit->getIsDead())
 		{
 			renderer->renderSprite(*unit->getObjectSprite(), MIDDLE_GROUND_FRONT);
+			renderer->renderSprite(*unit->hp_diamond, FOREGROUND);
+
+			std::string health_text = std::to_string(unit->getHealth()*unit->getSquadSize());
+			int text_x = 0;
+			if (health_text.size() == 3) { text_x = 40; }
+			else { text_x = 50; }
+			renderer->renderText(health_text, unit->getSpriteX() + text_x, unit->getSpriteY() + 105, 0.3, ASGE::COLOURS::WHITE, TEXT_FOREGROUND);
 		}
 	}
 
@@ -484,6 +492,8 @@ void GameScene::gameScreenRender(ASGE::Renderer * renderer)
 
 	std::string turn_txt = "Turn";
 	renderer->renderText(turn_txt, 616, 45, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
+
+	
 
 	std::string player_id = "You are:\nPlayer " + std::to_string(whichPlayer());
 	renderer->renderText(player_id, 650, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
