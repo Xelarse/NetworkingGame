@@ -51,6 +51,8 @@ void Unit::init(ASGE::Renderer * renderer)
 
 	if (is_enemy)
 	{
+		object_sprite->setFlipFlags(ASGE::Sprite::FlipFlags::FLIP_X);
+
 		if (unit_name == "Infantry")
 		{
 			attack_sprite->width(360);

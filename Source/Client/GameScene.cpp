@@ -2,6 +2,7 @@
 #include <array>
 #include "GameScene.h"
 #include <math.h>
+#include <Engine/Sprite.h>
 
 GameScene::GameScene(ASGE::Renderer * renderer, ASGE::Input * input, SceneManager * host, std::string ip_address)
 {
@@ -89,22 +90,21 @@ void GameScene::initUnits()
 	sniper_enemy.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
 	sniper_enemy->setRefName("sniper_enemy");
 	sniper_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
-	sniper_enemy->getObjectSprite()->FLIP_Y;
+	sniper_enemy->getObjectSprite()->setFlipFlags(ASGE::Sprite::FlipFlags::FLIP_X);
 
 	tank_enemy.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
 	tank_enemy->setRefName("tank_enemy");
 	tank_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
-	tank_enemy->getObjectSprite()->FLIP_Y;
+	
 
 	artillery_enemy.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
 	artillery_enemy->setRefName("artillery_enemy");
 	artillery_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
-	artillery_enemy->getObjectSprite()->FLIP_Y;
+	artillery_enemy->getObjectSprite()->setFlipFlags(ASGE::Sprite::FlipFlags::FLIP_X);
 
 	infantry_enemy.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
 	infantry_enemy->setRefName("infantry_enemy");
 	infantry_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
-	infantry_enemy->getObjectSprite()->FLIP_Y;
 
 	sniper_ally.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
 	sniper_ally->setIsEnemy(false);
