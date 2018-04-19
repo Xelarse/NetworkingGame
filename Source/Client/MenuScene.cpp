@@ -30,29 +30,21 @@ void MenuScene::init(ASGE::Renderer* renderer, ASGE::Input* inputs, SceneManager
 	start_button_pressed->loadTexture(".\\Resources\\Buttons\\ButtonPressed.png");
 	start_button_pressed->xPos(390);
 	start_button_pressed->yPos(300);
-	//start_button_pressed->width(500);
-	//start_button_pressed->height(100);
 
 	start_button_unpressed = renderer->createUniqueSprite();
 	start_button_unpressed->loadTexture(".\\Resources\\Buttons\\ButtonUnpressed.png");
 	start_button_unpressed->xPos(390);
 	start_button_unpressed->yPos(300);
-	//start_button_unpressed->width(500);
-	//start_button_unpressed->height(100);
 
 	exit_button_pressed = renderer->createUniqueSprite();
 	exit_button_pressed->loadTexture(".\\Resources\\Buttons\\ButtonPressed.png");
 	exit_button_pressed->xPos(390);
 	exit_button_pressed->yPos(450);
-	//exit_button_pressed->width(500);
-	//exit_button_pressed->height(100);
 
 	exit_button_unpressed = renderer->createUniqueSprite();
 	exit_button_unpressed->loadTexture(".\\Resources\\Buttons\\ButtonUnpressed.png");
 	exit_button_unpressed->xPos(390);
 	exit_button_unpressed->yPos(450);
-	//exit_button_unpressed->width(500);
-	//exit_button_unpressed->height(100);
 }				
 
 void MenuScene::update(const ASGE::GameTime& ms)
@@ -92,30 +84,34 @@ void MenuScene::render(ASGE::Renderer * renderer)
 	main_inputs->getCursorPos(mouse_x, mouse_y);
 
 	renderer->renderSprite(*menu_background.get(), BACKGROUND);
+	renderer->renderText("Gathering Storm", 320, 100, 1.2, ASGE::COLOURS::BLACK, FOREGROUND);
+
 
 	////If statement for start button hover
 	if (Collision::mouseOnSprite(mouse_x, mouse_y, start_button_unpressed.get()))
 	{
-		renderer->renderSprite(*start_button_pressed.get(), FOREGROUND);
+		renderer->renderSprite(*start_button_pressed.get(), MIDDLE_GROUND_FRONT);
+		renderer->renderText("Start", 575, 370, 1, ASGE::COLOURS::LIGHTGREEN, FOREGROUND);
 	}
 
 	else
 	{
-		renderer->renderSprite(*start_button_unpressed.get(), FOREGROUND);
+		renderer->renderSprite(*start_button_unpressed.get(), MIDDLE_GROUND_FRONT);
+		renderer->renderText("Start", 575, 370, 1, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
 
 	////If statement for exit button hover
 	if (Collision::mouseOnSprite(mouse_x, mouse_y, exit_button_unpressed.get()))
 	{
-		renderer->renderSprite(*exit_button_pressed.get(), FOREGROUND);
+		renderer->renderSprite(*exit_button_pressed.get(), MIDDLE_GROUND_FRONT);
+		renderer->renderText("Exit", 590, 520, 1, ASGE::COLOURS::LIGHTGREEN, FOREGROUND);
 	}
 
 	else
 	{
-		renderer->renderSprite(*exit_button_unpressed.get(), FOREGROUND);
+		renderer->renderSprite(*exit_button_unpressed.get(), MIDDLE_GROUND_FRONT);
+		renderer->renderText("Exit", 590, 520, 1, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
-
-
 }
 
 void MenuScene::clickHandler(const ASGE::SharedEventData data)
