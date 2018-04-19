@@ -38,6 +38,12 @@ void ServerConnectScene::update(const ASGE::GameTime & ms)
 			last_scene.store(false);
 
 			std::unique_ptr<GameScene> game_scene;
+
+			if (connect_ip == "")
+			{
+				connect_ip = "localhost";
+			}
+
 			game_scene = std::make_unique<GameScene>(main_renderer, main_inputs, host_manager, connect_ip);
 
 			host_manager->addScene(std::move(game_scene));
