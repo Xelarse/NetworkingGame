@@ -2,6 +2,7 @@
 #include <array>
 #include "GameScene.h"
 #include <math.h>
+#include <Engine/Sprite.h>
 
 GameScene::GameScene(ASGE::Renderer * renderer, ASGE::Input * input, SceneManager * host, std::string ip_address)
 {
@@ -32,6 +33,7 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 		&GameScene::clickHandler, this);
 	key_handler_id = main_inputs->addCallbackFnc(ASGE::EventType::E_KEY,
 		&GameScene::keyHandler, this);
+
 	initAudioEngine();
 
 	game_background = renderer->createUniqueSprite();
@@ -59,6 +61,7 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	turn_box->yPos(1);
 	turn_box->height(50);
 	turn_box->width(150);
+
 
 	bullet_sprite = renderer->createUniqueSprite();
 	bullet_sprite->loadTexture(".\\Resources\\Sprites\\Bullet.png");
@@ -88,22 +91,21 @@ void GameScene::initUnits()
 	sniper_enemy.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
 	sniper_enemy->setRefName("sniper_enemy");
 	sniper_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
-	sniper_enemy->getObjectSprite()->FLIP_Y;
+	sniper_enemy->getObjectSprite()->setFlipFlags(ASGE::Sprite::FlipFlags::FLIP_X);
 
 	tank_enemy.reset(UnitType::unit_types[UnitType::find("Tank")].createUnit(main_renderer));
 	tank_enemy->setRefName("tank_enemy");
 	tank_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
-	tank_enemy->getObjectSprite()->FLIP_Y;
+	
 
 	artillery_enemy.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
 	artillery_enemy->setRefName("artillery_enemy");
 	artillery_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
-	artillery_enemy->getObjectSprite()->FLIP_Y;
+	artillery_enemy->getObjectSprite()->setFlipFlags(ASGE::Sprite::FlipFlags::FLIP_X);
 
 	infantry_enemy.reset(UnitType::unit_types[UnitType::find("Infantry")].createUnit(main_renderer));
 	infantry_enemy->setRefName("infantry_enemy");
 	infantry_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
-	infantry_enemy->getObjectSprite()->FLIP_Y;
 
 	sniper_ally.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
 	sniper_ally->setIsEnemy(false);
@@ -444,6 +446,13 @@ void GameScene::unitsRender(ASGE::Renderer * renderer)
 		if (!unit->getIsDead())
 		{
 			renderer->renderSprite(*unit->getObjectSprite(), MIDDLE_GROUND_FRONT);
+			renderer->renderSprite(*unit->hp_diamond, FOREGROUND);
+
+			std::string health_text = std::to_string(unit->getHealth()*unit->getSquadSize());
+			int text_x = 0;
+			if (health_text.size() == 3) { text_x = 40; }
+			else { text_x = 50; }
+			renderer->renderText(health_text, unit->getSpriteX() + text_x, unit->getSpriteY() + 105, 0.3, ASGE::COLOURS::WHITE, TEXT_FOREGROUND);
 		}
 	}
 
@@ -485,13 +494,15 @@ void GameScene::gameScreenRender(ASGE::Renderer * renderer)
 	std::string turn_txt = "Turn";
 	renderer->renderText(turn_txt, 616, 45, 0.3, ASGE::COLOURS::BLACK, FOREGROUND);
 
+	
+
 	std::string player_id = "You are:\nPlayer " + std::to_string(whichPlayer());
 	renderer->renderText(player_id, 650, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 }
 void GameScene::lobbyScreenRender(ASGE::Renderer * renderer)
 {
 	renderer->renderSprite(*victory_background, BACKGROUND);
-	renderer->renderText("Waiting for other player", 150, 350, 1.1, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
+	renderer->renderText("Waiting for other player...", 150, 50, 0.7, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
 }
 void GameScene::unitSelectionRender(ASGE::Renderer * renderer)
 {

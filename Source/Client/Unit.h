@@ -53,6 +53,8 @@ public:
 	ASGE::Sprite* getAttackSprite();
 	ASGE::Sprite* getMoveSprite();
 	ASGE::Sprite* getObjectSprite();
+	std::unique_ptr<ASGE::Sprite> hp_diamond;
+
 
 	void takeDamage(Unit* damage_dealer);
 

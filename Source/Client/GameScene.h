@@ -137,6 +137,7 @@ private:
 	std::unique_ptr<ASGE::Sprite> turn_box;
 	std::unique_ptr<ASGE::Sprite> bullet_sprite;
 
+
 	//team 1
 	Unit* infantry_enemy_ptr = nullptr;
 	Unit* artillery_enemy_ptr = nullptr;

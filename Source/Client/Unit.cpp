@@ -39,10 +39,20 @@ void Unit::init(ASGE::Renderer * renderer)
 	object_sprite->width(117);
 	object_sprite->height(117);
 
+	hp_diamond = renderer->createUniqueSprite();
+	hp_diamond->loadTexture(".\\Resources\\Sprites\\diamond.png");
+	hp_diamond->xPos(x_pos + 30);
+	hp_diamond->yPos(y_pos + 85);
+	hp_diamond->height(35);
+	hp_diamond->width(60);
+
+
 	max_action_points = action_points;
 
 	if (is_enemy)
 	{
+		object_sprite->setFlipFlags(ASGE::Sprite::FlipFlags::FLIP_X);
+
 		if (unit_name == "Infantry")
 		{
 			attack_sprite->width(360);
@@ -135,6 +145,13 @@ void Unit::update(const ASGE::GameTime & ms)
 		object_sprite->xPos(-200);
 		object_sprite->yPos(-200);
 		is_dead = true;
+	}
+	if (!is_dead)
+	{
+
+		
+		hp_diamond->xPos(x_pos + 30);
+		hp_diamond->yPos(y_pos + 85);
 	}
 
 

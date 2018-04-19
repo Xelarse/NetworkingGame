@@ -1,6 +1,13 @@
 #pragma once
 
+#include <irrKlang.h>
+
 #include "Scene.h"
+
+namespace irrklang {
+	class ISoundEngine;
+}
+
 
 class ServerConnectScene : public Scene
 {
@@ -26,6 +33,10 @@ public:
 
 private:
 
+	bool initAudioEngine();
+
+	std::unique_ptr<irrklang::ISoundEngine> audio_engine = nullptr;
+
 	ServerConnectScene();
 
 	std::string connect_ip = "";
@@ -33,6 +44,9 @@ private:
 	std::string type_str = "";
 
 	std::unique_ptr<ASGE::Sprite> lobby_background;
+	std::unique_ptr<ASGE::Sprite> lobby_background_front;
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
+
+	std::unique_ptr<ASGE::Sprite> tank_sprite;
 };
