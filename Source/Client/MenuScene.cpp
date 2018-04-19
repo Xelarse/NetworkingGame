@@ -26,16 +26,34 @@ void MenuScene::init(ASGE::Renderer* renderer, ASGE::Input* inputs, SceneManager
 	menu_background->xPos(0);
 	menu_background->yPos(0);
 
-	start_button = renderer->createUniqueSprite();
-	start_button->loadTexture(".\\Resources\\Buttons\\Start.png");
-	start_button->xPos(390);
-	start_button->yPos(300);
+	start_button_pressed = renderer->createUniqueSprite();
+	start_button_pressed->loadTexture(".\\Resources\\Buttons\\ButtonPressed.png");
+	start_button_pressed->xPos(390);
+	start_button_pressed->yPos(300);
+	start_button_pressed->width(500);
+	start_button_pressed->height(100);
 
-	exit_button = renderer->createUniqueSprite();
-	exit_button->loadTexture(".\\Resources\\Buttons\\Exit.png");
-	exit_button->xPos(390);
-	exit_button->yPos(450);
-}
+	start_button_unpressed = renderer->createUniqueSprite();
+	start_button_unpressed->loadTexture(".\\Resources\\Buttons\\ButtonUnpressed.png");
+	start_button_unpressed->xPos(390);
+	start_button_unpressed->yPos(300);
+	start_button_unpressed->width(500);
+	start_button_unpressed->height(100);
+
+	exit_button_pressed = renderer->createUniqueSprite();
+	exit_button_pressed->loadTexture(".\\Resources\\Buttons\\ButtonPressed.png");
+	exit_button_pressed->xPos(390);
+	exit_button_pressed->yPos(450);
+	exit_button_pressed->width(500);
+	exit_button_pressed->height(100);
+
+	exit_button_unpressed = renderer->createUniqueSprite();
+	exit_button_unpressed->loadTexture(".\\Resources\\Buttons\\ButtonUnpressed.png");
+	exit_button_unpressed->xPos(390);
+	exit_button_unpressed->yPos(450);
+	exit_button_unpressed->width(500);
+	exit_button_unpressed->height(100);
+}				
 
 void MenuScene::update(const ASGE::GameTime& ms)
 {
@@ -68,9 +86,36 @@ void MenuScene::update(const ASGE::GameTime& ms)
 
 void MenuScene::render(ASGE::Renderer * renderer)
 {
+	double mouse_x;
+	double mouse_y;
+
+	main_inputs->getCursorPos(mouse_x, mouse_y);
+
 	renderer->renderSprite(*menu_background.get(), BACKGROUND);
-	renderer->renderSprite(*start_button.get(), FOREGROUND);
-	renderer->renderSprite(*exit_button.get(), FOREGROUND);
+
+	////If statement for start button hover
+	if (Collision::mouseOnSprite(mouse_x, mouse_y, start_button_unpressed.get()))
+	{
+		renderer->renderSprite(*start_button_pressed.get(), FOREGROUND);
+	}
+
+	else
+	{
+		renderer->renderSprite(*start_button_unpressed.get(), FOREGROUND);
+	}
+
+	////If statement for exit button hover
+	if (Collision::mouseOnSprite(mouse_x, mouse_y, exit_button_unpressed.get()))
+	{
+		renderer->renderSprite(*exit_button_pressed.get(), FOREGROUND);
+	}
+
+	else
+	{
+		renderer->renderSprite(*exit_button_unpressed.get(), FOREGROUND);
+	}
+
+
 }
 
 void MenuScene::clickHandler(const ASGE::SharedEventData data)
@@ -87,12 +132,12 @@ void MenuScene::clickHandler(const ASGE::SharedEventData data)
 	{
 		if (action == ASGE::MOUSE::BUTTON_PRESSED)
 		{
-			if (Collision::mouseOnSprite(xpos, ypos, start_button.get()))
+			if (Collision::mouseOnSprite(xpos, ypos, start_button_unpressed.get()))
 			{
 				next_scene.store(SceneTransitions::TO_CONNECT);
 			}
 
-			else if (Collision::mouseOnSprite(xpos, ypos, exit_button.get()))
+			else if (Collision::mouseOnSprite(xpos, ypos, exit_button_unpressed.get()))
 			{
 				next_scene.store(SceneTransitions::TO_EXIT);
 			}

@@ -30,8 +30,12 @@ private:
 	MenuScene();
 
 	std::unique_ptr<ASGE::Sprite> menu_background;
-	std::unique_ptr<ASGE::Sprite> start_button;
-	std::unique_ptr<ASGE::Sprite> exit_button;
+
+	std::unique_ptr<ASGE::Sprite> start_button_unpressed;
+	std::unique_ptr<ASGE::Sprite> start_button_pressed;
+
+	std::unique_ptr<ASGE::Sprite> exit_button_unpressed;
+	std::unique_ptr<ASGE::Sprite> exit_button_pressed;
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
 };
