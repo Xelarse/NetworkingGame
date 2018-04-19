@@ -501,7 +501,7 @@ void GameScene::gameScreenRender(ASGE::Renderer * renderer)
 void GameScene::lobbyScreenRender(ASGE::Renderer * renderer)
 {
 	renderer->renderSprite(*victory_background, BACKGROUND);
-	renderer->renderText("Waiting for other player", 150, 350, 1.1, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
+	renderer->renderText("Waiting for other player...", 150, 50, 0.7, ASGE::COLOURS::GHOSTWHITE, FOREGROUND);
 }
 void GameScene::unitSelectionRender(ASGE::Renderer * renderer)
 {

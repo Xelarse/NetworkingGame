@@ -33,6 +33,9 @@ private:
 	std::string type_str = "";
 
 	std::unique_ptr<ASGE::Sprite> lobby_background;
+	std::unique_ptr<ASGE::Sprite> lobby_background_front;
 
 	std::atomic<SceneTransitions> next_scene = SceneTransitions::NONE;
+
+	std::unique_ptr<ASGE::Sprite> tank_sprite;
 };
