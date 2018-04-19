@@ -50,7 +50,7 @@
 	"Tank": {
 	  "name": "Tank",
 	  "squad_size": 1,
-      "health": 30,
+      "health": 100,
       "damage": 15,
       "armour": 75,
 	  "move_range": 1,
