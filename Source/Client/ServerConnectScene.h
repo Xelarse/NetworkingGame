@@ -1,6 +1,13 @@
 #pragma once
 
+#include <irrKlang.h>
+
 #include "Scene.h"
+
+namespace irrklang {
+	class ISoundEngine;
+}
+
 
 class ServerConnectScene : public Scene
 {
@@ -25,6 +32,10 @@ public:
 	void keyHandler(const ASGE::SharedEventData data);
 
 private:
+
+	bool initAudioEngine();
+
+	std::unique_ptr<irrklang::ISoundEngine> audio_engine = nullptr;
 
 	ServerConnectScene();
 

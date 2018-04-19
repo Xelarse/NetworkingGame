@@ -14,12 +14,15 @@ ServerConnectScene::ServerConnectScene(ASGE::Renderer * renderer, ASGE::Input * 
 ServerConnectScene::~ServerConnectScene()
 {
 	keyHandlerReset();
+	audio_engine->stopAllSounds();
 }
 
 void ServerConnectScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManager * host)
 {
 	key_handler_id = main_inputs->addCallbackFnc(ASGE::EventType::E_KEY,
 		&ServerConnectScene::keyHandler, this);
+
+	initAudioEngine();
 
 	lobby_background = renderer->createUniqueSprite();
 	lobby_background->loadTexture(".\\Resources\\Backgrounds\\GameScene.png");
@@ -39,6 +42,10 @@ void ServerConnectScene::init(ASGE::Renderer * renderer, ASGE::Input * input, Sc
 	tank_sprite->height(120);
 	tank_sprite->width(120);
 	tank_sprite->colour(ASGE::COLOURS::DARKOLIVEGREEN);
+
+
+	std::string escape_location = "..\\..\\Resources\\SoundGS\\UnitSounds\\GreatEscapeLoop.mp3";
+	audio_engine->play2D(escape_location.c_str(), true);
 }
 
 void ServerConnectScene::update(const ASGE::GameTime & ms)
@@ -59,6 +66,7 @@ void ServerConnectScene::update(const ASGE::GameTime & ms)
 		case SceneTransitions::TO_GAME:
 		{
 			last_scene.store(false);
+			audio_engine->stopAllSounds();
 
 			std::unique_ptr<GameScene> game_scene;
 
@@ -79,6 +87,7 @@ void ServerConnectScene::update(const ASGE::GameTime & ms)
 		{
 			last_scene = false;
 			keyHandlerReset();
+			audio_engine->stopAllSounds();
 			host_manager->removeScene();
 			next_scene = SceneTransitions::NONE;
 		}
@@ -134,4 +143,16 @@ void ServerConnectScene::keyHandler(const ASGE::SharedEventData data)
 			}
 		}
 	}
+}
+
+bool ServerConnectScene::initAudioEngine()
+{
+	using namespace irrklang;
+	audio_engine.reset(createIrrKlangDevice());
+	if (!audio_engine)
+	{
+		// error starting audio engine
+		return false;
+	}
+	return true;
 }

@@ -33,6 +33,7 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 		&GameScene::clickHandler, this);
 	key_handler_id = main_inputs->addCallbackFnc(ASGE::EventType::E_KEY,
 		&GameScene::keyHandler, this);
+
 	initAudioEngine();
 
 	game_background = renderer->createUniqueSprite();
