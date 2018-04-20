@@ -14,6 +14,8 @@ ServerConnectScene::ServerConnectScene(ASGE::Renderer * renderer, ASGE::Input * 
 ServerConnectScene::~ServerConnectScene()
 {
 	keyHandlerReset();
+	type_str.clear();
+	connect_ip.clear();
 	audio_engine->stopAllSounds();
 }
 
@@ -66,7 +68,11 @@ void ServerConnectScene::update(const ASGE::GameTime & ms)
 		case SceneTransitions::TO_GAME:
 		{
 			last_scene.store(false);
+
 			audio_engine->stopAllSounds();
+			type_str.clear();
+			connect_ip.clear();
+			keyHandlerReset();
 
 			std::unique_ptr<GameScene> game_scene;
 
