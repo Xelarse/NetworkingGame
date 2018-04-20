@@ -731,6 +731,8 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit) //logic
 	bool over_x_max = false;
 	bool over_y_max = false;
 	// For X calculation
+
+	current_xpos -= 40;
 	current_xpos /= 120; // Getting individual grid pos
 	if (current_xpos > 10) { over_x_max = true; };
 	current_xpos = floor(current_xpos); //rounding down to get an exact grid value
@@ -750,6 +752,8 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit) //logic
 	}
 
 	//// For Y calculation, done in the same way as X
+
+	current_ypos -= 40;
 	current_ypos /= 120;
 	if (current_ypos > 5) { over_y_max = true; };
 	current_ypos = floor(current_ypos);
