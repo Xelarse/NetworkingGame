@@ -753,7 +753,7 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit) //logic
 
 	//// For Y calculation, done in the same way as X
 
-	current_ypos -= 40;
+	current_ypos -= 3;
 	current_ypos /= 120;
 	if (current_ypos > 5) { over_y_max = true; };
 	current_ypos = floor(current_ypos);
@@ -763,7 +763,7 @@ void GameScene::gridSnapping(float xpos, float ypos, ASGE::Sprite* unit) //logic
 	{
 		new_ypos = 3;
 	}
-	else if (over_y_max && isAUnitSelected())
+	else if (over_y_max)
 	{
 		new_ypos = 483;
 	}
