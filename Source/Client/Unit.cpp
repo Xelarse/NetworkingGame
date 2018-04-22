@@ -46,6 +46,13 @@ void Unit::init(ASGE::Renderer * renderer)
 	hp_diamond->height(35);
 	hp_diamond->width(60);
 
+	unit_count_box = renderer->createUniqueSprite();
+	unit_count_box->loadTexture(".\\Resources\\Sprites\\units_count.png");
+	unit_count_box->xPos(x_pos);
+	unit_count_box->yPos(y_pos);
+	unit_count_box->height(50);
+	unit_count_box->width(35);
+
 
 	max_action_points = action_points;
 
@@ -148,7 +155,8 @@ void Unit::update(const ASGE::GameTime & ms)
 	}
 	if (!is_dead)
 	{
-
+		unit_count_box->xPos(x_pos);
+		unit_count_box->yPos(y_pos+70);
 		
 		hp_diamond->xPos(x_pos + 30);
 		hp_diamond->yPos(y_pos + 85);
