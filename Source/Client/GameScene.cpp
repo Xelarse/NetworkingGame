@@ -478,7 +478,23 @@ void GameScene::winScreenRender(ASGE::Renderer * renderer)
 }
 void GameScene::gameScreenRender(ASGE::Renderer * renderer)
 {
+	double xpos = 0;
+	double ypos = 0;
+
+	main_inputs->getCursorPos(xpos, ypos);
+
 	renderer->renderSprite(*game_background.get(), BACKGROUND); //background is game board 
+
+	if (Collision::mouseOnSprite(xpos, ypos, next_turn_button.get()))
+	{
+		next_turn_button->colour(ASGE::COLOURS::POWDERBLUE);
+	}
+
+	else
+	{
+		next_turn_button->colour(ASGE::COLOURS::WHITE);
+	}
+
 	renderer->renderSprite(*next_turn_button.get(), MIDDLE_GROUND_FRONT); // next turn button
 
 	unitSelectionRender(renderer);
@@ -508,43 +524,43 @@ void GameScene::unitSelectionRender(ASGE::Renderer * renderer)
 {
 	if (infantry_select)
 	{
-		renderer->renderSprite(*infantry_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*infantry_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*infantry_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 	}
 	if (tank_select)
 	{
-		renderer->renderSprite(*tank_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*tank_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*tank_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 	}
 	if (artillery_select)
 	{
-		renderer->renderSprite(*artillery_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*artillery_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*artillery_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 	}
 	if (sniper_select)
 	{
-		renderer->renderSprite(*sniper_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*sniper_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*sniper_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 	}
 	if (infantry2_select)
 	{
-		renderer->renderSprite(*infantry_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*infantry_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*infantry_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 	}
 	if (tank2_select)
 	{
-		renderer->renderSprite(*tank_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*tank_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*tank_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 	}
 	if (artillery2_select)
 	{
-		renderer->renderSprite(*artillery_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*artillery_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*artillery_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 	}
 	if (sniper2_select)
 	{
-		renderer->renderSprite(*sniper_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*sniper_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*sniper_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 	}
 }
 void GameScene::unitHoverInfoRender(ASGE::Renderer * renderer)
