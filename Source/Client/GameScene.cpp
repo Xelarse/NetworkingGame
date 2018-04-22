@@ -416,7 +416,7 @@ void GameScene::chatRender(ASGE::Renderer * renderer)
 
 	if (client_component.getUsername() == "")
 	{
-		renderer->renderText("Please enter username:", 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+		renderer->renderText("Please enter username (6 Max chars):", 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 	}
 	else
 	{
@@ -431,14 +431,18 @@ void GameScene::chatRender(ASGE::Renderer * renderer)
 			renderer->renderText(str, 10, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 		}
 	}
-	renderer->renderText("Latest Message:", 350, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 
-	if (client_component.chat_recieved_queue.size())
+	if (client_component.getUsername() != "")
 	{
-		std::lock_guard<std::mutex> lock(client_component.recieved_mtx);
-		std::string msg1 = client_component.chat_recieved_queue.front().getUsername() + ": " + client_component.chat_recieved_queue.front().getMsg();
-		renderer->renderText(msg1, 350, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+		renderer->renderText("Latest Message:", 350, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+		if (client_component.chat_recieved_queue.size())
+		{
+			std::lock_guard<std::mutex> lock(client_component.recieved_mtx);
+			std::string msg1 = client_component.chat_recieved_queue.front().getUsername() + ": " + client_component.chat_recieved_queue.front().getMsg();
+			renderer->renderText(msg1, 350, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+		}
 	}
+
 	renderer->renderText(ss.str().c_str(), 10, 650, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 }
 void GameScene::unitsRender(ASGE::Renderer * renderer)
@@ -522,7 +526,7 @@ void GameScene::gameScreenRender(ASGE::Renderer * renderer)
 	
 
 	std::string player_id = "You are:\nPlayer " + std::to_string(whichPlayer());
-	renderer->renderText(player_id, 650, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
+	renderer->renderText(player_id, 750, 630, 0.4, ASGE::COLOURS::BLACK, FOREGROUND);
 }
 void GameScene::lobbyScreenRender(ASGE::Renderer * renderer)
 {
@@ -1150,6 +1154,11 @@ void GameScene::processString(std::string str)
 {
 	if (client_component.getUsername() == "")
 	{
+		if (str.size() > 6)
+		{
+			str.resize(6);
+		}
+
 		client_component.setUsername(str);
 	}
 
