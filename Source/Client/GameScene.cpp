@@ -29,10 +29,10 @@ void GameScene::init(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 	chat_thread = std::thread(&ClientComponent::consumeEvents, &client_component);
 	chat_thread.detach();
 
-	click_handler_id = main_inputs->addCallbackFnc(ASGE::EventType::E_MOUSE_CLICK,
-		&GameScene::clickHandler, this);
 	key_handler_id = main_inputs->addCallbackFnc(ASGE::EventType::E_KEY,
 		&GameScene::keyHandler, this);
+	click_handler_id = main_inputs->addCallbackFnc(ASGE::EventType::E_MOUSE_CLICK,
+		&GameScene::clickHandler, this);
 
 	initAudioEngine();
 
@@ -170,6 +170,8 @@ bool GameScene::initAudioEngine()
 
 void GameScene::update(const ASGE::GameTime & ms)
 {
+	if (!scene_full_init) { scene_full_init = true; }
+
 	if (client_component.getUserID() % 2 == 0 && assigned_team == PlayerTurn::NONE && client_component.getUserID() != -1)
 	{
 		assigned_team = PlayerTurn::PLAYER1;
@@ -485,7 +487,23 @@ void GameScene::winScreenRender(ASGE::Renderer * renderer)
 }
 void GameScene::gameScreenRender(ASGE::Renderer * renderer)
 {
+	double xpos = 0;
+	double ypos = 0;
+
+	main_inputs->getCursorPos(xpos, ypos);
+
 	renderer->renderSprite(*game_background.get(), BACKGROUND); //background is game board 
+
+	if (Collision::mouseOnSprite(xpos, ypos, next_turn_button.get()))
+	{
+		next_turn_button->colour(ASGE::COLOURS::POWDERBLUE);
+	}
+
+	else
+	{
+		next_turn_button->colour(ASGE::COLOURS::WHITE);
+	}
+
 	renderer->renderSprite(*next_turn_button.get(), MIDDLE_GROUND_FRONT); // next turn button
 
 	unitSelectionRender(renderer);
@@ -515,43 +533,43 @@ void GameScene::unitSelectionRender(ASGE::Renderer * renderer)
 {
 	if (infantry_select)
 	{
-		renderer->renderSprite(*infantry_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*infantry_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*infantry_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_MID);
 	}
 	if (tank_select)
 	{
-		renderer->renderSprite(*tank_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*tank_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*tank_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_MID);
 	}
 	if (artillery_select)
 	{
-		renderer->renderSprite(*artillery_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*artillery_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*artillery_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_MID);
 	}
 	if (sniper_select)
 	{
-		renderer->renderSprite(*sniper_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*sniper_enemy_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*sniper_enemy_ptr->getAttackSprite(), MIDDLE_GROUND_MID);
 	}
 	if (infantry2_select)
 	{
-		renderer->renderSprite(*infantry_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*infantry_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*infantry_ally_ptr->getAttackSprite(), MIDDLE_GROUND_MID);
 	}
 	if (tank2_select)
 	{
-		renderer->renderSprite(*tank_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*tank_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*tank_ally_ptr->getAttackSprite(), MIDDLE_GROUND_MID);
 	}
 	if (artillery2_select)
 	{
-		renderer->renderSprite(*artillery_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*artillery_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*artillery_ally_ptr->getAttackSprite(), MIDDLE_GROUND_MID);
 	}
 	if (sniper2_select)
 	{
-		renderer->renderSprite(*sniper_ally_ptr->getAttackSprite(), MIDDLE_GROUND_BACK);
 		renderer->renderSprite(*sniper_ally_ptr->getMoveSprite(), MIDDLE_GROUND_BACK);
+		renderer->renderSprite(*sniper_ally_ptr->getAttackSprite(), MIDDLE_GROUND_MID);
 	}
 }
 void GameScene::unitHoverInfoRender(ASGE::Renderer * renderer)
@@ -1061,7 +1079,7 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 		next_scene.store(SceneTransitions::TO_MENU);
 	}
 
-	if (last_scene && !client_component.getIsLobby() && !client_component.getIsReconnecting())
+	if (last_scene && !client_component.getIsLobby() && !client_component.getIsReconnecting() && scene_full_init)
 	{
 		if (action == ASGE::KEYS::KEY_PRESSED)
 		{
@@ -1077,7 +1095,7 @@ void GameScene::keyHandler(const ASGE::SharedEventData data)
 			else
 			{
 				chat_str += key;
-				if (chat_str.size() % 10 == 0)
+				if (chat_str.size() % 13 == 0)
 				{
 					chat_str.append("\n");
 				}

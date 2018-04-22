@@ -1,5 +1,6 @@
 constexpr float BACKGROUND = 5;
 constexpr float MIDDLE_GROUND_BACK = 4;
+constexpr float MIDDLE_GROUND_MID = 3.5;
 constexpr float MIDDLE_GROUND_FRONT = 3;
 constexpr float FOREGROUND = 2;
 constexpr float TEXT_FOREGROUND = 1;
