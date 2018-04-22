@@ -53,7 +53,10 @@ public:
 	ASGE::Sprite* getAttackSprite();
 	ASGE::Sprite* getMoveSprite();
 	ASGE::Sprite* getObjectSprite();
+
+	std::unique_ptr<ASGE::Sprite> unit_count_box;
 	std::unique_ptr<ASGE::Sprite> hp_diamond;
+
 
 
 	void takeDamage(Unit* damage_dealer);
@@ -89,6 +92,7 @@ private:
 
 	std::unique_ptr<ASGE::Sprite> attack_sprite = nullptr;
 	std::unique_ptr<ASGE::Sprite> move_sprite = nullptr;
+
 
 	Unit(UnitType&, ASGE::Renderer* renderer);
 	UnitType& type;

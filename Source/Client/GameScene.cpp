@@ -449,12 +449,19 @@ void GameScene::unitsRender(ASGE::Renderer * renderer)
 		{
 			renderer->renderSprite(*unit->getObjectSprite(), MIDDLE_GROUND_FRONT);
 			renderer->renderSprite(*unit->hp_diamond, FOREGROUND);
+			renderer->renderSprite(*unit->unit_count_box, FOREGROUND);
 
 			std::string health_text = std::to_string(unit->getHealth()*unit->getSquadSize());
 			int text_x = 0;
 			if (health_text.size() == 3) { text_x = 40; }
 			else { text_x = 50; }
 			renderer->renderText(health_text, unit->getSpriteX() + text_x, unit->getSpriteY() + 105, 0.3, ASGE::COLOURS::WHITE, TEXT_FOREGROUND);
+
+			std::string squad_text = std::to_string(unit->getSquadSize());
+			int squad_text_x = 0;
+			if (squad_text.size() == 2) { squad_text_x = 5; }
+			else { squad_text_x = 10; }
+			renderer->renderText(squad_text, unit->getSpriteX() + squad_text_x, unit->getSpriteY() + 105, 0.3, ASGE::COLOURS::WHITE, TEXT_FOREGROUND);
 		}
 	}
 
