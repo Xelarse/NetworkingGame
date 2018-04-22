@@ -49,31 +49,11 @@ public:
 private:
 
 	bool initAudioEngine();
-
-	std::unique_ptr<irrklang::ISoundEngine> audio_engine = nullptr;
-
-	PlayerTurn assigned_team = PlayerTurn::NONE;
-	PlayerTurn winning_player = PlayerTurn::NONE;
-	bool game_finished = false;
-	bool endgame_check();
-
-
-	std::atomic<bool> infantry_select = false;
-	std::atomic<bool> tank_select = false;
-	std::atomic<bool> artillery_select = false;
-	std::atomic<bool> sniper_select = false;
-
-	std::atomic<bool> infantry2_select = false;
-	std::atomic<bool> tank2_select = false;
-	std::atomic<bool> artillery2_select = false;
-	std::atomic<bool> sniper2_select = false;
-
-
-
-	std::atomic<int> user_ID;
-
 	void initUnits();
-	
+
+
+
+	bool isAUnitSelected();
 	void placeUnitAtClick(int xpos, int ypos);
 	void attackClickedUnit(int xpos, int ypos);
 	void setSelected(int xpos, int ypos);
@@ -82,17 +62,16 @@ private:
 	void nextTurnPressed(int xpos, int ypos);
 	void deselectAllUnits();
 
-	bool isAUnitSelected();
+	int whichTurn();
+	int whichPlayer();
+	bool endgame_check();
 
 	
-
 	void unitsUpdate(const ASGE::GameTime& ms);
 	void chatUpdate(const ASGE::GameTime& ms);
 	void unitNetworkUpdate(const ASGE::GameTime& ms);
 	void updateReconnectee(const ASGE::GameTime& ms);
 
-	int whichTurn();
-	int whichPlayer();
 
 	void unitInfoBox(ASGE::Renderer* renderer, Unit* unit_info);
 	void unitSelectionRender(ASGE::Renderer* renderer);
@@ -136,6 +115,27 @@ private:
 	std::unique_ptr<ASGE::Sprite> next_turn_button;
 	std::unique_ptr<ASGE::Sprite> turn_box;
 	std::unique_ptr<ASGE::Sprite> bullet_sprite;
+
+
+	std::atomic<bool> infantry_select = false;
+	std::atomic<bool> tank_select = false;
+	std::atomic<bool> artillery_select = false;
+	std::atomic<bool> sniper_select = false;
+
+	std::atomic<bool> infantry2_select = false;
+	std::atomic<bool> tank2_select = false;
+	std::atomic<bool> artillery2_select = false;
+	std::atomic<bool> sniper2_select = false;
+
+	std::unique_ptr<irrklang::ISoundEngine> audio_engine = nullptr;
+
+	PlayerTurn assigned_team = PlayerTurn::NONE;
+	PlayerTurn winning_player = PlayerTurn::NONE;
+
+	bool game_finished = false;
+	bool scene_full_init = false;
+
+	std::atomic<int> user_ID;
 
 
 	//team 1
