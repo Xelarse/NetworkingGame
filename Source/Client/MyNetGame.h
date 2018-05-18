@@ -72,12 +72,10 @@ private:
 
 private:
 	//Our stuff goes here under the boilerplate
-
 	std::unique_ptr<SceneManager> scene_manager;
-
-
-	std::unique_ptr<Unit> gunner_enemy = nullptr;
-
+	
+	//JH - delete redundant code
+	//std::unique_ptr<Unit> gunner_enemy = nullptr;
 	std::atomic<bool> exit_game = false;
 };
 

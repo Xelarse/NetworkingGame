@@ -2,11 +2,9 @@
 #include <Engine\OGLGame.h>
 #include <Engine\Sprite.h>
 
-
-class Collision
+//JH - this feels like a utility class, make it a namespace instead
+namespace Collision
 {
-public:
-
-	static bool spriteOnSprite(ASGE::Sprite* collider, ASGE::Sprite* collidee);
-	static bool mouseOnSprite(int pos_x, int pos_y, ASGE::Sprite* collidee);
+	bool spriteOnSprite(ASGE::Sprite* collider, ASGE::Sprite* collidee);
+	bool mouseOnSprite(int pos_x, int pos_y, ASGE::Sprite* collidee);
 };

@@ -1,5 +1,4 @@
 #include "Collision.h"
-
 bool Collision::spriteOnSprite(ASGE::Sprite* collider, ASGE::Sprite* collidee)
 {
 	bool x_collide = false;

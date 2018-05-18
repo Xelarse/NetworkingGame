@@ -9,6 +9,7 @@ class Scene
 {
 public:
 
+	// JH: WHere's the virtual destructor, you could be leaking memory on destruction?
 	virtual void init(ASGE::Renderer* renderer, ASGE::Input* input, SceneManager* host) = 0;
 	virtual void update(const ASGE::GameTime& ms) = 0;
 	virtual void render(ASGE::Renderer* renderer) = 0;
@@ -22,7 +23,11 @@ public:
 
 protected:
 
+	// JH - never been a fan of the scene having a circular dependency to the manager.
+	// Either the manager manages it or it doesn't. 
 	SceneManager* host_manager = nullptr;
+
+
 	ASGE::Input* main_inputs = nullptr;
 	ASGE::Renderer* main_renderer = nullptr;
 

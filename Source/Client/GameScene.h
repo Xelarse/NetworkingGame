@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <Engine\InputEvents.h>
 #include <Client\ClientNetworking.h>
 #include <Common\CustomPacket.h>
@@ -34,7 +35,7 @@ class GameScene : public Scene
 
 
 public:
-
+	//JH : this class is in need of refactoring
 	GameScene(ASGE::Renderer* renderer, ASGE::Input* input, SceneManager* host, std::string ip_address);
 	~GameScene();
 
@@ -50,8 +51,6 @@ private:
 
 	bool initAudioEngine();
 	void initUnits();
-
-
 
 	bool isAUnitSelected();
 	void placeUnitAtClick(int xpos, int ypos);
@@ -137,8 +136,36 @@ private:
 
 	std::atomic<int> user_ID;
 
+	// JH - convert these into structs
+
+	struct Team
+	{
+		Unit* one;
+		Unit* two;
+		Unit* three;
+		Unit* four;
+	};
+	// or
+	struct TeamSTL
+	{
+		enum UnitLocID
+		{
+			INFANTRY = 0,
+			ARTILLERY = 1,
+			SNIPER = 2,
+			TANK = 3
+		};
+
+		std::array<Unit*, 4> units{ nullptr };
+	};
+
+	TeamSTL enemy_team;
+	TeamSTL ally_team;
 
 	//team 1
+	// JH - I think making a load function on the unit class would have prevented the need for so many unique pointers
+	// Remember dereferencing is a slower operation and the game scene itself is on the heap and so is the scene manager
+	// *scene_manager -> *scene -> *unit
 	Unit* infantry_enemy_ptr = nullptr;
 	Unit* artillery_enemy_ptr = nullptr;
 	Unit* sniper_enemy_ptr = nullptr;

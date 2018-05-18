@@ -96,6 +96,8 @@ void ClientComponent::sendFrontOfQueue()
 
 	const auto& msg = sending_queue.front();
 	unsigned int msg_length = 0;
+
+	//JH - the msg is not being freed? you have a memory leak.
 	auto msg_data = msg.data(msg_length);
 
 	sending_queue.pop();

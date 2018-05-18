@@ -55,7 +55,9 @@ void Server::onClientData(server_client& client, const enet_uint8* data, size_t 
 
 		network_server.trace("Forwarding to all other clients");
 		network_server.getServer()->send_packet_to_all_if(0, data, data_size, ENET_PACKET_FLAG_RELIABLE,
-			[&](const server_client& destination) {return destination.get_id() != client.get_id(); });
+			[&](const server_client& destination) { 
+			return destination.get_id() != client.get_id(); 
+		});
 	}
 
 	if (msg.getType() == "unit")
@@ -68,7 +70,9 @@ void Server::onClientData(server_client& client, const enet_uint8* data, size_t 
 
 		network_server.trace("Forwarding to all other clients");
 		network_server.getServer()->send_packet_to_all_if(0, data, data_size, ENET_PACKET_FLAG_RELIABLE,
-			[&](const server_client& destination) {return destination.get_id() != client.get_id(); });
+			[&](const server_client& destination) {
+			return destination.get_id() != client.get_id(); 
+		});
 	}
 
 	if (msg.getType() == "turn")
@@ -81,7 +85,9 @@ void Server::onClientData(server_client& client, const enet_uint8* data, size_t 
 
 		network_server.trace("forwarding onto other client");
 		network_server.getServer()->send_packet_to_all_if(0, data, data_size, ENET_PACKET_FLAG_RELIABLE,
-			[&](const server_client& destination) {return destination.get_id() != client.get_id(); });
+			[&](const server_client& destination) {
+			return destination.get_id() != client.get_id();
+		});
 	}
 
 	if (msg.getType() == "player")
@@ -94,7 +100,9 @@ void Server::onClientData(server_client& client, const enet_uint8* data, size_t 
 
 		network_server.trace("forwarding onto other client");
 		network_server.getServer()->send_packet_to_all_if(0, data, data_size, ENET_PACKET_FLAG_RELIABLE,
-			[&](const server_client& destination) {return destination.get_id() != client.get_id(); });
+			[&](const server_client& destination) {
+			return destination.get_id() != client.get_id(); 
+		});
 	}
 
 	if (msg.getType() == "update_complete")
@@ -107,7 +115,9 @@ void Server::onClientData(server_client& client, const enet_uint8* data, size_t 
 
 		network_server.trace("forwarding onto other client");
 		network_server.getServer()->send_packet_to_all_if(0, data, data_size, ENET_PACKET_FLAG_RELIABLE,
-			[&](const server_client& destination) {return destination.get_id() != client.get_id(); });
+			[&](const server_client& destination) {
+			return destination.get_id() != client.get_id(); 
+		});
 	}
 
 
@@ -126,10 +136,16 @@ void Server::onClientData(server_client& client, const enet_uint8* data, size_t 
 		unsigned int complete_length = 0;
 		auto complete_data = completed.data(complete_length);
 
-
 		assert(sizeof(char) == sizeof(enet_uint8));
-		network_server.getServer()->send_packet_to(clients[0]->get_id(), 0, reinterpret_cast<enet_uint8*>(complete_data), complete_length, ENET_PACKET_FLAG_RELIABLE);
-		network_server.getServer()->send_packet_to(clients[1]->get_id(), 0, reinterpret_cast<enet_uint8*>(complete_data), complete_length, ENET_PACKET_FLAG_RELIABLE);
+
+		// JH - line lengths
+		network_server.getServer()->send_packet_to(
+			clients[0]->get_id(), 0, 
+			reinterpret_cast<enet_uint8*>(complete_data), complete_length, ENET_PACKET_FLAG_RELIABLE);
+
+		network_server.getServer()->send_packet_to(
+			clients[1]->get_id(), 0, 
+			reinterpret_cast<enet_uint8*>(complete_data), complete_length, ENET_PACKET_FLAG_RELIABLE);
 	}
 	
 }
@@ -138,12 +154,11 @@ void Server::onClientConnect(server_client & client)
 {
 	network_server.trace("on_client_connected id :" + std::to_string(client._uid));
 
-	auto clients = network_server.getServer()->get_connected_clients();
-
+	// JH - be explicit about working with constant data types, auto has subverted this
+	const auto clients = network_server.getServer()->get_connected_clients();
 
 	if (!game_active)
 	{
-
 		assignClientLocalID(client);
 
 		if (clients.size() >= 2)
@@ -154,8 +169,12 @@ void Server::onClientConnect(server_client & client)
 			auto start_data = start.data(start_length);
 
 			assert(sizeof(char) == sizeof(enet_uint8));
-			network_server.getServer()->send_packet_to(clients[0]->get_id(), 0, reinterpret_cast<enet_uint8*>(start_data), start_length, ENET_PACKET_FLAG_RELIABLE);
-			network_server.getServer()->send_packet_to(clients[1]->get_id(), 0, reinterpret_cast<enet_uint8*>(start_data), start_length, ENET_PACKET_FLAG_RELIABLE);
+			network_server.getServer()->send_packet_to(clients[0]->get_id(), 
+				0, reinterpret_cast<enet_uint8*>(start_data), start_length, ENET_PACKET_FLAG_RELIABLE);
+			
+			network_server.getServer()->send_packet_to(clients[1]->get_id(),
+				0, reinterpret_cast<enet_uint8*>(start_data), start_length, ENET_PACKET_FLAG_RELIABLE);
+
 			game_active = true;
 		}
 	}
@@ -229,15 +248,18 @@ void Server::assignClientLocalID(server_client & client)
 		}
 	}
 
-	if (even_check)
-	{
-		id = 1;
-	}
 
-	if (!even_check)
-	{
-		id = 0;
-	}
+	// JH - it's either even or it isn't, why waste a check, could also be written simplier
+	id = even_check ? 1 : 0;
+
+	//if (even_check)
+	//{
+	//	id = 1;
+	//}
+	//if (!even_check)
+	//{
+	//	id = 0;
+	//}
 
 	CustomPacket initpacket("init", "", std::to_string(id));
 
@@ -246,5 +268,9 @@ void Server::assignClientLocalID(server_client & client)
 
 
 	assert(sizeof(char) == sizeof(enet_uint8));
-	network_server.getServer()->send_packet_to(client._uid, 0, reinterpret_cast<enet_uint8*>(packet_data), packet_length, ENET_PACKET_FLAG_RELIABLE);
+
+	// JH - i;ve seen this code a lot, how about a helper, that takes a uid and channel and sends it?
+	network_server.getServer()->send_packet_to(
+		client._uid, 0, 
+		reinterpret_cast<enet_uint8*>(packet_data), packet_length, ENET_PACKET_FLAG_RELIABLE);
 }

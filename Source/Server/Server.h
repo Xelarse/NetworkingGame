@@ -22,5 +22,6 @@ private:
 	bool game_active = false;
 
 public:
-	static std::mutex s_cout_mutex;
+	// JH - this is not needed, Tracer exists instead
+//	static std::mutex s_cout_mutex;
 };

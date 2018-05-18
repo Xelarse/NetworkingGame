@@ -28,8 +28,6 @@ public:
 	std::string getAttackSoundName() const;
 	std::string getMoveSoundName() const;
 
-
-
 	Unit* createUnit(ASGE::Renderer* renderer);
 	static void load();
 	static int find(std::string name);

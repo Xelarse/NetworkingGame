@@ -22,6 +22,8 @@ public:
 	bool isConnected() const;
 	bool isConnecting() const;
 
+
+	// JH - generally try to avoid the use of inline functions.
 	std::string getIp() { return connecting_ip; };
 	void setIp(std::string ip) { connecting_ip = ip; };
 
@@ -44,7 +46,7 @@ public:
 	void sendFrontOfQueue();
 	void processRecievedPackets(CustomPacket msg);
 
-
+	// JH - good to see mutexs to control access to non-thread stl
 	std::queue<CustomPacket> chat_recieved_queue;
 	std::mutex chat_recieved_mtx;
 
@@ -59,8 +61,8 @@ public:
 
 
 private:
+	// JH - atomics sure do make basic types easier to manage in threaded apps :D
 	std::atomic<bool> kill_thread = false;
-
 	std::atomic<bool> is_lobby = true; //Used to signify if players are in lobby waiting for someone to play against
 	std::atomic<bool> is_reconnecting = false; //To signify if a player has disconnected
 	std::atomic<bool> data_sender = false; //To signify if this client will be the player to give the unit data to the reconnecting player

@@ -27,8 +27,9 @@ std::string CustomPacket::getType()
 	return type;
 }
 
-char * CustomPacket::data(unsigned int & size) const
+char* CustomPacket::data(unsigned int & size) const
 {
+	// JH - yep you need to include the null terminator, well spotted
 	const int type_length = type.length() + 1;
 	const int username_length = username.length() + 1;
 	const int msg_length = msg_text.length() + 1;
@@ -38,27 +39,32 @@ char * CustomPacket::data(unsigned int & size) const
 	char* data = new char[size];
 
 	memcpy((void*)&data[0], type.data(), type_length);
-
 	memcpy((void*)&data[type_length], username.data(), username_length);
-
 	memcpy((void*)&data[type_length + username_length], msg_text.data(), msg_length);
 
+	// JH - so the caller is responsible for this memory being released?
 	return data;
 }
 
-void CustomPacket::unitDataDeciper(std::string & unit_name, int & x_pos, int & y_pos, int & squad_size, int & unit_hp)
+void CustomPacket::unitDataDeciper(
+	std::string& unit_name, 
+	int& x_pos, int& y_pos, 
+	int& squad_size, int& unit_hp)
 {
+	// JH - it would have been more challenging to see the use of binary rather than string data
 	std::string s = getMsg();
 	std::string delimiter = "&";
 
 	size_t pos = 0;
 	std::queue<std::string> results;
 
-	while ((pos = s.find(delimiter)) != std::string::npos) {
+	while ((pos = s.find(delimiter)) != std::string::npos) 
+	{
 		results.push(s.substr(0, pos));
 		s.erase(0, pos + delimiter.length());
 	}
 
+	// JH - like the use of a queue with the delimiter
 	unit_name = results.front();
 	results.pop();
 

@@ -12,7 +12,6 @@ GameScene::GameScene(ASGE::Renderer * renderer, ASGE::Input * input, SceneManage
 
 	client_component.setIp(ip_address);
 
-
 	init(main_renderer, main_inputs, host_manager);
 }
 GameScene::~GameScene()
@@ -87,6 +86,7 @@ void GameScene::initUnits()
 	std::unique_ptr<Unit> artillery_ally = nullptr;
 	std::unique_ptr<Unit> infantry_ally = nullptr;
 
+	// JH - nice use of data driven design
 	UnitType::load();
 	sniper_enemy.reset(UnitType::unit_types[UnitType::find("Sniper")].createUnit(main_renderer));
 	sniper_enemy->setRefName("sniper_enemy");
@@ -97,7 +97,6 @@ void GameScene::initUnits()
 	tank_enemy->setRefName("tank_enemy");
 	tank_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
 	
-
 	artillery_enemy.reset(UnitType::unit_types[UnitType::find("Artillery")].createUnit(main_renderer));
 	artillery_enemy->setRefName("artillery_enemy");
 	artillery_enemy->getObjectSprite()->colour(ASGE::COLOURS::YELLOW);
